@@ -3,7 +3,7 @@
 > 이 문서는 컨텍스트 컴팩트/클리어 이후에도 다음 세션이 작업 맥락을 즉시 복원하도록 모든 작업을 빠짐없이 역순(최신이 위)으로 기록한다.
 > 매 entry의 timestamp는 작업 시점에 파이썬으로 호출해 부여한다: `python -c "from datetime import datetime; print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))"`
 >
-> **현재 단계**: **Phase 6 진행 중 — README 정비 완료 (로컬, 미푸시)**. Phase 5 라이브 배포 완료 상태 위에 Phase 6 첫 작업으로 README.md 를 Phase 5 시점에 맞춰 전면 갱신(라이브 URL 활성화 / 미션 5종 표 / special 미션 분기 가이드 / 폴더 구조 실제 반영). **남은 후보**: reduced-motion 회귀 점검 → 사운드 토글 → Plan 정본 미션 5 사양 동기화. 푸시는 사용자 명시 허락 후.
+> **현재 단계**: **Phase 6-1 완료 (README 정비 + MIT LICENSE 라이브 deploy)** — README.md Phase 5 상태 반영(미션 5종 표 / special 미션 분기 / 실제 폴더 구조) + `LICENSE` MIT 표준 본문 추가, 라이브 deploy 완료 (commit `bf084bb`, Pages 빌드 23.7초, GitHub API SPDX `MIT` 자동 감지). **남은 Phase 6 후보**: reduced-motion 회귀 점검 → 사운드 토글 → Plan 정본 미션 5 사양 동기화.
 > **라이브 URL**: <https://dongchan.github.io/krivet-terminal-sim/>
 > **GitHub 저장소**: <https://github.com/Dongchan/krivet-terminal-sim> (Public)
 > **로컬 서버**: `python -m http.server 5500` 백그라운드 실행 중 (Bash ID: becnmuyej, http://localhost:5500/) — 새 세션에서는 만료되어 있을 수 있으므로 필요시 재실행.
@@ -45,6 +45,24 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 - 직전 푸시: Phase 5 미션 5 IDE 모형 + 패널 액션 바 (commit `0f2f6dd` feat, `d77c19d` verification, `baa20c9` /clear 점검 entry).
 - Phase 6 흐름: ① **README 푸시(사용자 명시 허락 후, 다음 즉시 가능)** → ② reduced-motion 점검(`devtools → Rendering → Emulate prefers-reduced-motion`) → ③ 사운드 토글 결정 → ④ Plan 정본 동기화 결정.
 ```
+
+---
+
+## [2026-05-11 22:00:45] Phase 6-1 푸시 + 라이브 검증 (commit `bf084bb`)
+
+- 사용자 명시 허락: "메인푸시하고 라이센스는 MIT로 진행하자."
+- `git add` → 3 파일 (`M README.md`, `M Working_history.md`, `A LICENSE`)
+- 커밋: **`bf084bb`** "docs(phase6): README 정비 + MIT LICENSE 추가" (+128/-39, 3 files)
+- 푸시: `baa20c9..bf084bb  main -> main` 성공
+- Pages 빌드 폴링: `building` → until `built` → **duration 23,692 ms (~23.7초)** · commit hash 일치
+- 라이브 자산 검증 (HTTP 200):
+  - `https://dongchan.github.io/krivet-terminal-sim/README.md` — 6,734 B
+  - `https://dongchan.github.io/krivet-terminal-sim/LICENSE` — 1,052 B
+- README 키워드 노출 (전부 OK): `## 라이브 데모`, `special/` 폴더 라인, `### 2) 특수 미션 (special)`, `- parallel-terminals — 미션 2`, `- autocompact — 미션 4`, `- ide-mock — 미션 5`, `prefers-reduced-motion: reduce`, `**MIT License** — LICENSE 파일 참고`
+- LICENSE 키워드 노출: `MIT License` / `Copyright (c) 2026 Dongchan` / `WARRANTY OF ANY KIND`
+- **GitHub API 라이선스 자동 감지**: `gh api repos/Dongchan/krivet-terminal-sim --jq .license` → `{"spdx_id":"MIT","name":"MIT License"}`. 저장소 페이지 사이드바에 **MIT** 배지가 자동 노출됨.
+- 사람 눈 검증 (사용자 위임): GitHub 저장소 페이지 <https://github.com/Dongchan/krivet-terminal-sim> 에서 README 렌더링 + MIT 배지 확인, 라이브 페이지 <https://dongchan.github.io/krivet-terminal-sim/> 에서 미션 동작이 README 표와 일치하는지 확인.
+- 다음 작업: **reduced-motion 회귀 점검** (Phase 6 우선순위 1). DevTools → Rendering → Emulate `prefers-reduced-motion: reduce` 모드에서 미션 1·2·4·5 의 transition/animation 비활성 정상 동작 확인.
 
 ---
 
