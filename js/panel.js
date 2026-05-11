@@ -39,6 +39,17 @@ function renderIdle() {
   panel.appendChild(el('h1', { class: 'panel-title' }, [meta.title]));
   panel.appendChild(el('p', { class: 'panel-body' }, [meta.summary]));
 
+  if (meta.placeholder) {
+    panel.appendChild(el('div', { class: 'panel-placeholder' }, [
+      el('div', { class: 'panel-placeholder-label' }, ['🚧 곧 공개 예정']),
+      el('div', {}, ['이 미션은 아직 준비 중입니다. 다음 업데이트에서 만나요. 그동안 상단의 다른 미션으로 이동하거나, "처음부터" 로 미션 1을 다시 체험해 보세요.']),
+    ]));
+    panel.appendChild(el('div', { class: 'panel-actions' }, [
+      el('button', { class: 'btn-primary btn-start', disabled: true, title: '준비 중인 미션입니다' }, ['미션 시작 (준비 중)']),
+    ]));
+    return;
+  }
+
   panel.appendChild(el('div', { class: 'panel-step' }, [
     el('div', { class: 'panel-step-label' }, ['미션을 시작하면 단계가 안내됩니다']),
     el('div', { class: 'panel-step-text' }, ['우측 터미널에 따라 명령을 입력하며 진행해 보세요.']),

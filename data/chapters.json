@@ -13,7 +13,8 @@
         },
         "ch1-m2-parallel": {
           "title": "미션 2 · 두 개의 터미널, 두 배의 속도",
-          "summary": "탐색기에선 불가능했던 '동시에' 를 체험합니다."
+          "summary": "탐색기에선 불가능했던 '동시에' 를 체험합니다.",
+          "placeholder": true
         }
       }
     },
@@ -26,11 +27,13 @@
       "missionMeta": {
         "ch2-m3-gui-vs-cli": {
           "title": "미션 3 · GUI에서는 안 보이는 것",
-          "summary": "Claude Code의 컨텍스트 사용량을, 어디서 확인하나요?"
+          "summary": "Claude Code의 컨텍스트 사용량을, 어디서 확인하나요?",
+          "placeholder": true
         },
         "ch2-m4-autocompact": {
           "title": "미션 4 · 오토컴팩트 시뮬레이션",
-          "summary": "컨텍스트가 차오르면, 모델은 무엇을 잊고 무엇을 남기나요?"
+          "summary": "컨텍스트가 차오르면, 모델은 무엇을 잊고 무엇을 남기나요?",
+          "placeholder": true
         }
       }
     },
@@ -43,7 +46,8 @@
       "missionMeta": {
         "ch3-m5-ide-mock": {
           "title": "미션 5 · 터미널 + 에디터를 한 화면에",
-          "summary": "코드와 터미널을 한 워크스페이스에서 다루는 경험."
+          "summary": "코드와 터미널을 한 워크스페이스에서 다루는 경험.",
+          "placeholder": true
         }
       }
     }

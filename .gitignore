@@ -21,3 +21,4 @@ node_modules/
 # Playwright 검증 산출물 (스크린샷·세션 캐시)
 .playwright-mcp/
 phase*.png
+live-*.png

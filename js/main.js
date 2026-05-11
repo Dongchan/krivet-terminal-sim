@@ -76,18 +76,40 @@ function bindMissionEvents() {
   on('mission:completed', ({ mission }) => {
     showCompletionOverlay(mission);
   });
+  on('route:changed', () => {
+    // 이전 미션 출력 잔재 제거. 사용자가 미션을 시작하면 mission-engine.loadAndStart가 다시 mount하므로 안전.
+    if (!terminal) return;
+    if (engine?.mission && engine.mission.id !== getState().currentMissionId) {
+      // 진행 중 미션이 있는데 다른 미션으로 이동한 경우 → 엔진 상태도 끊어줌
+      engine.mission = null;
+    }
+    terminal.mount();
+    terminal.print({ type: 'system', text: '[시뮬레이터] 좌측 패널에서 "미션 시작" 버튼을 눌러 시작하세요.' });
+  });
 }
 
 async function startCurrentMission() {
   const state = getState();
   const missionId = state.currentMissionId;
   if (!missionId || !engine) return;
+  if (isPlaceholder(missionId)) {
+    alert('이 미션은 아직 준비 중입니다. 곧 공개될 예정이에요.');
+    return;
+  }
   try {
     await engine.loadAndStart(missionId);
   } catch (err) {
     console.error('[main] 미션 시작 실패', err);
     alert('미션을 불러오지 못했습니다: ' + err.message);
   }
+}
+
+function isPlaceholder(missionId) {
+  for (const chapter of chaptersRef || []) {
+    const meta = chapter.missionMeta?.[missionId];
+    if (meta?.placeholder) return true;
+  }
+  return false;
 }
 
 function skipMission() {

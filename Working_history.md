@@ -3,9 +3,107 @@
 > 이 문서는 컨텍스트 컴팩트/클리어 이후에도 다음 세션이 작업 맥락을 즉시 복원하도록 모든 작업을 빠짐없이 역순(최신이 위)으로 기록한다.
 > 매 entry의 timestamp는 작업 시점에 파이썬으로 호출해 부여한다: `python -c "from datetime import datetime; print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))"`
 >
-> **현재 단계**: Phase 1 완료(미션 1 MVP 동작). 다음 결정 대기 중 — Phase 2(미션 3 데이터-only 확장) / Phase 3(미션 2 병렬 터미널) / GitHub Pages 배포 / 추가 폴리시.
-> **로컬 서버**: `python -m http.server 5500` 백그라운드 실행 중 (Bash ID: becnmuyej, http://localhost:5500/)
+> **현재 단계**: Phase 1 완료(미션 1 MVP 동작) + **GitHub Pages 배포 완료** + **미션 전환 UX 보정**(터미널 clear + 미션 2~5 placeholder 카드). 다음 결정 대기 중 — Phase 2(미션 3 데이터-only 확장) / Phase 3(미션 2 병렬 터미널) / 추가 폴리시.
+> **라이브 URL**: <https://dongchan.github.io/krivet-terminal-sim/>
+> **GitHub 저장소**: <https://github.com/Dongchan/krivet-terminal-sim> (Public)
+> **로컬 서버**: `python -m http.server 5500` 백그라운드 실행 중 (Bash ID: becnmuyej, http://localhost:5500/) — 새 세션에서는 만료되어 있을 수 있으므로 필요시 재실행.
 > **계획 정본**: `D:\AI_Work\Claude\Terminal_Sim\Plan_sim_v.1.0.md` (사본 `C:\Users\krivet\.claude\plans\requirement-md-polymorphic-wozniak.md`)
+> **새 세션 시작 시**: 바로 아래 "다음 세션 진입 프롬프트" 섹션을 새 채팅창에 통째로 복사-붙여넣기 하세요.
+
+---
+
+## 🚀 다음 세션 진입 프롬프트 (복사-붙여넣기 전용 · 역순 entry 규칙 예외, 항상 헤더 직후 고정)
+
+> 컨텍스트 컴팩트/클리어 이후 새 채팅창을 열어 다음 박스 안의 내용을 그대로 붙여넣으면 맥락이 즉시 복원된다. **이 박스 안의 글머리표 4개와 운영 규칙 3개는 임의로 줄이지 말고 그대로 사용한다** — 신규 세션 Claude가 길잡이로 삼는다.
+
+```
+D:\AI_Work\Claude\Terminal_Sim 프로젝트를 이어서 진행합니다. 응답은 한국어, learning/explanatory 톤을 유지하세요.
+
+먼저 다음을 순서대로 수행하세요:
+
+1. `D:\AI_Work\Claude\Terminal_Sim\Working_history.md` 를 읽고 **상단 메타 박스 + 가장 위 entry** 를 확인하세요. 이 문서가 정본 인수인계 문서입니다. ("현재 단계" 라인 = 현재 상태의 진실값)
+2. 필요하면 `Plan_sim_v.1.0.md` (계획 정본), `Requirement.md` (원본 요구사항), `README.md` (대외용 안내) 를 함께 참조하세요. Reference_Folder/References.txt 에 외부 디자인/레퍼런스 링크 있음.
+3. 현재 어디까지 와있는지, 결정 대기 중인 다음 옵션이 무엇인지 1~2문장으로 한국어 요약해 보고하세요.
+4. 사용자 다음 지시를 기다리세요. 임의로 다음 Phase 작업을 시작하지 마세요.
+
+운영 규칙 (메모리에 자동 로드되지만 항상 확인):
+- 모든 의미 있는 작업(파일 생성·수정·삭제, 검증, 의사결정, 버그 픽스 등)을 `Working_history.md` 맨 앞에 entry로 추가. 빠짐없이.
+- 매 entry의 timestamp는 매번 Bash로 파이썬 호출해 획득: `python -c "from datetime import datetime; print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))"` (임의 시간 추정 금지)
+- 로컬 서버는 이전 세션의 백그라운드 프로세스가 만료됐을 가능성 있음. 검증이 필요할 때 재실행: `python -m http.server 5500` (작업 폴더에서). 한 번 실행하면 http://localhost:5500/ 로 미션 확인 가능.
+
+추가 컨텍스트:
+- GitHub 저장소: https://github.com/Dongchan/krivet-terminal-sim (Public, main 브랜치 루트 서빙)
+- 라이브 URL: https://dongchan.github.io/krivet-terminal-sim/
+- 다음 push 시점은 사용자 확인을 받은 뒤 진행. 임의 push 금지.
+```
+
+---
+
+## [2026-05-11 12:05:15] 미션 전환 UX 보정: 터미널 clear + placeholder 카드
+
+- 사용자 발견: "우측 터미널이 어딨어?" — 미션 1 완료 후 "다음 미션으로" 클릭 시 미션 2로 라우팅됐는데 ① 미션 1 출력 잔재 그대로 ② 미션 2 JSON 없어 "미션 시작" 누르면 alert ③ 캐럿 focus 잃음.
+- 사용자 결정 (AskUserQuestion): "전환 시 clear + Placeholder 안내 (추천)"
+- 수정 파일:
+  - `js/main.js`:
+    - `bindMissionEvents()` 에 `on('route:changed', ...)` 추가 — 미션 전환 시 `terminal.mount()` 재호출(전체 reset)하고 idle 안내 메시지 + focus 재부착. 진행 중인 미션이 있으면 `engine.mission = null` 로 끊어줌.
+    - `startCurrentMission()` 에 `isPlaceholder(missionId)` 가드 추가 — placeholder 미션 시작 차단, "준비 중" alert.
+    - `isPlaceholder()` 헬퍼 신설 — chapter.missionMeta[id].placeholder 확인.
+  - `data/chapters.json`: 미션 2, 3, 4, 5의 missionMeta에 `"placeholder": true` 플래그 추가. 미션 1만 placeholder 없음 = 활성.
+  - `js/panel.js` `renderIdle()`: meta.placeholder 이면 `.panel-placeholder` 카드("🚧 곧 공개 예정") + `btn-primary[disabled]` "미션 시작 (준비 중)" 만 렌더. 건너뛰기 버튼은 숨김.
+  - `css/panel.css`: `.btn-primary:disabled` (회색 배경 + not-allowed 커서), `.panel-placeholder` (점선 + 액션블루 좌측 보더 + bg-sub 배경), `.panel-placeholder-label` 추가.
+- 검증: Playwright로 <http://localhost:5500/#ch1/ch1-m2-parallel> 직접 이동 → 좌측 placeholder 카드 + disabled 버튼, 우측 터미널 clear + 인사 메시지만(미션 1 잔재 사라짐) 확인 (`phase1-placeholder.png`).
+- 향후 Phase 3에서 미션 2 JSON을 만들 때는 `chapters.json` 에서 미션 2의 `placeholder: true` 한 줄만 제거하면 자동 활성화 — 데이터-only 확장 유지.
+
+---
+
+## [2026-05-11 11:57:43] 다음 세션 진입 프롬프트 추가
+
+- 사용자 요청: "클리어 후, 다음 세션에서 입력해야 할 프롬프트를 작성해서 Working_history.md 에 넣자. 세션 시작하면 바로 실행할 수 있게."
+- 결정 사항:
+  - Working_history.md 상단(헤더 메타 박스 직후, 모든 entry 앞)에 고정 섹션으로 배치 → 새 세션 Claude가 가장 먼저 보게 됨
+  - "역순 entry 규칙"의 예외임을 섹션 제목과 메타 박스 양쪽에 명시
+  - 프롬프트는 코드블록으로 감싸 복사 용이성 확보
+  - "현재 상태"는 프롬프트에 박지 않고 "Working_history.md 메타 박스를 진실값으로 따르라"로 위임 → stale 방지
+- 헤더 메타 박스에 "새 세션 시작 시 안내" 한 줄 추가
+- 새 entry 본 항목은 역순 entry 규칙에 따라 메타박스/진입 프롬프트 다음 자리에 삽입
+
+---
+
+## [2026-05-11 11:55:31] GitHub Public 저장소 생성 + Pages 배포 완료
+
+- 사용자 결정 (AskUserQuestion):
+  - 저장소 공개 범위: **Public** (GitHub Free + Pages 무료 활성화를 위한 선택)
+  - git commit identity: `Dongchan` / `chan.tangentbeta@gmail.com` / `--global`
+- 환경 점검 (Bash 병렬):
+  - `git --version` → 2.50.1.windows.1
+  - `gh --version` → 2.83.2 (로그인 계정: `Dongchan`, scope: gist/read:org/repo/workflow, keyring 저장)
+  - `git config user.name/email` → 글로벌·시스템 모두 미설정 (커밋 전 설정 필요)
+- git config 글로벌 설정:
+  - `user.name = Dongchan`
+  - `user.email = chan.tangentbeta@gmail.com`
+  - `init.defaultBranch = main`
+- 신규 파일 작성:
+  - `.gitignore` — OS/IDE/log/node_modules + `.playwright-mcp/`, `phase*.png` 제외
+  - `.nojekyll` (빈 파일) — Jekyll 자동 처리 차단
+  - `README.md` — 라이브 데모 링크, 로컬 실행법, 폴더 구조, 미션 추가 가이드, 디자인 톤 요약, MIT 라이선스 예고
+- git 흐름:
+  - `git init -b main` → main 브랜치로 빈 저장소 생성
+  - 명시 파일 stage (`-A` 회피): `.gitignore .nojekyll README.md Plan_sim_v.1.0.md Working_history.md Requirement.md Reference_Folder index.html css js data`
+  - LF→CRLF 경고 30여건 발생 — Windows 정상 동작, 무해
+  - `git commit` (HEREDOC 사용): **commit `a25885e`** — 33 files / +2250 lines, 한국어 메시지 + `Co-Authored-By` 라인
+- GitHub 저장소 생성 + push:
+  - `gh repo create krivet-terminal-sim --public --source=. --remote=origin --description ... --push`
+  - 결과: <https://github.com/Dongchan/krivet-terminal-sim>, `main → origin/main` 트래킹 설정
+- GitHub Pages 활성화:
+  - `gh api -X POST repos/Dongchan/krivet-terminal-sim/pages -f "source[branch]=main" -f "source[path]=/"`
+  - 1차 시도 leading slash 사용 → Git Bash가 fs 경로로 변환해 실패. leading slash 제거 후 성공.
+  - 응답: `html_url: https://dongchan.github.io/krivet-terminal-sim/`, `https_enforced: true`, `build_type: legacy`
+- 라이브 URL 검증:
+  - `gh api repos/.../pages/builds/latest --jq .status` → 1차 폴링 즉시 `built`
+  - `curl` 응답 (5개 자산 모두 200):
+    - `/` (index.html), `/data/chapters.json`, `/data/missions/ch1-m1-direct-read.json`, `/js/main.js`, `/css/tokens.css`
+  - Playwright로 <https://dongchan.github.io/krivet-terminal-sim/> 접속 → 페이지 타이틀 OK, 콘솔 에러는 favicon 404 1건만(무해)
+  - 캡처: `live-pages.png` — KRIVET 헤더, 좌측 idle 패널, 다크 터미널, 부드러운 흰색 도트, 푸터 모두 의도대로
 
 ---
 
