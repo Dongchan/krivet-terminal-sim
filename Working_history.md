@@ -3,7 +3,7 @@
 > 이 문서는 컨텍스트 컴팩트/클리어 이후에도 다음 세션이 작업 맥락을 즉시 복원하도록 모든 작업을 빠짐없이 역순(최신이 위)으로 기록한다.
 > 매 entry의 timestamp는 작업 시점에 파이썬으로 호출해 부여한다: `python -c "from datetime import datetime; print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))"`
 >
-> **현재 단계**: **Phase 5 완료 (전체 미션 5종 라이브 deploy)** — 미션 1 / 미션 2 병렬 / 미션 3 (`@` 멘션) / 미션 4 오토컴팩트 / **미션 5 IDE 모형** + 전 미션 공통 패널 액션 바(이전·새로 시작·건너뛰기) 모두 라이브 동작 (commit `0f2f6dd`, Pages 빌드 28.9초). **다음 작업 후보: Phase 6 폴리시** (reduced-motion 점검, README 미션 추가 가이드, 사운드 토글 등) 또는 사용자가 직접 결정.
+> **현재 단계**: **Phase 6 진행 중 — README 정비 완료 (로컬, 미푸시)**. Phase 5 라이브 배포 완료 상태 위에 Phase 6 첫 작업으로 README.md 를 Phase 5 시점에 맞춰 전면 갱신(라이브 URL 활성화 / 미션 5종 표 / special 미션 분기 가이드 / 폴더 구조 실제 반영). **남은 후보**: reduced-motion 회귀 점검 → 사운드 토글 → Plan 정본 미션 5 사양 동기화. 푸시는 사용자 명시 허락 후.
 > **라이브 URL**: <https://dongchan.github.io/krivet-terminal-sim/>
 > **GitHub 저장소**: <https://github.com/Dongchan/krivet-terminal-sim> (Public)
 > **로컬 서버**: `python -m http.server 5500` 백그라운드 실행 중 (Bash ID: becnmuyej, http://localhost:5500/) — 새 세션에서는 만료되어 있을 수 있으므로 필요시 재실행.
@@ -38,14 +38,52 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 - 다음 push 시점은 사용자 확인을 받은 뒤 진행. 임의 push 금지. main 직접 푸시는 사용자가 매 사이클 명시 허락("푸시 진행", "메인 푸시" 등) 줄 때만.
 
 다음 작업 후보 (사용자 확인 후 결정):
-- **Phase 6 — 폴리시** (Plan_sim_v.1.0.md 305).
-  - **README.md 정비** (Plan 288-293) — 라이브 데모 링크 / 한국어 한 문단 소개 / 로컬 실행법(`python -m http.server` / Live Server / `npx serve`) / 미션 추가 가이드 1쪽 (KRIVET 동료용, JSON 만 수정해 새 미션 추가하는 비개발자 가이드) / MIT 또는 CC-BY 라이선스 표기.
-  - **reduced-motion 회귀 점검** — `prefers-reduced-motion: reduce` 환경에서 미션 1·2·4·5 의 모든 transition/animation 비활성 정상 동작 확인 (특히 ide-mock 페이드 + autocompact 게이지 + parallel typing).
-  - **사운드 토글** (선택, 우선순위 낮음) — 글로벌 헤더에 무음/소리 토글 + `state.preferences.sound` (이미 state.js 에 자리 있음) 사용.
-- 직전에 끝난 작업: Phase 5 미션 5 IDE 모형 — 데스크톱 풍 사전 화면(폴더·IDE 앱 아이콘) + IDE 모형 아이콘 더블클릭 → IDE 모형 진입 → 시나리오 3단계(보고서.md 클릭 → `claude` 입력해 PowerShell→Claude Code 셸 전환 → `@2024_직업역량_보고서_초안.md` 멘션) + 전 미션 공통 패널 액션 바(이전·새로 시작·건너뛰기). 라이브 deploy 됨 (commit `0f2f6dd` feat, `d77c19d` verification).
-- 참고 (Plan 정본과의 차이): Plan_sim_v.1.0.md 254-258 의 미션 5 사양은 `code .` + `git status` 이지만 사용자 결정으로 데스크톱 아이콘 더블클릭 + Claude Code 부팅 + `@` 멘션으로 변경됨 (Working_history 2026-05-11 20:13:35 entry 참조). Plan 정본 본문 자체는 그대로 유지 — Phase 6 에서 plan 정본 동기화 여부도 함께 결정 가능.
-- Phase 6 시작 흐름: ① Plan 폴리시 섹션 + 현재 README.md 상태 점검 → ② 사용자에게 우선순위 확인(README 우선? 미션 추가 가이드 우선? reduced-motion 회귀 점검 우선?) → ③ 작성 → ④ 푸시 (사용자 명시 허락 후).
+- **Phase 6 — 폴리시** (Plan_sim_v.1.0.md 305). **README 정비는 완료** — 현재 로컬 갱신 상태, 푸시 대기.
+  - **reduced-motion 회귀 점검** (우선순위 1) — `prefers-reduced-motion: reduce` 환경에서 미션 1·2·4·5 의 모든 transition/animation 비활성 정상 동작 확인 (특히 ide-mock 페이드 + autocompact 게이지 + parallel typing + 데스크톱 toast).
+  - **사운드 토글** (우선순위 2, 선택) — 글로벌 헤더에 무음/소리 토글 + `state.preferences.sound` (이미 state.js 에 자리 있음) 사용.
+  - **Plan 정본 미션 5 사양 동기화** (우선순위 3) — Plan_sim_v.1.0.md 254-258 의 `code .` + `git status` 흐름이 실제 구현(데스크톱 아이콘 더블클릭 + `claude` 부팅 + `@` 멘션)과 다름. README 는 이미 실제 구현 기준으로 작성됨.
+- 직전 푸시: Phase 5 미션 5 IDE 모형 + 패널 액션 바 (commit `0f2f6dd` feat, `d77c19d` verification, `baa20c9` /clear 점검 entry).
+- Phase 6 흐름: ① **README 푸시(사용자 명시 허락 후, 다음 즉시 가능)** → ② reduced-motion 점검(`devtools → Rendering → Emulate prefers-reduced-motion`) → ③ 사운드 토글 결정 → ④ Plan 정본 동기화 결정.
 ```
+
+---
+
+## [2026-05-11 21:59:11] Phase 6-1 — LICENSE(MIT) 추가 + README 라이선스 라인 확정
+
+- 사용자 결정: "메인푸시하고 라이센스는 MIT로 진행하자." → 라이선스 종류 MIT 확정, 푸시 명시 허락.
+- 신규 파일: `LICENSE` — 표준 MIT License 본문, `Copyright (c) 2026 Dongchan` (git user 와 일치). OSI 표준 문구 그대로.
+- `README.md` 라이선스 섹션 갱신: "MIT 또는 CC-BY 로 확정 예정" → **"MIT License — `LICENSE` 파일 참고"** + MIT 조건(저작권 표기·라이선스 사본 동봉) 1줄 설명. 외부 사용·재배포 자유 명시.
+- 다음 액션: 즉시 푸시 (README + LICENSE + Working_history 한 커밋) → Pages 빌드 폴링 → 라이브 자산 검증(README 키워드 + LICENSE GET 200) → verification entry 별도 커밋.
+
+---
+
+## [2026-05-11 21:55:15] Phase 6-1 — README.md 전면 정비 (Phase 1 시점 카피 → Phase 5 완료 상태 반영)
+
+- 사용자 결정: "우선순위 높은 것부터 진행하자. 우선 리드미부터 정비." → Phase 6 폴리시 첫 작업으로 README 착수.
+- 진단 (정비 전 README 문제점):
+  - 라이브 데모 섹션이 "(배포 후 활성화)" 표시 — 실제로는 이미 라이브.
+  - "현재 상태" 가 **Phase 1 완료** 로 박혀 있음. 실제 라이브는 **Phase 5 완료(미션 1~5 + 패널 액션 바)**. 5단계 뒤처짐.
+  - 폴더 구조에 `js/special/`, `js/mission/`, `css/special.css` / `css/mission-overlay.css` / `css/tokens.css` 등 실제 디렉토리·파일 누락. `Working_history.md` / `Requirement.md` 도 미언급.
+  - 미션 추가 가이드가 step-based 미션만 다루고 special 미션(`parallel-terminals` / `autocompact` / `ide-mock`) 분기 언급 없음 — 비개발자가 미션 2·4·5 카피 수정 경로를 못 찾음.
+  - 라이선스 라인 "MIT (예정)" — 실제 LICENSE 파일은 아직 없음(`Glob LICENSE*` → 결과 0건). 그대로 두되 "외부 사용 문의" 한 줄 추가가 안전.
+- 변경 (`README.md`, +62/-31):
+  - **라이브 데모** 활성 URL 명시 + "main 브랜치 루트 서빙 / [처음부터] 진행도 리셋" 안내.
+  - **미션 구성 표 추가** — 5종 미션 × 핵심 체험 1줄. 미션 5 설명에 ide_framing 메모리 규칙(IDE = 방법론 아닌 도구) 1문장 명시.
+  - **로컬 실행법** — 기존 3옵션(Python/Node/Live Server) 유지, Python 포트 5500 명시, VS Code Live Server 자동 새로고침 안내.
+  - **폴더 구조** — 실제 트리 반영: `css/`(7개 파일 그룹화), `js/main.js + router.js + state.js + panel.js + progress.js`, `js/terminal/ + mission/ + special/ + utils/`, `data/missions/` + `chapters.json` + `fs-fixtures/`, 루트 `Plan_sim_v.1.0.md` / `Requirement.md` / `Working_history.md`.
+  - **미션 추가 가이드 2갈래 분기**:
+    1. 표준 step-based 미션 — `ch1-m1-direct-read.json` 복사 → `id`/`chapterId`/`title`/`intro`/`steps[]`/`completion.reflection` 수정 → `chapters.json` 의 `missions` 배열 + `missionMeta` 등록.
+    2. special 미션 — `"special": { "kind": "..." }` 의 3종(`parallel-terminals` / `autocompact` / `ide-mock`) 안내. 새 special 미션은 JS 코드 동반 작업 필요, 카피·시나리오·회고 카드 수정은 JSON 만으로 가능 명시.
+  - **디자인 톤** — 기존 3항(네이비/액션블루, 듀얼 컬러, 폰트) 유지 + `prefers-reduced-motion` 자동 비활성 한 줄 추가.
+  - **접근성/진행 상태 섹션 신설** — `localStorage` 진행도, [처음부터] / 좌측 패널 [← 이전] [↻ 새로 시작] [건너뛰기 →] 액션 바 통일 안내.
+  - **라이선스** — "MIT 또는 CC-BY 로 확정 예정" 유지 + "그 전까지 외부 사용·재배포는 저장소 소유자에게 문의" 한 줄 추가.
+- 미수행:
+  - **푸시 미수행** — 사용자 명시 허락("푸시 진행", "메인 푸시") 받은 뒤 진행.
+  - LICENSE 파일 자체는 생성하지 않음 — 라이선스 종류(MIT vs CC-BY) 사용자 결정 사안. README 라이선스 라인만 안전 문구로 보강.
+  - reduced-motion 회귀 점검 / 사운드 토글 / Plan 정본 미션 5 사양 동기화는 후속 작업으로 남음.
+- 메타박스 / 진입 프롬프트 박스 갱신:
+  - "현재 단계" → **Phase 6 진행 중 — README 정비 완료 (로컬, 미푸시)**.
+  - 진입 프롬프트 박스 "다음 작업 후보" 에서 README 항목 제거하고 우선순위 재정렬 (1. reduced-motion 점검, 2. 사운드 토글, 3. Plan 정본 동기화). Phase 6 흐름 첫 단계가 **README 푸시(사용자 명시 허락 후)** 임을 명시.
 
 ---
 
