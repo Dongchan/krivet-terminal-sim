@@ -3,7 +3,7 @@
 > 이 문서는 컨텍스트 컴팩트/클리어 이후에도 다음 세션이 작업 맥락을 즉시 복원하도록 모든 작업을 빠짐없이 역순(최신이 위)으로 기록한다.
 > 매 entry의 timestamp는 작업 시점에 파이썬으로 호출해 부여한다: `python -c "from datetime import datetime; print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))"`
 >
-> **현재 단계**: **Phase 6-2 완료 (reduced-motion 회귀 라이브 deploy)** — `mission-overlay.css` 미션 시작/완료 페이드 + `special.css` `.disclaimer-overlay` autocompact 고지 모달 페이드 두 곳 reduced-motion 무력화 블록 추가, 라이브 deploy 완료 (commit `e5500d6`, Pages 빌드 33.5초). CSS 11곳 매핑 + JS 4 모듈 가드 검증 모두 통과. **남은 Phase 6**: 사운드 토글 → Plan 정본 미션 5 사양 동기화.
+> **현재 단계**: **Phase 6 완료** — README 정비(`bf084bb`) + MIT LICENSE + reduced-motion 회귀 픽스(`e5500d6`) + Plan 정본 미션 5 사양 동기화. 사운드 토글은 사용자 결정으로 건너뜀. **다음 후보(우선순위 없음)**: Phase 7 선택적 확장 / 미션 추가 / 미션 카피 폴리시 / 디자인 보강. 사용자 결정 대기.
 > **라이브 URL**: <https://dongchan.github.io/krivet-terminal-sim/>
 > **GitHub 저장소**: <https://github.com/Dongchan/krivet-terminal-sim> (Public)
 > **로컬 서버**: `python -m http.server 5500` 백그라운드 실행 중 (Bash ID: becnmuyej, http://localhost:5500/) — 새 세션에서는 만료되어 있을 수 있으므로 필요시 재실행.
@@ -37,14 +37,33 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 - 라이브 URL: https://dongchan.github.io/krivet-terminal-sim/
 - 다음 push 시점은 사용자 확인을 받은 뒤 진행. 임의 push 금지. main 직접 푸시는 사용자가 매 사이클 명시 허락("푸시 진행", "메인 푸시" 등) 줄 때만.
 
-다음 작업 후보 (사용자 확인 후 결정):
-- **Phase 6 — 폴리시** (Plan_sim_v.1.0.md 305). **README 정비는 완료** — 현재 로컬 갱신 상태, 푸시 대기.
-  - **reduced-motion 회귀 점검** (우선순위 1) — `prefers-reduced-motion: reduce` 환경에서 미션 1·2·4·5 의 모든 transition/animation 비활성 정상 동작 확인 (특히 ide-mock 페이드 + autocompact 게이지 + parallel typing + 데스크톱 toast).
-  - **사운드 토글** (우선순위 2, 선택) — 글로벌 헤더에 무음/소리 토글 + `state.preferences.sound` (이미 state.js 에 자리 있음) 사용.
-  - **Plan 정본 미션 5 사양 동기화** (우선순위 3) — Plan_sim_v.1.0.md 254-258 의 `code .` + `git status` 흐름이 실제 구현(데스크톱 아이콘 더블클릭 + `claude` 부팅 + `@` 멘션)과 다름. README 는 이미 실제 구현 기준으로 작성됨.
-- 직전 푸시: Phase 5 미션 5 IDE 모형 + 패널 액션 바 (commit `0f2f6dd` feat, `d77c19d` verification, `baa20c9` /clear 점검 entry).
-- Phase 6 흐름: ① **README 푸시(사용자 명시 허락 후, 다음 즉시 가능)** → ② reduced-motion 점검(`devtools → Rendering → Emulate prefers-reduced-motion`) → ③ 사운드 토글 결정 → ④ Plan 정본 동기화 결정.
+현재 상태: **Phase 6 사실상 완료** — README 정비(`bf084bb`) + MIT LICENSE + reduced-motion 회귀 픽스(`e5500d6`) + Plan 정본 미션 5 사양 동기화까지 라이브 deploy. 사운드 토글은 사용자 결정으로 건너뜀(코드베이스에 사운드 소스 없음).
+- 다음 작업 후보 (사용자 확인 후 결정, 우선순위 없음):
+  - **Phase 7 — 선택적 확장** (Plan_sim_v.1.0.md 307) — macOS/Bash 탭, i18n, 진행률 CSV 내보내기 등.
+  - 미션 추가 — 비개발자도 JSON 만 수정해 새 미션 등록 가능 (README "미션 추가 가이드" 참조).
+  - 미션 카피 폴리시 — 기존 미션의 회고 카드·힌트·intro 카피 다듬기.
+  - 디자인 보강 — 모바일 ≤640px 대응, 키보드 포커스 링, 더 명확한 미션 진행률 시각화 등.
 ```
+
+---
+
+## [2026-05-11 22:17:45] Phase 6-3 — Plan 정본 미션 5 사양 동기화
+
+- 사용자 결정: 사운드 토글 건너뛰고 Phase 6 마지막 작업(Plan 동기화)로 이동.
+- 진단: 라이브 미션 5 는 데스크톱 아이콘 더블클릭 + Claude Code 부팅 + `@` 멘션 시나리오로 동작 중인데, Plan_sim_v.1.0.md 254-258 은 원안의 `code .` 입력 + 가짜 파일트리 클릭 + `git status` 흐름 그대로. 또 line 343 수동 테스트 체크리스트의 `code .` → 1초 내 IDE 전환 항목도 stale. README 는 Phase 6-1 작업에서 이미 실제 구현 기준으로 작성됨.
+- 변경 (`Plan_sim_v.1.0.md`):
+  - **line 254-258 미션 5 사양 블록 재작성** (+10 라인):
+    - "범용 IDE 디자인" + 좌측 활동표시줄/탐색기/중앙 에디터/하단 통합 터미널 4분할 명시.
+    - **핵심 메시지 라인 신설** — "IDE 는 새로운 개발 방법론이 아니라, 에디터·터미널·파일트리를 한 워크스페이스에 모은 도구·환경" (ide_framing 메모리 규칙 준수).
+    - 워터마크 + 상태바 `ESC · 바탕화면으로` 명시 (실제 구현 line 252 / line 518-535 와 일치).
+    - 시나리오 3단계 명세 (데스크톱 더블클릭 → md 클릭 → `claude` 부팅 → `@` 멘션 prefix 매칭).
+    - Terminal 클래스 재사용 + 셸 종류 동적 전환(`setPrompt` + `refreshTitlebar`) 보강.
+    - **설계 변경 메모** 1문단 추가 — 2026-05-11 사용자 결정으로 원안 교체 + 3가지 사유(터미널만으로 IDE 부르는 게 오해 가능 / `git status` 사전 지식 부담 / 미션 3·4 의 `@` 멘션 재활용으로 학습 연속성) + Working_history 20:13:35 entry 참조 라인.
+  - **line 343 수동 테스트 체크리스트** 갱신: "`code .` → 1초 내 IDE 전환" → "**IDE 아이콘 더블클릭** → 0.7초 내 IDE 전환".
+- 진입 프롬프트 박스 정리: "다음 작업 후보" 섹션을 Phase 6 마무리 단계로 재작성. **README 푸시·reduced-motion 점검·사운드 토글·Plan 동기화 4 항목 제거**. Phase 7 선택적 확장(macOS/Bash 탭, i18n, 진행률 CSV) + 미션 추가 / 카피 폴리시 / 디자인 보강 후보 4개로 정리.
+- 메타박스 "현재 단계" → **Phase 6 완료**.
+- 미수행:
+  - **푸시** — 사용자 명시 허락 후. 변경 2 파일(`Plan_sim_v.1.0.md`, `Working_history.md`). 라이브 코드 변경 없음(설계 문서만) → Pages 빌드는 돌지만 사용자 노출 자산은 변경 없음.
 
 ---
 
