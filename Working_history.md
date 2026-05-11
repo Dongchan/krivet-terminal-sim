@@ -3,7 +3,7 @@
 > 이 문서는 컨텍스트 컴팩트/클리어 이후에도 다음 세션이 작업 맥락을 즉시 복원하도록 모든 작업을 빠짐없이 역순(최신이 위)으로 기록한다.
 > 매 entry의 timestamp는 작업 시점에 파이썬으로 호출해 부여한다: `python -c "from datetime import datetime; print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))"`
 >
-> **현재 단계**: **Phase 5 — 미션 5 `ch3-m5-ide-mock` 재설계 완료 (로컬 검증 통과, 사용자 사람-눈 검수 + 푸시 대기)**. 데스크톱 풍 사전 화면(폴더·IDE 앱 아이콘 + 작업표시줄) → IDE 모형 아이콘 더블클릭 → 700ms 페이드 전환 → IDE 모형(PowerShell 통합 터미널) → 시나리오 3단계(파일 클릭 → `claude` 입력해 Claude Code 부팅 → `@` 멘션) → 회고. ESC 로 바탕화면 복귀. 다음 단계: 사용자 사람-눈 검증 → 명시 허락 후 main 푸시.
+> **현재 단계**: **Phase 5 완료 (전체 미션 5종 라이브 deploy)** — 미션 1 / 미션 2 병렬 / 미션 3 (`@` 멘션) / 미션 4 오토컴팩트 / **미션 5 IDE 모형** + 전 미션 공통 패널 액션 바(이전·새로 시작·건너뛰기) 모두 라이브 동작 (commit `0f2f6dd`, Pages 빌드 28.9초). **다음 작업 후보: Phase 6 폴리시** (reduced-motion 점검, README 미션 추가 가이드, 사운드 토글 등) 또는 사용자가 직접 결정.
 > **라이브 URL**: <https://dongchan.github.io/krivet-terminal-sim/>
 > **GitHub 저장소**: <https://github.com/Dongchan/krivet-terminal-sim> (Public)
 > **로컬 서버**: `python -m http.server 5500` 백그라운드 실행 중 (Bash ID: becnmuyej, http://localhost:5500/) — 새 세션에서는 만료되어 있을 수 있으므로 필요시 재실행.
@@ -44,6 +44,33 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 - 직전에 끝난 작업: Phase 4 미션 4 오토컴팩트 — 게이지 + 5턴 누적 + 85% 임계 도달 시 30%로 압축 애니메이션 + disclaimer 모달. 로컬 검증/사용자 검수 후 푸시했음 (verification entry 확인).
 - Phase 5 시작 흐름: ① Plan 미션 5 섹션 재확인 → ② 사용자에게 진행 확인 → ③ 점검·설계 → ④ 구현 → ⑤ 푸시 (사용자 명시 허락 후).
 ```
+
+---
+
+## [2026-05-11 21:48:30] Phase 5 푸시 + 라이브 자산 키워드 검증
+
+- 사용자 결정: "메인 푸시 진행"
+- staged 8 파일:
+  - `M` Working_history.md / css/panel.css / css/special.css / data/chapters.json / js/main.js / js/panel.js
+  - `A` data/missions/ch3-m5-ide-mock.json / js/special/ide-mock.js
+- `git commit` (HEREDOC): **commit `0f2f6dd`** — 8 files / +1889/-23, 한국어 메시지(미션 5 시나리오 + 패널 액션바 부가) + `Co-Authored-By`
+- `git push origin main`: `b21e6be..0f2f6dd  main -> main` 성공
+- Pages 빌드 폴링: poll 1 `building` → 폴링 5초 간격 until `built` → **`built`** · duration **28,937 ms (~28.9초)** — 평소 25~30초 범위 정상
+- 라이브 자산 GET (8 URL × 200): index.html(2258 B) / data/chapters.json(2052) / data/missions/ch3-m5-ide-mock.json(10966) / js/main.js(10543) / js/panel.js(12057) / js/special/ide-mock.js(21759) / css/special.css(17392) / css/panel.css(3847)
+- 미션 5 JSON 라이브 sanity (모두 OK):
+  - `id=ch3-m5-ide-mock`, `special.kind=ide-mock`
+  - desktop icons = [(folder-krivet, folder), (app-ide, app-ide)]
+  - ide.terminal = `{ kind: 'powershell', cwd: 'C:\\KRIVET\\연구' }`
+  - scenarioSteps = [openFile/보고서.md, terminalCommand/`claude`/exact, terminalCommand/`@2024_직업역량_보고서_초안.md`/prefix]
+  - reflection bullets = 6
+- chapters.json 라이브 상태: 활성 5종 (ch1-m1/ch1-m2/ch2-m3/ch2-m4/ch3-m5), placeholder 0
+- 라이브 코드 키워드 노출 (전부 OK):
+  - `js/special/ide-mock.js` — `export class IdeMockMission`, `mountDesktop`, `buildDesktopIcon`, `handleIconDoubleClick`, `buildTaskbar`, `flashDesktopToast`, `transitionToIde`, `returnToDesktop`, `matchesStepCommand`, `afterSwitchShell`, `updateTerminalMeta`, `makeDesktopIconSvg`
+  - `js/main.js` — `import { IdeMockMission }`, `goToPreviousMission`, `restartCurrentMission`, `startIdeMockMission`, `mission.special?.kind === 'ide-mock'` 분기, `btn-prev-mission` / `btn-restart-mission` 핸들러
+  - `js/panel.js` — `appendNavActions`, `renderIdeMockPanel`, `ide-mock:stage` / `ide-mock:scenario` 구독, `btn-prev-mission` / `btn-restart-mission` / `panel-actions-nav` / `btn-secondary` / `btn-ghost`
+  - `css/special.css` — `.ide-mock-desktop`, `.ide-mock-desktop-icon`, `.ide-mock-desktop-grid`, `.ide-mock-taskbar`, `.ide-mock-desktop-toast`, `.ide-mock-shell`, `.ide-mock-watermark`
+  - `css/panel.css` — `.btn-secondary`, `.btn-ghost`, `.panel-actions-nav`, `justify-content: space-between`
+- 사람 눈 검증은 사용자가 직접: <https://dongchan.github.io/krivet-terminal-sim/#ch3/ch3-m5-ide-mock>. 캐시 무시하려면 Ctrl+F5 또는 시크릿 창. 이전 in_progress 상태가 localStorage 에 남아 있다면 우측 상단 [처음부터] 로 리셋하거나 좌측 패널 [↻ 새로 시작] 사용.
 
 ---
 
