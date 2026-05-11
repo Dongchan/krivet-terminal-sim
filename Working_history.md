@@ -3,7 +3,7 @@
 > 이 문서는 컨텍스트 컴팩트/클리어 이후에도 다음 세션이 작업 맥락을 즉시 복원하도록 모든 작업을 빠짐없이 역순(최신이 위)으로 기록한다.
 > 매 entry의 timestamp는 작업 시점에 파이썬으로 호출해 부여한다: `python -c "from datetime import datetime; print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))"`
 >
-> **현재 단계**: **Phase 6-2 진행 중 — reduced-motion 누락 2곳 픽스 (로컬, 미푸시)**. Phase 6-1 라이브(`bf084bb`) 위에 코드 레벨 점검: CSS 11곳 transition/animation 매핑 + JS 4 모듈 REDUCED_MOTION 가드 확인 → **`mission-overlay.css` + `special.css` 의 `.disclaimer-overlay` 두 곳만 누락** → reduced-motion 블록 각 1개 추가. 사람 눈 시연은 사용자 위임(DevTools Rendering). 푸시는 사용자 명시 허락 후. **남은 Phase 6**: 사운드 토글 → Plan 정본 미션 5 사양 동기화.
+> **현재 단계**: **Phase 6-2 완료 (reduced-motion 회귀 라이브 deploy)** — `mission-overlay.css` 미션 시작/완료 페이드 + `special.css` `.disclaimer-overlay` autocompact 고지 모달 페이드 두 곳 reduced-motion 무력화 블록 추가, 라이브 deploy 완료 (commit `e5500d6`, Pages 빌드 33.5초). CSS 11곳 매핑 + JS 4 모듈 가드 검증 모두 통과. **남은 Phase 6**: 사운드 토글 → Plan 정본 미션 5 사양 동기화.
 > **라이브 URL**: <https://dongchan.github.io/krivet-terminal-sim/>
 > **GitHub 저장소**: <https://github.com/Dongchan/krivet-terminal-sim> (Public)
 > **로컬 서버**: `python -m http.server 5500` 백그라운드 실행 중 (Bash ID: becnmuyej, http://localhost:5500/) — 새 세션에서는 만료되어 있을 수 있으므로 필요시 재실행.
@@ -45,6 +45,25 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 - 직전 푸시: Phase 5 미션 5 IDE 모형 + 패널 액션 바 (commit `0f2f6dd` feat, `d77c19d` verification, `baa20c9` /clear 점검 entry).
 - Phase 6 흐름: ① **README 푸시(사용자 명시 허락 후, 다음 즉시 가능)** → ② reduced-motion 점검(`devtools → Rendering → Emulate prefers-reduced-motion`) → ③ 사운드 토글 결정 → ④ Plan 정본 동기화 결정.
 ```
+
+---
+
+## [2026-05-11 22:11:20] Phase 6-2 푸시 + 라이브 검증 (commit `e5500d6`)
+
+- 사용자 명시 허락: "메인 푸시 진행."
+- `git add` 3 파일 (`M css/mission-overlay.css`, `M css/special.css`, `M Working_history.md`)
+- 커밋: **`e5500d6`** "fix(a11y): mission-overlay / disclaimer-overlay reduced-motion 처리" (+49/-1, 3 files). WCAG SC 2.3.3 근거를 메시지에 포함.
+- 푸시: `b5f5c37..e5500d6  main -> main` 성공
+- Pages 빌드 폴링: `until built` → **duration 33,455 ms (~33.5초)** · commit hash 일치
+- 라이브 자산 검증 (HTTP 200):
+  - `css/mission-overlay.css` — 1,658 B (이전 1,365 → +6 라인)
+  - `css/special.css` — 17,487 B (이전 17,392 → +6 라인)
+- 키워드 노출:
+  - `mission-overlay.css`: `@media (prefers-reduced-motion: reduce) { .mission-overlay { transition: none; } }` 블록 정상 노출.
+  - `special.css`: `prefers-reduced-motion` 블록 **2개** 확인 — 신규 `.disclaimer-overlay` + 기존 `.ide-mock-*` 블록.
+- 사람 눈 시연은 사용자 위임: DevTools → Rendering → Emulate CSS media feature `prefers-reduced-motion: reduce`. 미션 1·2·4·5 진행하며 (1) 미션 시작/완료 오버레이 페이드 사라짐, (2) 캐럿 깜빡임 사라짐, (3) 타이핑 즉시 출력, (4) 미션 4 게이지 즉시 차오름 + 고지 모달 페이드 사라짐, (5) 미션 5 데스크톱↔IDE 즉시 전환 확인.
+- 메타박스 "현재 단계" → **Phase 6-2 완료 (reduced-motion 회귀 라이브 deploy)**.
+- 다음 작업: **사운드 토글** (Phase 6 우선순위 2). 글로벌 헤더에 무음/소리 토글 + `state.preferences.sound` (state.js 에 이미 자리 있음). 다만 현재 사이트에 사운드 소스가 없어 토글 자체가 의미 있는지부터 점검 필요 — 차례 시작 전 사용자와 방향 확인 권장.
 
 ---
 
