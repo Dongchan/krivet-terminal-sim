@@ -1,0 +1,75 @@
+.mission-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 34, 56, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease-out;
+}
+.mission-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mission-card {
+  background: var(--color-bg);
+  width: min(560px, calc(100vw - 48px));
+  border: 1px solid var(--color-border);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.18);
+  padding: var(--space-6);
+  border-radius: var(--radius-1);
+}
+
+.mission-card-tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--color-action);
+  text-transform: uppercase;
+}
+
+.mission-card-title {
+  font-size: var(--fs-title);
+  font-weight: 700;
+  color: var(--color-navy);
+  margin: 6px 0 var(--space-4);
+  letter-spacing: -0.01em;
+}
+
+.mission-card-bullets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+.mission-card-bullets li {
+  position: relative;
+  padding-left: 18px;
+  color: var(--color-text);
+}
+.mission-card-bullets li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--color-action);
+  font-weight: 700;
+}
+
+.mission-card-next {
+  font-size: var(--fs-small);
+  color: var(--color-text-mute);
+  background: var(--color-bg-sub);
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--color-action);
+  margin-bottom: var(--space-4);
+}
+
+.mission-card-actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KRIVET 터미널 시뮬레이터</title>
+  <meta name="description" content="한국직업능력연구원 구성원을 위한 AI 리터러시 터미널 시뮬레이터" />
+
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" as="style" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Joungkyun/font-d2coding/d2coding.css" />
+
+  <link rel="stylesheet" href="./css/tokens.css" />
+  <link rel="stylesheet" href="./css/reset.css" />
+  <link rel="stylesheet" href="./css/layout.css" />
+  <link rel="stylesheet" href="./css/panel.css" />
+  <link rel="stylesheet" href="./css/terminal.css" />
+  <link rel="stylesheet" href="./css/mission-overlay.css" />
+
+  <script type="module" src="./js/main.js"></script>
+</head>
+<body>
+  <div class="app">
+
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-title">KRIVET 터미널 시뮬레이터</span>
+        <span class="brand-sub">한국직업능력연구원 AI 리터러시 시뮬레이터</span>
+      </div>
+
+      <div class="header-spacer"></div>
+
+      <div class="header-progress">
+        <span class="chapter-label">Ch.1 왜 터미널인가</span>
+        <span class="progress-dots"></span>
+        <span class="progress-count">[0/5]</span>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn-ghost btn-reset" type="button" title="진행 상태 초기화">처음부터</button>
+      </div>
+    </header>
+
+    <aside class="app-panel">
+      <!-- panel.js 가 렌더 -->
+    </aside>
+
+    <main class="app-terminal">
+      <!-- Terminal 클래스가 동적으로 렌더 -->
+    </main>
+
+    <footer class="app-footer">
+      <span class="footer-hint">💬 다음 미션 예고: 두 개의 터미널, 두 배의 속도</span>
+      <span class="footer-meta">© KRIVET · 교육용 시뮬레이터 · 출력은 사전 정의 스크립트입니다</span>
+    </footer>
+
+  </div>
+</body>
+</html>

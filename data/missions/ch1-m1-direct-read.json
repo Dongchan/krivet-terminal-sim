@@ -1,0 +1,105 @@
+{
+  "id": "ch1-m1-direct-read",
+  "chapterId": "ch1",
+  "title": "미션 1 · 파일을 직접 읽어보기",
+  "order": 1,
+  "estimatedMinutes": 4,
+  "intro": {
+    "headline": "탐색기로 열지 말고, 명령으로 직접 읽어봅시다",
+    "bodyMarkdown": "탐색기에서 파일을 열려면 ① 폴더 찾기 ② 더블클릭 ③ 프로그램 대기까지 거쳐야 합니다.\n\n터미널은 이걸 한 줄로 끝냅니다. 우측 터미널에 따라 입력해 보세요."
+  },
+  "shell": {
+    "kind": "powershell",
+    "prompt": "PS C:\\KRIVET\\연구> ",
+    "initialCwd": "C:\\KRIVET\\연구",
+    "fsFixture": "workspace"
+  },
+  "steps": [
+    {
+      "id": "step-ls",
+      "instruction": "현재 폴더에 어떤 파일이 있는지 봅시다. 우측 터미널에 `dir` 을 입력해보세요.",
+      "tip": {
+        "label": "macOS / Linux 사용자라면",
+        "text": "같은 결과를 보려면 `ls` 명령을 사용합니다. (PowerShell도 `ls` 를 alias로 받아들여요)"
+      },
+      "expected": {
+        "type": "command",
+        "match": ["dir", "ls", "Get-ChildItem", "gci"],
+        "caseSensitive": false,
+        "normalize": "trimCollapseSpaces"
+      },
+      "output": [
+        { "type": "blank" },
+        { "type": "dim",  "text": "    디렉터리: C:\\KRIVET\\연구\\" },
+        { "type": "blank" },
+        { "type": "line", "text": "Mode  LastWriteTime       Length  Name" },
+        { "type": "line", "text": "----  -------------       ------  ----" },
+        { "type": "line", "text": "-a--- 2026-05-10  14:21    18234  2024_직업역량_보고서_초안.md" },
+        { "type": "line", "text": "-a--- 2026-05-09  09:11    91002  설문조사_원본.csv" },
+        { "type": "line", "text": "-a--- 2026-05-08  16:45     4210  참고문헌.bib" },
+        { "type": "blank" }
+      ],
+      "hints": [
+        { "afterFailures": 2, "text": "글자 세 개입니다. `dir` 을 그대로 입력해 보세요." },
+        { "afterFailures": 4, "text": "정답: dir" }
+      ]
+    },
+    {
+      "id": "step-cat",
+      "instruction": "이제 보고서 초안의 내용을 직접 읽어볼까요? `type 2024_직업역량_보고서_초안.md` 를 입력해보세요.",
+      "tip": {
+        "label": "macOS / Linux 사용자라면",
+        "text": "같은 일을 `cat 파일명` 으로 합니다. (PowerShell도 `cat` 을 alias로 받아들여요)"
+      },
+      "expected": {
+        "type": "command",
+        "match": [
+          "type 2024_직업역량_보고서_초안.md",
+          "type .\\2024_직업역량_보고서_초안.md",
+          "cat 2024_직업역량_보고서_초안.md",
+          "cat .\\2024_직업역량_보고서_초안.md",
+          "Get-Content 2024_직업역량_보고서_초안.md",
+          "gc 2024_직업역량_보고서_초안.md"
+        ],
+        "caseSensitive": false,
+        "normalize": "trimCollapseSpaces"
+      },
+      "output": [
+        { "type": "blank" },
+        { "type": "typing", "text": "# 2024 직업역량 보고서 초안", "cps": 60 },
+        { "type": "blank" },
+        { "type": "line", "text": "## 1. 배경" },
+        { "type": "line", "text": "본 보고서는 산업 전환기에 대응하기 위해 신직업역량의 변화를 추적한 결과를 정리한다." },
+        { "type": "blank" },
+        { "type": "line", "text": "## 2. 조사 개요" },
+        { "type": "line", "text": "- 조사 기간: 2026-02 ~ 2026-04" },
+        { "type": "line", "text": "- 표본: 전국 사업체 종사자 1,200명" },
+        { "type": "line", "text": "- 방법: 온라인 패널 + 심층 면접" },
+        { "type": "blank" },
+        { "type": "line", "text": "## 3. 주요 발견" },
+        { "type": "line", "text": "1. AI 활용 역량은 전 직무군에서 1순위로 부상" },
+        { "type": "line", "text": "2. 데이터 해석 역량의 격차 확대" },
+        { "type": "line", "text": "3. 협업·소통 역량은 여전히 핵심" },
+        { "type": "blank" },
+        { "type": "dim",  "text": "(... 이하 생략 ...)" },
+        { "type": "blank" }
+      ],
+      "hints": [
+        { "afterFailures": 2, "text": "파일 이름을 정확히 적어야 합니다. dir 결과에서 본 그대로 복사해 보세요." },
+        { "afterFailures": 4, "text": "정답: type 2024_직업역량_보고서_초안.md" }
+      ]
+    }
+  ],
+  "completion": {
+    "type": "allStepsPassed",
+    "reflection": {
+      "headline": "탐색기 vs 터미널, 무엇이 달랐나요?",
+      "bullets": [
+        "마우스 클릭 3~5회로 할 일을, 명령 한 줄로 끝냅니다.",
+        "파일을 '여는' 게 아니라, 안의 내용을 '바로' 봅니다.",
+        "이 과정을 스크립트로 묶으면 자동화의 시작입니다."
+      ],
+      "nextHint": "다음 미션에서는 두 개의 터미널이 동시에 일할 수 있다는 걸 체험합니다."
+    }
+  }
+}

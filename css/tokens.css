@@ -1,0 +1,49 @@
+:root {
+  --color-navy:         #003366;
+  --color-navy-soft:    #1a3a66;
+  --color-action:       #4A90E2;
+  --color-action-hover: #3A78C0;
+
+  --color-bg:           #FFFFFF;
+  --color-bg-sub:       #F5F5F5;
+  --color-border:       #E5E5E5;
+  --color-text:         #333333;
+  --color-text-mute:    #666666;
+
+  --term-bg:            #0F2238;
+  --term-bg-soft:       #15314f;
+  --term-fg:            #E8E8E8;
+  --term-fg-mute:       #B8C3D1;
+  --term-prompt:        #4A90E2;
+  --term-error:         #E06C75;
+  --term-system:        #E5C07B;
+  --term-dim:           #7A8FA5;
+
+  --font-sans:  "Pretendard", "Pretendard Variable", "Noto Sans KR", "맑은 고딕", "Malgun Gothic", system-ui, sans-serif;
+  --font-mono:  "D2Coding", "Cascadia Mono", Consolas, "Courier New", monospace;
+
+  --fs-body:     15px;
+  --fs-small:    13px;
+  --fs-heading:  20px;
+  --fs-title:    24px;
+  --fs-term:     14px;
+
+  --line-body:   1.55;
+  --line-term:   1.4;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  --header-h: 56px;
+  --footer-h: 56px;
+  --panel-w:  380px;
+
+  --radius-0: 0;
+  --radius-1: 2px;
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.04);
+}

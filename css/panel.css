@@ -1,0 +1,95 @@
+.app-panel {
+  background: var(--color-bg);
+  border-right: 1px solid var(--color-border);
+  padding: var(--space-5);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.panel-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--color-action);
+  text-transform: uppercase;
+}
+
+.panel-title {
+  font-size: var(--fs-title);
+  font-weight: 700;
+  color: var(--color-navy);
+  letter-spacing: -0.01em;
+}
+
+.panel-body {
+  color: var(--color-text);
+  font-size: var(--fs-body);
+}
+
+.panel-step {
+  border-left: 3px solid var(--color-action);
+  background: var(--color-bg-sub);
+  padding: var(--space-3) var(--space-4);
+}
+.panel-step-label {
+  font-size: 12px;
+  color: var(--color-text-mute);
+  margin-bottom: 4px;
+}
+.panel-step-text { font-size: var(--fs-body); }
+.panel-step-text code {
+  background: #e3edfb;
+  color: var(--color-navy);
+  padding: 1px 6px;
+  border-radius: var(--radius-1);
+  font-size: 0.9em;
+}
+
+.panel-tip {
+  border: 1px dashed var(--color-border);
+  border-left: 3px solid var(--color-text-mute);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--fs-small);
+  color: var(--color-text-mute);
+  background: transparent;
+}
+.panel-tip-label {
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+.panel-tip code {
+  background: var(--color-bg-sub);
+  color: var(--color-text);
+  padding: 1px 6px;
+  border-radius: var(--radius-1);
+  font-size: 0.92em;
+}
+
+.panel-hint {
+  border: 1px solid var(--color-border);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--fs-small);
+  color: var(--color-text-mute);
+}
+.panel-hint-title {
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.panel-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding-top: var(--space-4);
+}
+.btn-primary {
+  background: var(--color-action);
+  color: #fff;
+  border: 1px solid var(--color-action);
+}
+.btn-primary:hover { background: var(--color-action-hover); border-color: var(--color-action-hover); }
