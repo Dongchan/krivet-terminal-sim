@@ -3,7 +3,7 @@
 > 이 문서는 컨텍스트 컴팩트/클리어 이후에도 다음 세션이 작업 맥락을 즉시 복원하도록 모든 작업을 빠짐없이 역순(최신이 위)으로 기록한다.
 > 매 entry의 timestamp는 작업 시점에 파이썬으로 호출해 부여한다: `python -c "from datetime import datetime; print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))"`
 >
-> **현재 단계**: **Phase 6-1 완료 (README 정비 + MIT LICENSE 라이브 deploy)** — README.md Phase 5 상태 반영(미션 5종 표 / special 미션 분기 / 실제 폴더 구조) + `LICENSE` MIT 표준 본문 추가, 라이브 deploy 완료 (commit `bf084bb`, Pages 빌드 23.7초, GitHub API SPDX `MIT` 자동 감지). **남은 Phase 6 후보**: reduced-motion 회귀 점검 → 사운드 토글 → Plan 정본 미션 5 사양 동기화.
+> **현재 단계**: **Phase 6-2 진행 중 — reduced-motion 누락 2곳 픽스 (로컬, 미푸시)**. Phase 6-1 라이브(`bf084bb`) 위에 코드 레벨 점검: CSS 11곳 transition/animation 매핑 + JS 4 모듈 REDUCED_MOTION 가드 확인 → **`mission-overlay.css` + `special.css` 의 `.disclaimer-overlay` 두 곳만 누락** → reduced-motion 블록 각 1개 추가. 사람 눈 시연은 사용자 위임(DevTools Rendering). 푸시는 사용자 명시 허락 후. **남은 Phase 6**: 사운드 토글 → Plan 정본 미션 5 사양 동기화.
 > **라이브 URL**: <https://dongchan.github.io/krivet-terminal-sim/>
 > **GitHub 저장소**: <https://github.com/Dongchan/krivet-terminal-sim> (Public)
 > **로컬 서버**: `python -m http.server 5500` 백그라운드 실행 중 (Bash ID: becnmuyej, http://localhost:5500/) — 새 세션에서는 만료되어 있을 수 있으므로 필요시 재실행.
@@ -45,6 +45,42 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 - 직전 푸시: Phase 5 미션 5 IDE 모형 + 패널 액션 바 (commit `0f2f6dd` feat, `d77c19d` verification, `baa20c9` /clear 점검 entry).
 - Phase 6 흐름: ① **README 푸시(사용자 명시 허락 후, 다음 즉시 가능)** → ② reduced-motion 점검(`devtools → Rendering → Emulate prefers-reduced-motion`) → ③ 사운드 토글 결정 → ④ Plan 정본 동기화 결정.
 ```
+
+---
+
+## [2026-05-11 22:04:38] Phase 6-2 — reduced-motion 회귀 점검 + 누락 2곳 픽스
+
+- 점검 방식: 코드 레벨 매핑(사람 눈 시연 전). `prefers-reduced-motion` 키워드 grep + CSS 의 `transition:` / `animation:` 사용처 11곳 매핑 + JS 의 `REDUCED_MOTION` 가드 매핑.
+- **CSS transition/animation 매핑 (11곳)**:
+  | 위치 | 무엇 | 비고 |
+  |---|---|---|
+  | `terminal.css:89` 캐럿 깜빡임 | ✅ `:96` 무력화 | OK |
+  | `mission-overlay.css:11` 미션 시작/완료 페이드 | ❌ **누락** | **픽스 대상** |
+  | `special.css:148` `.disclaimer-overlay` autocompact 고지 모달 페이드 | ❌ **누락** | **픽스 대상** |
+  | `special.css:235` `.ide-mock-desktop` opacity | ✅ `:871` 블록 | OK |
+  | `special.css:418` `.ide-mock-desktop-toast` | ✅ `:871` 블록 | OK |
+  | `special.css:448` `.ide-mock-shell.fading-in` | ✅ `:871` 블록 | OK |
+  | `special.css:859` `.ide-mock-toast` | ✅ `:871` 블록 | OK |
+  | `special.css:95` 게이지 background-color 단계 | color shift 정보 표시(motion 아님) | 유지 |
+  | `special.css:529` activity-btn opacity/color hover | 마이크로 인터랙션 | 유지 |
+  | `terminal.css:58` help-pill background hover | 마이크로 인터랙션 | 유지 |
+  | `panel.css:109` 버튼 색상 hover | 마이크로 인터랙션 | 유지 |
+- **JS REDUCED_MOTION 가드 매핑 (모두 적절)**:
+  - `js/terminal/renderer.js:46` — REDUCED_MOTION 이면 `textContent` 즉시 할당(타이핑 cps 건너뜀)
+  - `js/special/autocompact.js:231` — REDUCED_MOTION 이면 `renderGauge(to)` 즉시 적용(게이지 차오름 애니메이션 건너뜀)
+  - `js/special/ide-mock.js:189` / `:203` — REDUCED_MOTION 이면 `ide-mock-fading-out` / `ide-mock-fading-in` 클래스 미부착(데스크톱↔IDE 즉시 전환)
+  - `js/special/parallel-terminals.js` — 자체 setTimeout/raf 사용 안 함. 타이핑은 `Terminal.printScript → renderer.js` 위임 → 가드 일관 적용. 미션 2 별도 처리 불필요 (이전 추정 보강 완료).
+- 픽스 (CSS 2곳 추가):
+  - **`css/mission-overlay.css` +6** — 파일 끝에 `@media (prefers-reduced-motion: reduce) { .mission-overlay { transition: none; } }` 블록. 미션 시작/완료 오버레이 페이드(180ms) 무력화. 전 미션 5종 영향.
+  - **`css/special.css` +6** — `.disclaimer-overlay.open` 블록 직후에 동일 패턴 블록 추가. autocompact 고지 모달 페이드(180ms) 무력화. 미션 4 영향.
+- WCAG SC 2.3.3 (Animation from Interactions) 기준 정리: opacity 페이드는 "비필수 motion" 이라 reduced-motion 모드에서 끄는 게 맞음. hover 색상 변경(`panel.css:109` 등 4곳)은 motion 이 아니라 color shift 라 유지가 정석.
+- 검증:
+  - 로컬 서버(`http://localhost:5500/`) 200 OK
+  - `curl http://localhost:5500/css/mission-overlay.css | grep "prefers-reduced"` → 블록 노출
+  - `curl http://localhost:5500/css/special.css | grep "disclaimer-overlay" -A3` → 블록 노출
+  - **사람 눈 시연은 사용자 위임**: DevTools → Rendering 패널 → Emulate CSS media feature `prefers-reduced-motion: reduce` 토글. 미션 1·2·4·5 진행하며 (1) 미션 시작/완료 오버레이 페이드 없음, (2) 캐럿 깜빡임 없음, (3) 타이핑 즉시 출력, (4) 미션 4 게이지 즉시 차오름 + 고지 모달 페이드 없음, (5) 미션 5 데스크톱↔IDE 즉시 전환 확인.
+- 미수행 (사용자 결정 대기):
+  - **푸시** — 사용자 명시 허락 필요. 변경 2 파일 (`css/mission-overlay.css`, `css/special.css`) + Working_history.
 
 ---
 

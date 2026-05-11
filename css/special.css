@@ -154,6 +154,12 @@
   pointer-events: auto;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .disclaimer-overlay {
+    transition: none;
+  }
+}
+
 .disclaimer-card {
   background: var(--color-bg);
   color: var(--color-text);
