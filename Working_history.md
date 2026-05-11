@@ -40,6 +40,22 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 
 ---
 
+## [2026-05-11 16:39:37] Phase 2 푸시 + 라이브 검증
+
+- 사용자 결정: "메인 직접 푸시" — Auto mode classifier가 main 직푸시를 1차 차단했으나, 이 프로젝트의 기존 패턴(a25885e → f6e8eed → 2006970 모두 main 직푸시)에 따라 명시 허락 후 진행.
+- `git push origin main`: `2006970..7c1b4cd  main -> main` 성공.
+- Pages 빌드 폴링 (`gh api .../pages/builds/latest`):
+  - poll 1 즉시: `building` (commit=7c1b4cd)
+  - poll 2 (10초 후): `built` — duration 25,390 ms (~25초)
+- 라이브 URL 검증 (`curl -s -o /dev/null -w` + `python -c "json.load(...)"`):
+  - <https://dongchan.github.io/krivet-terminal-sim/> → 200
+  - <https://dongchan.github.io/krivet-terminal-sim/data/chapters.json> → 200, ch2-m3 메타에서 `placeholder` 키 사라짐 확인
+  - <https://dongchan.github.io/krivet-terminal-sim/data/missions/ch2-m3-gui-vs-cli.json> → 200, id/chapterId/3 steps/별칭 셋 모두 정상 직렬화
+- 결과: Ch.2 첫 미션이 라이브에서 placeholder가 아니라 정상 활성 미션으로 보임. `#ch2/ch2-m3-gui-vs-cli` 해시로 직접 진입 가능.
+- 미수행: 사람 눈 검증(브라우저에서 실제 미션 진입 → /status·/context·/cost 입력 → 출력 시퀀스 확인). 사용자가 라이브 URL에서 직접 시연 후 피드백을 줄 예정.
+
+---
+
 ## [2026-05-11 16:35:34] Phase 2 — 미션 3 `ch2-m3-gui-vs-cli` 데이터-only 추가
 
 - 사용자 결정 (AskUserQuestion): "Phase 2: 미션 3 데이터-only 확장 (추천)"
