@@ -3,7 +3,7 @@
 > 이 문서는 컨텍스트 컴팩트/클리어 이후에도 다음 세션이 작업 맥락을 즉시 복원하도록 모든 작업을 빠짐없이 역순(최신이 위)으로 기록한다.
 > 매 entry의 timestamp는 작업 시점에 파이썬으로 호출해 부여한다: `python -c "from datetime import datetime; print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))"`
 >
-> **현재 단계**: Phase 2 완료(미션 3 활성) + **터미널 입력 UX 보강**(prompt-line 좌측 액션블루 강조선·옅은 배경, 터미널 영역 클릭 시 자동 포커스, placeholder "여기에 명령을 입력하고 Enter"). 다음 결정 대기 중 — Phase 3(미션 2 병렬 터미널) / Phase 4(미션 4 오토컴팩트) / 추가 폴리시.
+> **현재 단계**: Phase 2 미션 3 확장(**6 step**: PowerShell → `claude` 입력 → **셸 전환(prompt `> `, titlebar 'Claude Code')** → `/status`·`/context`·`/cost` → `@단일파일` → `@파일A @파일B`) + 입력 UX 보강 유지. **mission-engine 에 `step.effects.setShell` 메커니즘 신설**(범용 step-effect 슬롯, 향후 다른 미션도 활용 가능). 다음 결정 대기 중 — Phase 3(미션 2 병렬 터미널) / Phase 4(미션 4 오토컴팩트) / 추가 폴리시.
 > **라이브 URL**: <https://dongchan.github.io/krivet-terminal-sim/>
 > **GitHub 저장소**: <https://github.com/Dongchan/krivet-terminal-sim> (Public)
 > **로컬 서버**: `python -m http.server 5500` 백그라운드 실행 중 (Bash ID: becnmuyej, http://localhost:5500/) — 새 세션에서는 만료되어 있을 수 있으므로 필요시 재실행.
@@ -37,6 +37,51 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 - 라이브 URL: https://dongchan.github.io/krivet-terminal-sim/
 - 다음 push 시점은 사용자 확인을 받은 뒤 진행. 임의 push 금지.
 ```
+
+---
+
+## [2026-05-11 16:55:47] 미션 3 확장: `@` 멘션 step 2개 + `claude` 접속 step 0 + 셸 전환 효과
+
+- 사용자 요청 (두 단계, 같은 흐름으로 묶음):
+  - (1) "터미널의 장점 중 하나가 `@` 기호 사용인데, 단일 파일과 여러개 파일을 지정해서 사용자가 의도한 대로 작업을 수행할 수 있다는 것. GUI는 지정을 못하니까 전체 파일을 다 읽어서 토큰 비효율적이잖아."
+  - (2) "미션3의 경우, 터미널에서 클로드 코드 같은 cli를 썼을 때 나오는 기능인데, 마치 터미널에서 다 되는 건줄 알겠어. 클로드 코드를 예제로 만들 수 있어? 클로드 코드에 접속하는 경험도 같이 할 수 있도록."
+- 문제 진단: 현재 미션 3가 PowerShell prompt에서 `/status` 등을 받기 때문에 사용자가 "이건 PowerShell 의 기본 기능"으로 오해할 위험. 그리고 `@` 멘션의 토큰 효율 이점이 미션에서 누락됨.
+- 설계: 미션 3을 3 step → **6 step** 으로 확장.
+  - `step-launch-claude` (신규) — PowerShell 에서 `claude` 입력 → 환영 출력 + **셸 전환**(prompt `PS …> ` → `> `, titlebar 'PowerShell · KRIVET\\연구' → 'Claude Code · KRIVET\\연구')
+  - `/status` · `/context` · `/cost` — 기존 (단, 첫 instruction에 "프롬프트가 바뀌었나요? 이제 Claude Code 안" 환기)
+  - `step-mention-single` (신규) — `@2024_직업역량_보고서_초안.md` → +14,200 tok, 정확히 한 파일만 컨텍스트
+  - `step-mention-multi` (신규) — `@설문조사_원본.csv @참고문헌.bib` → 두 파일 합 +74,380 tok, dim 비교 "GUI 폴더 통째로 → ~6배 토큰"
+- 데이터-only 원칙은 한 번 깨고 코드 일반화 추가(향후 재사용 가능한 **step effects 슬롯** 신설):
+  - `js/terminal/shell-prompt.js`: `kind === 'claude'` → `'> '` 분기 1줄
+  - `js/terminal/terminal.js`:
+    - `labelForShell`: `'claude'` → `'Claude Code'` 분기 1줄
+    - `setPrompt({ cwd, kind })`: kind 옵션도 받도록 확장
+    - `refreshTitlebar()` 메서드 신설 — titlebar의 lastElementChild span text를 셸/cwd 기반으로 갱신 (DOM 부분 갱신, remount 불필요해 출력 보존)
+  - `js/mission/mission-engine.js`:
+    - `applyEffects(effects, terminal)` 신설 — 현재는 `effects.setShell` 만 처리 (`terminal.setPrompt(...)` + `terminal.refreshTitlebar()`). 향후 다른 효과(예: `setCwd`, `addBadge`)도 같은 슬롯에서 확장 가능.
+    - `handleInput` 의 success 경로에서 `printScript` 후 `applyEffects` 호출, 그 다음 `advance`
+- 데이터 (`data/missions/ch2-m3-gui-vs-cli.json`):
+  - intro headline 변경 ("PowerShell 에서 Claude Code 로 — 채팅 GUI 가 못 하는 일들"), bodyMarkdown에 ④(@멘션) 추가, 첫 step 위주로 흐름 안내
+  - title 보강: "미션 3 · GUI에서는 안 보이는 것 (그리고 못 고르는 것)"
+  - reflection bullets 4개로 확장 (PowerShell → claude 셸 전환 메커니즘 / 슬래시 노출 / `@` 멘션 절약 / `/context` 습관)
+  - estimatedMinutes 5 → 8
+- 알려진 호환성 이슈 (의도적, 사용자 수가 적어 무시 가능):
+  - 기존 사용자가 5 step 버전 미션 3을 진행 중이었다면 새 6 step 의 중간 step부터 재개될 수 있음. `mission-engine.loadAndStart` 의 `stepIndex >= length` 가드는 작동(=완료자는 reset). idle/재시작은 정상.
+- 검증 (로컬 5500 서버):
+  - JSON parse OK, steps 6개, alias 셋 모두 의도대로 (`['claude']`, 슬래시 셋, `@` 단일·다중)
+  - `shell-prompt.js` / `terminal.js` / `mission-engine.js` 본문에 신규 키워드(`'claude'`, `refreshTitlebar`, `applyEffects`, `setShell`) 모두 노출
+- 미수행 (의도적): 사람 눈 검증. 라이브 푸시 후 사용자가 셸 전환 시각 효과(`PS …> ` → `> `, titlebar 변화)를 직접 확인.
+
+---
+
+## [2026-05-11 16:48:06] 입력 UX 패치 푸시 + 라이브 자산 키워드 확인
+
+- `git push origin main`: `deb43b1..5522096  main -> main` 성공
+- Pages 빌드 폴링: poll 1 `building` → poll 2 (10초 후) `built` — duration 30,803 ms (~31초)
+- 라이브 자산 GET + grep:
+  - `/css/terminal.css` 200, 본문에 `.term-prompt-line`·`.term-prompt-line:focus-within`·`.term-input::placeholder` 셋 다 존재
+  - `/js/terminal/terminal.js` 200, 본문에 `ensureRootClickFocus`·`여기에 명령을 입력하고 Enter` 존재
+- 사람 눈 검증은 사용자가 라이브 URL(<https://dongchan.github.io/krivet-terminal-sim/>) 에서 직접 진행 예정. 캐시 무시하려면 Ctrl+F5 또는 시크릿 창.
 
 ---
 

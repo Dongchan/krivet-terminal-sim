@@ -146,9 +146,19 @@ export class Terminal {
     if (this.outputEl) clear(this.outputEl);
   }
 
-  setPrompt({ cwd }) {
+  setPrompt({ cwd, kind } = {}) {
     if (cwd) this.shell.cwd = cwd;
+    if (kind) this.shell.kind = kind;
     this.promptText = formatPrompt({ kind: this.shell.kind, cwd: this.shell.cwd });
+  }
+
+  refreshTitlebar() {
+    const titlebar = this.root.querySelector('.term-titlebar');
+    if (!titlebar) return;
+    const labelSpan = titlebar.lastElementChild;
+    if (labelSpan && labelSpan.tagName === 'SPAN') {
+      labelSpan.textContent = `${labelForShell(this.shell.kind)} · ${this.shell.cwd.split('\\').slice(-2).join('\\')}`;
+    }
   }
 
   focus() {
@@ -159,5 +169,6 @@ export class Terminal {
 function labelForShell(kind) {
   if (kind === 'powershell') return 'PowerShell';
   if (kind === 'bash')       return 'Bash';
+  if (kind === 'claude')     return 'Claude Code';
   return 'Shell';
 }

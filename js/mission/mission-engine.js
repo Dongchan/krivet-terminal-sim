@@ -76,6 +76,7 @@ export class MissionEngine {
     const result = evaluateStep(step, value);
     if (result.ok) {
       await terminal.printScript(step.output || []);
+      this.applyEffects(step.effects, terminal);
       this.advance();
     } else {
       this.failures += 1;
@@ -85,6 +86,14 @@ export class MissionEngine {
       ]);
       this.emitStep();
       emit('mission:failed', { failures: this.failures, missionId: this.mission.id });
+    }
+  }
+
+  applyEffects(effects, terminal) {
+    if (!effects) return;
+    if (effects.setShell) {
+      terminal.setPrompt(effects.setShell);
+      terminal.refreshTitlebar?.();
     }
   }
 
