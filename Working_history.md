@@ -3,7 +3,7 @@
 > 이 문서는 컨텍스트 컴팩트/클리어 이후에도 다음 세션이 작업 맥락을 즉시 복원하도록 모든 작업을 빠짐없이 역순(최신이 위)으로 기록한다.
 > 매 entry의 timestamp는 작업 시점에 파이썬으로 호출해 부여한다: `python -c "from datetime import datetime; print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))"`
 >
-> **현재 단계**: **Phase 4 구현 완료 (Ch.2 모두 활성, 로컬 검증 단계)** — 미션 1 / 미션 2 병렬 / 미션 3 (`@` 멘션) / **미션 4 오토컴팩트** 모두 활성. `ch2-m4-autocompact.json` 신규, `js/special/autocompact.js` 신설, `chapters.json` placeholder 제거. **사용자 로컬 사람-눈 검증 대기 중** — 검증 통과 후 푸시 예정. **다음 작업 후보: Phase 5 미션 5 IDE 모형** (`ch3-m5-ide-mock`, 현재 placeholder).
+> **현재 단계**: **Phase 4 완료 (Ch.1·Ch.2 모두 활성, 라이브 deploy)** — 미션 1 / 미션 2 병렬 / 미션 3 (`@` 멘션) / **미션 4 오토컴팩트** 모두 라이브에서 동작 (commit `5566289`, Pages 빌드 36초). **다음 작업 후보: Phase 5 미션 5 IDE 모형** (`ch3-m5-ide-mock`, 현재 placeholder).
 > **라이브 URL**: <https://dongchan.github.io/krivet-terminal-sim/>
 > **GitHub 저장소**: <https://github.com/Dongchan/krivet-terminal-sim> (Public)
 > **로컬 서버**: `python -m http.server 5500` 백그라운드 실행 중 (Bash ID: becnmuyej, http://localhost:5500/) — 새 세션에서는 만료되어 있을 수 있으므로 필요시 재실행.
@@ -44,6 +44,27 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 - 직전에 끝난 작업: Phase 4 미션 4 오토컴팩트 — 게이지 + 5턴 누적 + 85% 임계 도달 시 30%로 압축 애니메이션 + disclaimer 모달. 로컬 검증/사용자 검수 후 푸시했음 (verification entry 확인).
 - Phase 5 시작 흐름: ① Plan 미션 5 섹션 재확인 → ② 사용자에게 진행 확인 → ③ 점검·설계 → ④ 구현 → ⑤ 푸시 (사용자 명시 허락 후).
 ```
+
+---
+
+## [2026-05-11 19:33:06] Phase 4 푸시 + 라이브 자산 키워드 검증
+
+- 사용자 결정: "메인 푸시 진행"
+- staged 7 파일(이전 entry 의 모든 변경):
+  - `M` Working_history.md / css/special.css / data/chapters.json / js/main.js / js/panel.js
+  - `A` data/missions/ch2-m4-autocompact.json / js/special/autocompact.js
+- `git commit` (HEREDOC): **commit `5566289`** — 7 files / +713/-14, 한국어 메시지 + `Co-Authored-By`
+- `git push origin main`: `12ffcc4..5566289  main -> main` 성공
+- Pages 빌드 폴링: poll 1 `building` → poll 2 (10초 후) `building` → poll 3 (20초 후) **`built`** · duration **36,426 ms (~36초)** — 평소 25~30초 대비 살짝 길지만 정상 범위
+- 라이브 자산 GET (7 URL × 200): index.html, js/special/autocompact.js, data/missions/ch2-m4-autocompact.json, css/special.css, js/main.js, js/panel.js, data/chapters.json
+- 키워드 노출 확인 (전부 OK):
+  - autocompact.js — `export class AutocompactMission`, `runCompaction`, `animateGauge`, `showDisclaimer`, `emitTurnPanel`
+  - main.js — `import { AutocompactMission }`, `mission.special?.kind === 'autocompact'` 분기, `startAutocompactMission`, `mission:start … specialKind: 'autocompact'`, `mission.special` 가드(maybeAutoStart)
+  - panel.js — `specialKind` 구조분해, `autocompact:turn` / `autocompact:compacting` 구독, `renderAutocompactPanel`
+  - special.css — `.autocompact-gauge` + 3-tier(`tier-safe`/`tier-warn`/`tier-danger`) + `.disclaimer-overlay`
+- 미션 JSON 라이브 sanity: `special.kind=autocompact`, budget/start/threshold/after = `1000000/700000/0.85/0.3`, userPrompts=5, compaction keys=[preScript, compactDurationMs, postScript], reflection bullets=5
+- chapters.json 라이브 상태: 활성 4 (ch1-m1/ch1-m2/ch2-m3/ch2-m4) + placeholder 1 (ch3-m5)
+- 사람 눈 검증은 사용자가 직접: <https://dongchan.github.io/krivet-terminal-sim/#ch2/ch2-m4-autocompact>. 캐시 무시하려면 Ctrl+F5 또는 시크릿 창. 진행 중이던 미션 4 in_progress 상태가 localStorage 에 남았다면 우측 상단 [처음부터] 로 리셋.
 
 ---
 
