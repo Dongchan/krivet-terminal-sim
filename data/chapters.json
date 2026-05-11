@@ -38,12 +38,12 @@
       "id": "ch3",
       "shortLabel": "Ch.3",
       "title": "터미널을 넘어 IDE로",
-      "summary": "터미널만으로는 불편합니다. IDE는 왜 등장했을까요?",
+      "summary": "터미널만으로는 불편합니다. 에디터·터미널·파일트리를 한 창에 묶은 도구로서 IDE가 왜 등장했을까요?",
       "missions": ["ch3-m5-ide-mock"],
       "missionMeta": {
         "ch3-m5-ide-mock": {
           "title": "미션 5 · 터미널 + 에디터를 한 화면에",
-          "summary": "코드와 터미널을 한 워크스페이스에서 다루는 경험.",
+          "summary": "IDE는 새로운 개발 방법론이 아니라, 여러 도구를 한 워크스페이스에 모은 환경입니다. 그 차이를 직접 체험합니다.",
           "placeholder": true
         }
       }
