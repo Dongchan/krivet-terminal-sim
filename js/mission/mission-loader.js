@@ -1,4 +1,4 @@
-const REQUIRED = ['id', 'chapterId', 'title', 'steps', 'completion'];
+const REQUIRED_BASE = ['id', 'chapterId', 'title', 'completion'];
 
 export async function loadMission(missionId) {
   const url = `./data/missions/${missionId}.json`;
@@ -18,13 +18,17 @@ export async function loadFixture(fixtureId) {
 }
 
 function validate(mission, missionId) {
-  for (const key of REQUIRED) {
+  for (const key of REQUIRED_BASE) {
     if (!(key in mission)) throw new Error(`미션 JSON에 '${key}' 필드가 없습니다: ${missionId}`);
   }
   if (mission.id !== missionId) {
     console.warn(`[mission-loader] 파일명(${missionId})과 id(${mission.id})가 다릅니다.`);
   }
-  if (!Array.isArray(mission.steps) || mission.steps.length === 0) {
-    throw new Error(`미션 '${missionId}'에 steps가 비어 있습니다.`);
+  if (mission.special) {
+    if (!mission.special.kind) throw new Error(`미션 '${missionId}'에 special.kind 가 없습니다.`);
+  } else {
+    if (!Array.isArray(mission.steps) || mission.steps.length === 0) {
+      throw new Error(`미션 '${missionId}'에 steps가 비어 있습니다.`);
+    }
   }
 }

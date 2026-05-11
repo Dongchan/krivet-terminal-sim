@@ -1,0 +1,43 @@
+/* 미션 2 — 병렬 터미널 좌/우 분할 */
+
+.parallel-terminals {
+  display: flex;
+  gap: 16px;
+  height: 100%;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.parallel-sub {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.parallel-sub-label {
+  color: var(--term-fg-mute);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--term-bg-soft);
+}
+
+.parallel-sub-terminal {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.parallel-sub-terminal .term-window {
+  max-width: none;
+  height: 100%;
+}
+
+/* 모바일/좁은 화면에서는 세로 스택 (layout.css 모바일 분기와 일관) */
+@media (max-width: 900px) {
+  .parallel-terminals {
+    flex-direction: column;
+    gap: 24px;
+  }
+}

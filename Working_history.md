@@ -3,7 +3,7 @@
 > 이 문서는 컨텍스트 컴팩트/클리어 이후에도 다음 세션이 작업 맥락을 즉시 복원하도록 모든 작업을 빠짐없이 역순(최신이 위)으로 기록한다.
 > 매 entry의 timestamp는 작업 시점에 파이썬으로 호출해 부여한다: `python -c "from datetime import datetime; print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))"`
 >
-> **현재 단계**: Phase 2 미션 3 확장(**6 step**: PowerShell → `claude` 입력 → **셸 전환(prompt `> `, titlebar 'Claude Code')** → `/status`·`/context`·`/cost` → `@단일파일` → `@파일A @파일B`) + 입력 UX 보강 유지. **mission-engine 에 `step.effects.setShell` 메커니즘 신설**(범용 step-effect 슬롯, 향후 다른 미션도 활용 가능). 다음 결정 대기 중 — Phase 3(미션 2 병렬 터미널) / Phase 4(미션 4 오토컴팩트) / 추가 폴리시.
+> **현재 단계**: **Phase 3 미션 2 활성** — 병렬 터미널(좌/우 분할, pandoc .md→.docx 변환 + 7z 폴더 백업 자동 동시 시연). `js/special/parallel-terminals.js` 신설, `Terminal` 에 `readOnly` 옵션, `mission-loader` 가 `special.kind` 분기, `panel` 에 '🚀 자동 진행 중' 카드, `index.html` 에 `special.css` link. **Ch.1 완성** (m1·m2 활성). 다음 결정 대기 중 — Phase 4(미션 4 오토컴팩트) / Phase 5(미션 5 IDE 모형) / 추가 폴리시.
 > **라이브 URL**: <https://dongchan.github.io/krivet-terminal-sim/>
 > **GitHub 저장소**: <https://github.com/Dongchan/krivet-terminal-sim> (Public)
 > **로컬 서버**: `python -m http.server 5500` 백그라운드 실행 중 (Bash ID: becnmuyej, http://localhost:5500/) — 새 세션에서는 만료되어 있을 수 있으므로 필요시 재실행.
@@ -37,6 +37,28 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 - 라이브 URL: https://dongchan.github.io/krivet-terminal-sim/
 - 다음 push 시점은 사용자 확인을 받은 뒤 진행. 임의 push 금지.
 ```
+
+---
+
+## [2026-05-11 17:28:33] Phase 3 — 미션 2 `ch1-m2-parallel` 병렬 터미널 구현
+
+- 사용자 결정 (AskUserQuestion): "Phase 3 미션 2 병렬 터미널 (추천)"
+- 시나리오 설계: 좌 터미널 A 는 `pandoc 2024_직업역량_보고서_초안.md -o 보고서.docx --reference-doc=KRIVET_template.docx`, 우 터미널 B 는 `7z a -t7z .\백업\연구_백업_20260511.7z .\*.md .\*.csv .\*.bib`. 둘 다 typing 애니메이션(cps 45 + 55) 으로 거의 같은 시간에 진행, 끝나면 한 번에 완료 모달.
+- 신규 파일:
+  - `js/special/parallel-terminals.js` — `ParallelTerminals` 클래스 (mount/startAll/destroy). 각 sub-terminal 은 `Terminal` 인스턴스를 `readOnly: true` 로 마운트. `Promise.all` 로 두 `printScript` 병렬 실행, 끝나면 `mission:completed` emit.
+  - `css/special.css` — `.parallel-terminals` flex row + gap, `.parallel-sub` flex column, `.parallel-sub-label` (모노 dim 헤더), 모바일(≤900px) 세로 스택.
+  - `data/missions/ch1-m2-parallel.json` — `special.kind: "parallel"` + `config.terminals[2]` 각각 9 라인 script + completion.reflection 4 bullets.
+- 코드 일반화 변경:
+  - `js/terminal/terminal.js` — constructor 에 `readOnly` 옵션. readOnly 면 mount 후 `ensureRootClickFocus`/`focus` 안 부르고, `render` 에서 promptLine + 환영 두 줄을 만들지 않으며, `attachPromptLine` 도 no-op. 향후 다른 자동 시연 미션에도 재사용 가능.
+  - `js/mission/mission-loader.js` — `REQUIRED` → `REQUIRED_BASE`(steps 제외). `mission.special` 있으면 `special.kind` 만 검증, steps 검증 스킵.
+  - `js/main.js` — `loadMission`/`ParallelTerminals`/`updateProgress` import, 모듈 상태 `parallelTerminals` 추가. `startCurrentMission` 이 mission 로드 후 `mission.special?.kind === 'parallel'` 분기 → `startParallelMission(mission)`. 신규 함수가 `.app-terminal` 에 `ParallelTerminals` 마운트하고 `setTimeout 400ms` 후 `startAll` 호출(분할 레이아웃 시각 인식 텀). `route:changed` 핸들러에서 `parallelTerminals.destroy()` 정리.
+  - `js/panel.js` — `mission:start` 페이로드에 `special` 받아 `currentCtx.special` 저장. `renderActive` 에서 `special` 이면 "🚀 자동 진행 중" 카드(step 안내 대체). `mission.steps?.[stepIndex]` 옵셔널 체이닝.
+  - `index.html` — `./css/special.css` link 추가.
+- 데이터:
+  - `data/chapters.json` — `ch1-m2-parallel.placeholder: true` 제거 → 자동 활성화 + 사이드바에 idle 패널 "미션 시작" 버튼 노출.
+- 검증 (로컬 5500): JSON parse OK (special.kind=parallel, terminals 2 × 9 lines), chapters.json keys=['title','summary'] (placeholder 없음), 7개 자산 모두 200, 신규 코드 키워드(parallel-terminals.js의 ParallelTerminals/startAll, terminal.js의 readOnly, mission-loader.js의 REQUIRED_BASE, main.js의 startParallelMission, panel.js의 special) 노출.
+- 미수행 (의도적, 사용자 시연 위임): 두 터미널의 typing 동기, completion 모달이 두 작업 모두 끝난 후에만 뜨는지, 좁은 화면(≤900px) 에서 세로 스택, 미션 2 → 미션 3 이동 시 parallel destroy.
+- Ch.1 (m1·m2) 가 모두 활성으로 끝남. 다음 결정: Phase 4(미션 4 오토컴팩트) / Phase 5(미션 5 IDE 모형) / 폴리시.
 
 ---
 

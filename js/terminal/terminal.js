@@ -4,10 +4,11 @@ import { attachKeyHandlers } from './input.js';
 import { formatPrompt } from './shell-prompt.js';
 
 export class Terminal {
-  constructor(rootEl, { shell, onSubmit } = {}) {
+  constructor(rootEl, { shell, onSubmit, readOnly = false } = {}) {
     this.root = rootEl;
     this.shell = shell || { kind: 'powershell', cwd: 'C:\\KRIVET\\연구' };
     this.onSubmit = onSubmit;
+    this.readOnly = readOnly;
     this.history = [];
     this.outputEl = null;
     this.promptLineEl = null;
@@ -20,6 +21,7 @@ export class Terminal {
   mount() {
     this.promptText = formatPrompt({ kind: this.shell.kind, cwd: this.shell.cwd });
     this.render();
+    if (this.readOnly) return;
     this.ensureRootClickFocus();
     this.focus();
   }
@@ -53,14 +55,18 @@ export class Terminal {
     this.outputEl = el('div', { class: 'term-output' });
     window.appendChild(this.outputEl);
 
-    this.promptLineEl = this.makePromptLine();
-    window.appendChild(this.promptLineEl);
+    if (!this.readOnly) {
+      this.promptLineEl = this.makePromptLine();
+      window.appendChild(this.promptLineEl);
+    }
 
     this.root.appendChild(window);
 
-    appendLine(this.outputEl, { type: 'dim', text: 'Windows PowerShell' });
-    appendLine(this.outputEl, { type: 'dim', text: 'Copyright (C) Microsoft Corporation. All rights reserved.' });
-    appendLine(this.outputEl, { type: 'line', text: '' });
+    if (!this.readOnly) {
+      appendLine(this.outputEl, { type: 'dim', text: 'Windows PowerShell' });
+      appendLine(this.outputEl, { type: 'dim', text: 'Copyright (C) Microsoft Corporation. All rights reserved.' });
+      appendLine(this.outputEl, { type: 'line', text: '' });
+    }
   }
 
   makePromptLine() {
@@ -115,6 +121,7 @@ export class Terminal {
   }
 
   attachPromptLine() {
+    if (this.readOnly) return;
     if (this.promptLineEl) return;
     this.promptLineEl = this.makePromptLine();
     this.root.querySelector('.term-window').appendChild(this.promptLineEl);

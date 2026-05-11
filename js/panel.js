@@ -9,8 +9,8 @@ export function initPanel(chapters) {
   chaptersRef = chapters;
   renderIdle();
   on('route:changed', () => { currentCtx = null; renderIdle(); });
-  on('mission:start', ({ mission, stepIndex }) => {
-    currentCtx = { mission, stepIndex, hint: null, failures: 0 };
+  on('mission:start', ({ mission, stepIndex, special }) => {
+    currentCtx = { mission, stepIndex, hint: null, failures: 0, special: !!special };
     renderActive();
   });
   on('mission:step-changed', (payload) => {
@@ -63,9 +63,9 @@ function renderIdle() {
 
 function renderActive() {
   if (!currentCtx || !chaptersRef) return;
-  const { mission, stepIndex, totalSteps, hint, failures } = currentCtx;
+  const { mission, stepIndex, totalSteps, hint, failures, special } = currentCtx;
   const chapter = chaptersRef.find((c) => c.id === mission.chapterId) || chaptersRef[0];
-  const step = mission.steps[stepIndex];
+  const step = mission.steps?.[stepIndex];
 
   const panel = $('.app-panel');
   clear(panel);
@@ -74,7 +74,12 @@ function renderActive() {
   panel.appendChild(el('h1', { class: 'panel-title' }, [mission.title]));
   panel.appendChild(el('p', { class: 'panel-body' }, [mission.intro?.bodyMarkdown?.split('\n\n')[0] || '']));
 
-  if (step) {
+  if (special) {
+    panel.appendChild(el('div', { class: 'panel-step' }, [
+      el('div', { class: 'panel-step-label' }, ['🚀 자동 진행 중']),
+      el('div', { class: 'panel-step-text' }, ['좌/우 두 터미널이 같은 시간에 다른 작업을 처리합니다. 두 작업이 끝나면 회고 카드가 떠요.']),
+    ]));
+  } else if (step) {
     panel.appendChild(el('div', { class: 'panel-step' }, [
       el('div', { class: 'panel-step-label' }, [`현재 단계 (${stepIndex + 1}/${totalSteps ?? mission.steps.length})`]),
       makeInstruction(step.instruction),

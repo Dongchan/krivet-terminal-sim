@@ -1,15 +1,18 @@
-import { resetAll, getState } from './state.js';
+import { resetAll, getState, updateProgress } from './state.js';
 import { initRouter } from './router.js';
 import { initProgress } from './progress.js';
 import { initPanel } from './panel.js';
 import { Terminal } from './terminal/terminal.js';
 import { MissionEngine } from './mission/mission-engine.js';
+import { loadMission } from './mission/mission-loader.js';
+import { ParallelTerminals } from './special/parallel-terminals.js';
 import { $, el, clear } from './utils/dom.js';
 import { on, emit } from './utils/events.js';
 
 let chaptersRef = null;
 let terminal = null;
 let engine = null;
+let parallelTerminals = null;
 
 async function boot() {
   chaptersRef = await loadChapters();
@@ -77,10 +80,13 @@ function bindMissionEvents() {
     showCompletionOverlay(mission);
   });
   on('route:changed', () => {
-    // 이전 미션 출력 잔재 제거. 사용자가 미션을 시작하면 mission-engine.loadAndStart가 다시 mount하므로 안전.
+    // 이전 미션 출력 잔재 제거. 사용자가 미션을 시작하면 다시 mount하므로 안전.
+    if (parallelTerminals) {
+      parallelTerminals.destroy();
+      parallelTerminals = null;
+    }
     if (!terminal) return;
     if (engine?.mission && engine.mission.id !== getState().currentMissionId) {
-      // 진행 중 미션이 있는데 다른 미션으로 이동한 경우 → 엔진 상태도 끊어줌
       engine.mission = null;
     }
     terminal.mount();
@@ -97,11 +103,30 @@ async function startCurrentMission() {
     return;
   }
   try {
-    await engine.loadAndStart(missionId);
+    const mission = await loadMission(missionId);
+    if (mission.special?.kind === 'parallel') {
+      await startParallelMission(mission);
+    } else {
+      await engine.loadAndStart(missionId);
+    }
   } catch (err) {
     console.error('[main] 미션 시작 실패', err);
     alert('미션을 불러오지 못했습니다: ' + err.message);
   }
+}
+
+async function startParallelMission(mission) {
+  const rootEl = $('.app-terminal');
+  if (parallelTerminals) parallelTerminals.destroy();
+  parallelTerminals = new ParallelTerminals(rootEl, mission.special.config || {});
+  parallelTerminals.setMission(mission);
+  parallelTerminals.mount();
+
+  updateProgress(mission.id, { status: 'in_progress' });
+  emit('mission:start', { mission, stepIndex: 0, special: true });
+
+  // 마운트 직후 startAll — 약간의 시각적 텀을 줘 사용자가 분할 레이아웃을 인식하게 함
+  setTimeout(() => parallelTerminals?.startAll(), 400);
 }
 
 function isPlaceholder(missionId) {
