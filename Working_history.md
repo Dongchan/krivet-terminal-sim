@@ -47,6 +47,26 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 
 ---
 
+## [2026-05-11 22:24:48] Phase 6-3 푸시 + 라이브 검증 (commit `344bbaf`)
+
+- 사용자 명시 허락: "메인푸시 진행."
+- `git add` 2 파일 (`M Plan_sim_v.1.0.md`, `M Working_history.md`)
+- 커밋: **`344bbaf`** "docs(plan): 미션 5 사양 라이브 구현과 동기화" (+37/-13, 2 files). 라이브 코드 변경 없음 명시.
+- 푸시: `01f3564..344bbaf  main -> main` 성공
+- Pages 빌드 폴링: `until built` → **duration 32,618 ms (~32.6초)** · commit hash 일치 (`344bbaf86ffb...`)
+- 라이브 자산 검증: `https://dongchan.github.io/krivet-terminal-sim/Plan_sim_v.1.0.md` HTTP 200, **19,666 B** (이전 18,xxx → +1.3KB 신규 사양 라인)
+- **신규 키워드 노출 (전부 OK)**:
+  - "IDE 는 새로운 개발 방법론이 아니라, 에디터·터미널·파일트리를 한 워크스페이스에 모은 도구·환경"
+  - "ESC · 바탕화면으로 항시 노출 + Escape 키로 데스크톱 복귀"
+  - "**데스크톱 풍 사전 화면** — 폴더 아이콘 + IDE 모형 아이콘 ... 더블클릭"
+  - "**하단 통합 터미널(PowerShell)에 `claude` 입력** → Claude Code 부팅 시퀀스 + 셸 전환 → ... `@2024_직업역량_보고서_초안.md ...` 멘션"
+  - "설계 변경 메모: 2026-05-11 사용자 결정으로 원안의 `code .` + `git status` 흐름을 위 3단 시나리오로 교체"
+  - "미션 5의 IDE 아이콘 더블클릭 → 0.7초 내 IDE 전환, ESC 복귀" (수동 테스트 체크리스트)
+- **옛 키워드 부재 확인**: `code .` + 가짜 파일트리 / `code .` → 1초 패턴 모두 라이브에서 제거됨.
+- Phase 6 마무리: 4 커밋(`bf084bb` README/LICENSE → `b5f5c37` verification → `e5500d6` reduced-motion → `01f3564` verification → `344bbaf` Plan 동기화 → 이 entry 별도 커밋 예정). 메타박스 "현재 단계" → **Phase 6 완료**. 진입 프롬프트 박스 "다음 작업 후보" 4갈래로 정리(Phase 7 / 미션 추가 / 카피 폴리시 / 디자인 보강).
+
+---
+
 ## [2026-05-11 22:17:45] Phase 6-3 — Plan 정본 미션 5 사양 동기화
 
 - 사용자 결정: 사운드 토글 건너뛰고 Phase 6 마지막 작업(Plan 동기화)로 이동.
