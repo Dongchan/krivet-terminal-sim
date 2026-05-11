@@ -47,6 +47,20 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 
 ---
 
+## [2026-05-11 19:38:51] IDE 프레임 보강 푸시 + 라이브 카피 검증
+
+- 사용자 결정: "푸시 진행" (옵션 A — 별도 푸시)
+- `git commit` (HEREDOC): **commit `b0af36b`** — 2 files / +15/-2, 한국어 메시지 + `Co-Authored-By`
+- `git push origin main`: `491e9bd..b0af36b  main -> main` 성공
+- Pages 빌드 폴링: poll 1 `building` → poll 2 (10초 후) `building` → poll 3 (20초 후) **`built`** · duration **18,099 ms (~18초)** — 평소 25~30초보다 짧음 (소규모 변경)
+- 라이브 카피 확인 (`/data/chapters.json` GET + python parse):
+  - Ch.3 summary: "터미널만으로는 불편합니다. 에디터·터미널·파일트리를 한 창에 묶은 도구로서 IDE가 왜 등장했을까요?" ← 의도대로 노출
+  - 미션 5 summary: "IDE는 새로운 개발 방법론이 아니라, 여러 도구를 한 워크스페이스에 모은 환경입니다. 그 차이를 직접 체험합니다." ← 의도대로 노출
+  - 미션 5 placeholder: true 유지 (Phase 5 진입 시까지)
+- 결과: 라이브 placeholder 카드(`#ch3/ch3-m5-ide-mock`) 가 새 카피로 표시. Phase 5 코드 작성 전에도 학습자에게 "도구·환경" 프레임이 정확히 전달.
+
+---
+
 ## [2026-05-11 19:36:48] IDE 는 방법론이 아닌 도구 — Ch.3 카피 프레임 보강 + 메모리 등록 (선행 점검)
 
 - 사용자 지적: "IDE 관련 내용 작성할 때, 누군가는 IDE 를 방법론으로 알고 있는 것 같아. Tool 또는 개발환경에 불과한 거 아니야?" → "방법론이 아닌 도구라는 점을 강조해 주는 무언가가 있으면 좋겠어."
