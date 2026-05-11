@@ -40,6 +40,24 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 
 ---
 
+## [2026-05-11 17:32:18] Phase 3 푸시 + 라이브 자산 키워드 검증
+
+- 사용자 결정: "메인 푸시 진행"
+- `git push origin main`: `3ff0155..714c9ca  main -> main` 성공
+- Pages 빌드 폴링: poll 1 `building` → poll 2 (10초 후) `built` · duration 23,488 ms (~23초)
+- 라이브 자산 GET (9 URL × 200): index.html, css/special.css, js/special/parallel-terminals.js, js/main.js, js/mission/mission-loader.js, js/terminal/terminal.js, js/panel.js, data/chapters.json, data/missions/ch1-m2-parallel.json
+- 키워드 노출 확인:
+  - parallel-terminals.js — `class ParallelTerminals`, `startAll`, `destroy`
+  - terminal.js — `readOnly` 옵션, mount의 `if (this.readOnly) return`
+  - main.js — `import { ParallelTerminals } from './special/parallel-terminals.js'`, `startParallelMission`, `mission.special?.kind === 'parallel'` 분기
+  - panel.js — `mission:start` 의 `special` 받기, `renderActive` 의 `special` 분기
+  - chapters.json — ch1-m2 keys=['title','summary'] (placeholder 키 부재)
+  - ch1-m2 미션 JSON — special.kind='parallel', terminals 2개 × 9 라인 script
+- 알려진 정적 어색함 (자질구레, 보정 가능): `index.html` 의 footer-hint 가 "💬 다음 미션 예고: 두 개의 터미널, 두 배의 속도" 로 고정 — 미션 2가 활성된 지금은 더 이상 미래형이 아님. 동적 갱신(현재 미션 다음 미션으로 표시) 또는 라벨 변경으로 추후 폴리시.
+- 사람 눈 검증은 사용자가 직접 (라이브 URL 의 미션 2 진입 + 시작 + 동시 진행 + 완료 모달).
+
+---
+
 ## [2026-05-11 17:28:33] Phase 3 — 미션 2 `ch1-m2-parallel` 병렬 터미널 구현
 
 - 사용자 결정 (AskUserQuestion): "Phase 3 미션 2 병렬 터미널 (추천)"
