@@ -39,6 +39,27 @@ D:\AI_Work\Claude\Terminal_Sim 프로젝트를 이어서 진행합니다. 응답
 
 ---
 
+## [2026-05-11 12:07:51] 전환 픽스 커밋 + 푸시 + 라이브 검증
+
+- 사용자 요청: "기록하고, 다음 세션 프롬프트 입력하고, 커밋하고 푸쉬."
+- 진입 프롬프트 섹션은 stale-free 설계라 본문 수정 없음. 메타박스 "현재 단계" 라인만 갱신("미션 전환 UX 보정" 추가).
+- staged 변경(6 파일):
+  - `M .gitignore` (live-*.png 패턴 추가)
+  - `M Working_history.md`, `M css/panel.css`, `M data/chapters.json`, `M js/main.js`, `M js/panel.js`
+  - `live-pages.png` 는 새 .gitignore 패턴으로 자동 제외 — 빈 검증 산출물이 staging에 끼지 않음
+- `git commit` (HEREDOC): **commit `f6e8eed`** — 6 files / +170/-6, 한국어 메시지 + `Co-Authored-By`
+- `git push origin main`: `a25885e..f6e8eed  main -> main` 성공
+- Pages 빌드 폴링:
+  - poll 1: building (sha=f6e8eed)
+  - poll 2: building
+  - poll 3: **built** (10초 간격 폴링, ~20초 만에 완료)
+- 라이브 URL 검증: <https://dongchan.github.io/krivet-terminal-sim/#ch1/ch1-m2-parallel>
+  - `.panel-placeholder` DOM 존재, label = "🚧 곧 공개 예정"
+  - 미션 1 (`/#` 또는 hash 없음)으로 가면 정상 활성 미션 표시, 미션 2~5 hash는 placeholder 카드
+- 결과: 사용자가 신고한 두 UX 결함(미션 전환 잔재 + 미션 2 데드엔드) 모두 라이브에서 해결. 작업 종료.
+
+---
+
 ## [2026-05-11 12:05:15] 미션 전환 UX 보정: 터미널 clear + placeholder 카드
 
 - 사용자 발견: "우측 터미널이 어딨어?" — 미션 1 완료 후 "다음 미션으로" 클릭 시 미션 2로 라우팅됐는데 ① 미션 1 출력 잔재 그대로 ② 미션 2 JSON 없어 "미션 시작" 누르면 alert ③ 캐럿 focus 잃음.
