@@ -33,6 +33,16 @@ export function initPanel(chapters) {
     currentCtx.autocompact = { phase: 'compacting', ...payload };
     renderActive();
   });
+  on('ide-mock:stage', (payload) => {
+    if (!currentCtx) return;
+    currentCtx.ideMock = { ...(currentCtx.ideMock || {}), stage: payload.stage };
+    renderActive();
+  });
+  on('ide-mock:scenario', (payload) => {
+    if (!currentCtx) return;
+    currentCtx.ideMock = { ...(currentCtx.ideMock || {}), scenario: payload };
+    renderActive();
+  });
 }
 
 function renderIdle() {
@@ -54,9 +64,7 @@ function renderIdle() {
       el('div', { class: 'panel-placeholder-label' }, ['🚧 곧 공개 예정']),
       el('div', {}, ['이 미션은 아직 준비 중입니다. 다음 업데이트에서 만나요. 그동안 상단의 다른 미션으로 이동하거나, "처음부터" 로 미션 1을 다시 체험해 보세요.']),
     ]));
-    panel.appendChild(el('div', { class: 'panel-actions' }, [
-      el('button', { class: 'btn-primary btn-start', disabled: true, title: '준비 중인 미션입니다' }, ['미션 시작 (준비 중)']),
-    ]));
+    appendNavActions(panel, { mode: 'idle', missionId, isPlaceholder: true });
     return;
   }
 
@@ -65,15 +73,12 @@ function renderIdle() {
     el('div', { class: 'panel-step-text' }, ['우측 터미널에 따라 명령을 입력하며 진행해 보세요.']),
   ]));
 
-  panel.appendChild(el('div', { class: 'panel-actions' }, [
-    el('button', { class: 'btn-primary btn-start' }, ['미션 시작']),
-    el('button', { class: 'btn-skip' }, ['건너뛰기']),
-  ]));
+  appendNavActions(panel, { mode: 'idle', missionId });
 }
 
 function renderActive() {
   if (!currentCtx || !chaptersRef) return;
-  const { mission, stepIndex, totalSteps, hint, failures, special, specialKind, autocompact } = currentCtx;
+  const { mission, stepIndex, totalSteps, hint, failures, special, specialKind, autocompact, ideMock } = currentCtx;
   const chapter = chaptersRef.find((c) => c.id === mission.chapterId) || chaptersRef[0];
   const step = mission.steps?.[stepIndex];
 
@@ -86,6 +91,8 @@ function renderActive() {
 
   if (special && specialKind === 'autocompact') {
     renderAutocompactPanel(panel, autocompact);
+  } else if (special && specialKind === 'ide-mock') {
+    renderIdeMockPanel(panel, ideMock);
   } else if (special) {
     panel.appendChild(el('div', { class: 'panel-step' }, [
       el('div', { class: 'panel-step-label' }, ['🚀 자동 진행 중']),
@@ -112,9 +119,57 @@ function renderActive() {
     ]));
   }
 
-  panel.appendChild(el('div', { class: 'panel-actions' }, [
-    el('button', { class: 'btn-skip-mission' }, ['건너뛰기']),
-  ]));
+  appendNavActions(panel, { mode: 'active', missionId: mission.id });
+}
+
+function appendNavActions(panel, { mode, missionId, isPlaceholder = false }) {
+  const firstMissionId = chaptersRef[0]?.missions?.[0];
+  const isFirst = missionId === firstMissionId;
+
+  const actions = el('div', { class: 'panel-actions' });
+
+  const navGroup = el('div', { class: 'panel-actions-nav' });
+
+  const prevAttrs = {
+    class: 'btn-secondary btn-prev-mission',
+    type: 'button',
+    title: '이전 미션으로',
+  };
+  if (isFirst) {
+    prevAttrs.disabled = true;
+    prevAttrs.title = '첫 미션입니다';
+  }
+  navGroup.appendChild(el('button', prevAttrs, ['← 이전']));
+
+  if (!isPlaceholder) {
+    navGroup.appendChild(el('button', {
+      class: 'btn-secondary btn-restart-mission',
+      type: 'button',
+      title: '이 미션을 처음부터 다시',
+    }, ['↻ 새로 시작']));
+  }
+
+  navGroup.appendChild(el('button', {
+    class: 'btn-ghost btn-skip-mission',
+    type: 'button',
+    title: '이 미션을 건너뛰고 다음으로',
+  }, ['건너뛰기 →']));
+
+  actions.appendChild(navGroup);
+
+  if (mode === 'idle') {
+    const startAttrs = {
+      class: 'btn-primary btn-start',
+      type: 'button',
+    };
+    if (isPlaceholder) {
+      startAttrs.disabled = true;
+      startAttrs.title = '준비 중인 미션입니다';
+    }
+    actions.appendChild(el('button', startAttrs, [isPlaceholder ? '미션 시작 (준비 중)' : '미션 시작']));
+  }
+
+  panel.appendChild(actions);
 }
 
 function makeInstruction(text) {
@@ -154,4 +209,85 @@ function renderAutocompactPanel(panel, autocompact) {
       makeInstruction('`' + nextHint + '`'),
     ]));
   }
+}
+
+function renderIdeMockPanel(panel, ideMock) {
+  const stage = ideMock?.stage || 'desktop';
+
+  if (stage === 'desktop') {
+    panel.appendChild(el('div', { class: 'panel-step' }, [
+      el('div', { class: 'panel-step-label' }, ['🖥 바탕화면 — IDE 모형을 띄울 차례']),
+      el('div', { class: 'panel-step-text' }, [
+        '우측 바탕화면에 폴더와 IDE 모형 아이콘이 보여요. IDE 는 그저 도구 — 시작 아이콘을 더블클릭해서 같은 폴더를 한 창에 펼쳐 봅니다.',
+      ]),
+    ]));
+    panel.appendChild(el('div', { class: 'panel-tip' }, [
+      el('div', { class: 'panel-tip-label' }, ['이번 단계의 행동']),
+      makeInstruction('우측 바탕화면의 `IDE 모형` 아이콘을 **더블클릭** 하세요. 더블클릭이 어렵다면 한 번 클릭 후 Enter 키도 같은 동작이에요.'),
+    ]));
+    return;
+  }
+
+  if (stage === 'complete') {
+    panel.appendChild(el('div', { class: 'panel-step' }, [
+      el('div', { class: 'panel-step-label' }, ['✨ 시나리오 완료']),
+      el('div', { class: 'panel-step-text' }, [
+        '같은 폴더, 같은 셸, 같은 파일을 두 가지 시각으로 다뤘어요 — 회고 카드를 확인해 주세요.',
+      ]),
+    ]));
+    return;
+  }
+
+  // stage === 'ide' (or 'transitioning' which is briefly visible)
+  const scenario = ideMock?.scenario;
+  const step = scenario?.step;
+  const indexLabel = scenario ? `(${(scenario.index ?? 0) + 1}/${scenario.total || 0})` : '';
+
+  if (step?.kind === 'openFile') {
+    panel.appendChild(el('div', { class: 'panel-step' }, [
+      el('div', { class: 'panel-step-label' }, [`${step.panelLabel || '1단계'} ${indexLabel}`]),
+      makeInstruction(step.panelHint || `좌측 탐색기에서 \`${step.file}\` 를 한 번 클릭하세요.`),
+    ]));
+    panel.appendChild(el('div', { class: 'panel-tip' }, [
+      el('div', { class: 'panel-tip-label' }, ['관찰 포인트']),
+      el('div', { class: 'panel-step-text' }, [
+        '터미널에서 `cat` 으로 보던 같은 파일을, IDE 안에서는 클릭 한 번으로 큰 미리보기 영역에 펼칠 수 있어요. 폴더가 바뀐 게 아니라 시선 이동이 줄어든 거예요.',
+      ]),
+    ]));
+    return;
+  }
+
+  if (step?.kind === 'terminalCommand') {
+    const isClaudeBoot = step.command === 'claude';
+    const tipLabel = isClaudeBoot ? '관찰 포인트' : '관찰 포인트';
+    const tipBody = isClaudeBoot
+      ? 'IDE 안 통합 터미널은 처음엔 평범한 PowerShell 입니다. `claude` 한 줄을 입력하면 미션 3·4 에서 익힌 그 Claude Code 가 같은 셸 위에서 부팅돼요 — 새로운 환경이 아니라, 같은 폴더에 같은 CLI 를 띄우는 것뿐이에요.'
+      : '좌측 트리로 한 번 연 같은 파일을, 하단 터미널에서는 `@` 멘션으로 다시 가리킬 수 있어요. 한 파일을 두 가지 시각으로 다뤄 보는 단계예요.';
+
+    panel.appendChild(el('div', { class: 'panel-step' }, [
+      el('div', { class: 'panel-step-label' }, [`${step.panelLabel || '다음 단계'} ${indexLabel}`]),
+      makeInstruction(step.panelHint || `하단 통합 터미널에 \`${step.command}\` 를 입력하세요.`),
+    ]));
+
+    if (step.displayHint) {
+      panel.appendChild(el('div', { class: 'panel-tip' }, [
+        el('div', { class: 'panel-tip-label' }, ['입력할 명령']),
+        makeInstruction('`' + step.displayHint + '`'),
+      ]));
+    }
+
+    panel.appendChild(el('div', { class: 'panel-tip' }, [
+      el('div', { class: 'panel-tip-label' }, [tipLabel]),
+      el('div', { class: 'panel-step-text' }, [tipBody]),
+    ]));
+    return;
+  }
+
+  // fallback (no scenario step)
+  panel.appendChild(el('div', { class: 'panel-step' }, [
+    el('div', { class: 'panel-step-label' }, ['🧰 IDE 모형 — 한 창에 모인 도구']),
+    el('div', { class: 'panel-step-text' }, [
+      '좌측 탐색기에서 파일을 클릭하거나 하단 터미널을 사용해 보세요. ESC 를 누르면 바탕화면으로 되돌아갑니다.',
+    ]),
+  ]));
 }

@@ -3,7 +3,7 @@
 > 이 문서는 컨텍스트 컴팩트/클리어 이후에도 다음 세션이 작업 맥락을 즉시 복원하도록 모든 작업을 빠짐없이 역순(최신이 위)으로 기록한다.
 > 매 entry의 timestamp는 작업 시점에 파이썬으로 호출해 부여한다: `python -c "from datetime import datetime; print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))"`
 >
-> **현재 단계**: **Phase 4 완료 (Ch.1·Ch.2 모두 활성, 라이브 deploy)** — 미션 1 / 미션 2 병렬 / 미션 3 (`@` 멘션) / **미션 4 오토컴팩트** 모두 라이브에서 동작 (commit `5566289`, Pages 빌드 36초). **다음 작업 후보: Phase 5 미션 5 IDE 모형** (`ch3-m5-ide-mock`, 현재 placeholder).
+> **현재 단계**: **Phase 5 — 미션 5 `ch3-m5-ide-mock` 재설계 완료 (로컬 검증 통과, 사용자 사람-눈 검수 + 푸시 대기)**. 데스크톱 풍 사전 화면(폴더·IDE 앱 아이콘 + 작업표시줄) → IDE 모형 아이콘 더블클릭 → 700ms 페이드 전환 → IDE 모형(PowerShell 통합 터미널) → 시나리오 3단계(파일 클릭 → `claude` 입력해 Claude Code 부팅 → `@` 멘션) → 회고. ESC 로 바탕화면 복귀. 다음 단계: 사용자 사람-눈 검증 → 명시 허락 후 main 푸시.
 > **라이브 URL**: <https://dongchan.github.io/krivet-terminal-sim/>
 > **GitHub 저장소**: <https://github.com/Dongchan/krivet-terminal-sim> (Public)
 > **로컬 서버**: `python -m http.server 5500` 백그라운드 실행 중 (Bash ID: becnmuyej, http://localhost:5500/) — 새 세션에서는 만료되어 있을 수 있으므로 필요시 재실행.
@@ -47,7 +47,122 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 
 ---
 
-## [2026-05-11 19:40:25] /clear 직전 점검 — Phase 4 완료 + IDE 프레임 메모리 안착 확인
+## [2026-05-11 20:20:10] 전 미션 공통 — 패널 액션 바 통일 (이전 미션 / 새로 시작 / 건너뛰기)
+
+- 사용자 피드백: "모든 미션에서, 미션 새로 시작하기, 이전으로 가기 이런 것들도 필요하지 않을까?"
+- 진단: 진행 중 패널에는 `.btn-skip-mission` (건너뛰기) 하나만 있었음. idle 패널은 `[미션 시작] [건너뛰기]` 2개. "이전 미션" / "현재 미션 재시작" 부재. 또 기존 `skipMission()` 가 `engine?.mission` 만 확인해 special 미션 진행 중에는 건너뛰기 자체가 동작 안 하는 잠재 버그도 발견 — 동시 픽스.
+- 설계: panel 좌측 하단 `panel-actions` 를 모든 모드에서 동일한 3-버튼 nav 그룹으로 통일.
+  - `[← 이전]` `.btn-secondary` — 챕터 경계 넘어 직전 미션 hash 로 이동. 첫 미션(ch1-m1)은 `disabled`.
+  - `[↻ 새로 시작]` `.btn-secondary` — confirm 후 현재 미션 진행도 리셋 + special 인스턴스 destroy + 즉시 재시작 (`emit('route:changed') + startCurrentMission()`).
+  - `[건너뛰기 →]` `.btn-ghost` — 기존 skipMission 동작 (status='skipped' + 다음 미션). engine?.mission 가드 제거 → currentMissionId 기반으로 special 미션에서도 동작.
+  - idle 모드에서는 우측에 `[미션 시작]` `.btn-primary` 가 추가로 붙음. placeholder 미션은 `[새로 시작]` 만 숨김.
+- 신규 파일/변경:
+  - `js/main.js` — `goToPreviousMission()`(챕터 경계 처리 mirror of goToNextMission), `restartCurrentMission()`(updateProgress reset + emit route:changed + startCurrentMission 재호출) 추가. `skipMission()` 의 `engine?.mission` 가드 제거, getState().currentMissionId 기반으로 재작성. document click 핸들러에 `.btn-prev-mission` / `.btn-restart-mission` 추가, 잘못된 `.btn-skip → startCurrentMission` 매핑 제거.
+  - `js/panel.js` — 신규 helper `appendNavActions(panel, { mode, missionId, isPlaceholder })`. `renderIdle` 의 placeholder/일반 분기 + `renderActive` 끝 부분 모두 helper 호출로 통일. 첫 미션 자동 감지(`chaptersRef[0]?.missions?.[0]`)로 [← 이전] disabled.
+  - `css/panel.css` — `.panel-actions` justify-content: space-between + flex-wrap (좁은 화면 줄바꿈). 신규 `.panel-actions-nav` 가로 그룹. 신규 버튼 클래스 `.btn-secondary` (액션블루 outline) / `.btn-ghost` (회색 ghost) + hover/disabled. 기존 `.btn-primary` 유지.
+- 검증 (로컬 5500):
+  - HTTP 200: main.js (10837 B), panel.js (12350 B), panel.css (4022 B)
+  - main.js 키워드: `goToPreviousMission`, `restartCurrentMission`, `btn-prev-mission`, `btn-restart-mission`
+  - panel.js 키워드: `appendNavActions`, 3개 nav 버튼 클래스, `panel-actions-nav`, `btn-secondary`, `btn-ghost`
+  - panel.css 키워드: `.btn-secondary`, `.btn-ghost`, `.panel-actions-nav`, `justify-content: space-between`
+- 미수행 (사용자 시연 위임):
+  - 사람 눈 검증 — 모든 미션(특히 첫 미션 ch1-m1 의 [← 이전] disabled / special 미션 ch3-m5 에서 [↻ 새로 시작] 시 데스크톱 단계부터 다시 시작) 동작. 챕터 경계 미션(ch2-m3 의 [← 이전] → ch1-m2) 동작. [건너뛰기 →] 가 special 미션 진행 중에도 동작 (이전 잠재 버그 픽스 확인).
+  - 라이브 푸시 — 사용자 사람-눈 검수 통과 후 명시 허락 필요.
+
+---
+
+## [2026-05-11 20:13:35] 미션 5 재설계 — 사전 터미널 → 데스크톱 + 아이콘 더블클릭 + 통합 터미널 안 Claude Code 부팅
+
+- 사용자 피드백 1차: "`code .` 를 입력하세요. 같은 폴더가 IDE 모형 안에서 그대로 열립니다 — 이건 무슨 뜻이야? IDE를 부른다는 건가? 차라리 아이콘 같은 걸 더블클릭하게 하는 게 낫지 않을까? 터미널에서 저렇게 입력하면 진짜 뜨는 줄 알겠어."
+- 사용자 피드백 2차: "마지막 예제 git 은 너무 나간 듯한데? 깃허브 자체를 모르는데 명령어를 조금 더 쉽고 친숙한 걸로 바꾸면 어떨까?"
+- 사용자 피드백 3차: "아 그러려면 IDE에서 터미널 뜨고 클로드 접속하는 것도 보여주면 좋겠다."
+- AskUserQuestion 결정 (1회): 사전 화면 = "데스크톱 풍 + 아이콘 더블클릭" / `code .` 처리 = "회고 카드 노트로만 언급". 후속 채팅으로 추가 결정: 마지막 명령 = `@` 멘션 (`git status` 폐기), 통합 터미널은 PowerShell 로 시작 후 `claude` 입력으로 Claude Code 부팅 단계 추가.
+- 진단/의도:
+  - `code .` 흐름은 학습자에게 "터미널만으로 IDE 가 뜬다" 오해 가능 + Plan 미션 5 의 핵심 메시지("IDE 는 도구") 와 어울리지 않는 트릭. → 데스크톱 아이콘 더블클릭으로 변경 (Windows 비개발자에게 가장 익숙한 행동).
+  - `git status` 는 비개발자 학습자(KRIVET 직원) 가 git/GitHub 자체를 모르는 상황에 너무 어려운 명령. → `@` 멘션 + 한 줄 요약 요청. 미션 3·4 에서 익힌 `@` 멘션을 재활용해 학습 연속성 확보.
+  - IDE 안 통합 터미널이 처음부터 Claude Code 셸로 떠 있으면 "IDE 가 새 환경" 으로 보임. → PowerShell 로 시작 후 `claude` 입력으로 부팅하는 단계를 추가, "같은 셸 위에 같은 CLI 가 뜬다" 는 점을 시각화.
+- 시나리오 (3단계로 확장):
+  1. 좌측 트리에서 `2024_직업역량_보고서_초안.md` 클릭 → 에디터 미리보기 (1단계, openFile)
+  2. 하단 PowerShell 에 `claude` 입력 → 부팅 시퀀스 출력 + 셸이 Claude Code 로 전환(setPrompt + refreshTitlebar + header meta 갱신) (2단계, terminalCommand exact)
+  3. Claude Code 프롬프트에 `@2024_직업역량_보고서_초안.md ...` 입력(prefix 매칭) → 보고서 한 줄 요약 응답 (3단계, terminalCommand prefix)
+- 신규 파일/대체:
+  - `data/missions/ch3-m5-ide-mock.json` — `preIde` → `desktop` 으로 교체. desktop 안: watermark / icons[folder, app-ide] / taskbar(start·search·locale·clock·lockedNote) / transitionDurationMs. ide.terminal = PowerShell. ide.terminalGreeting dim 안내 1줄. scenarioSteps 3개 (matchKind: 'exact' 또는 'prefix'). step2 에 `afterSwitchShell: { kind: 'claude', cwd }` 추가. 회고 bullets 6개로 확장 (`code .` 단축키 노트 + 단순화 모형 고지).
+  - `js/special/ide-mock.js` — 전면 재작성:
+    - 신규 메서드: `mountDesktop / buildDesktopIcon / handleIconClick / handleIconDoubleClick / buildTaskbar / clearDesktopSelection / flashDesktopToast / makeDesktopIconSvg`
+    - 변경: `handlePreInput` 제거. `transitionToIde` 가 `.ide-mock-desktop.ide-mock-fading-out` 로 전환. `returnToPreIde` → `returnToDesktop`. `flashTooltip` → `flashIdeToast` (데스크톱용 toast 와 분리)
+    - 핵심 신규 로직: `matchesStepCommand(step, cmd)` — `matchKind: 'prefix'` 면 `cmd.startsWith(step.command)`, 아니면 exact. `handleIdeTermInput` 에서 매칭 후 `step.afterSwitchShell` 있으면 `ideTerminal.setPrompt(...) + refreshTitlebar() + updateTerminalMeta()` 호출 → 다음 prompt line 부터 새 셸 표시. `terminalMetaEl` 헤더 라벨도 갱신.
+    - 이전 픽스 (`this.preTerminal.readOnly = true`) 는 이제 해당 없음 — preTerminal 자체가 없음.
+  - `js/panel.js` — `renderIdeMockPanel` 의 stage 분기 갱신:
+    - `'pre-ide'` → `'desktop'` 카피 "🖥 바탕화면 — IDE 모형을 띄울 차례" + 행동 카드 "IDE 모형 아이콘을 **더블클릭**".
+    - terminalCommand 분기에서 step.displayHint 가 있으면 "입력할 명령" 코드 카드로 보여줌. step.command === 'claude' 면 관찰 포인트 카피를 "PowerShell 위 Claude Code 부팅" 톤으로, 아니면 "한 파일을 두 시각으로" 톤으로 분기.
+  - `css/special.css` — Desktop stage 레이아웃 추가:
+    - `.ide-mock-desktop` (그라데이션 배경 + 우상단 워터마크 + 페이드 transition)
+    - `.ide-mock-desktop-grid` (110×110 그리드)
+    - `.ide-mock-desktop-icon` (hover/focus/is-selected 상태 + tile + label/sublabel) + `.kind-app-ide` 액션블루 톤
+    - `.ide-mock-taskbar` (시작·검색·로케일·시계, 클릭 시 lockedNote 토스트)
+    - `.ide-mock-desktop-toast` (데스크톱 토스트)
+    - prefers-reduced-motion + 모바일 분기(≤900: 96×96 그리드, ≤640: 검색 박스 숨김) 확장
+- 검증:
+  - JSON parse — id/kind/desktop.icons/ide.terminal/scenarioSteps 3개/reflection bullets 6개 모두 일치
+  - HTTP 200 — mission JSON(10966 B) / ide-mock.js(21759 B) / panel.js(11221 B) / special.css(17392 B)
+  - 라이브 ide-mock.js 키워드 12종 모두 노출 (mountDesktop · buildDesktopIcon · handleIconDoubleClick · matchesStepCommand · afterSwitchShell · updateTerminalMeta · returnToDesktop 등)
+  - CSS `.ide-mock-desktop*` 32 occurrences
+- 미수행 (사용자 시연 위임):
+  - 사람 눈 검증 — 바탕화면 화면, 아이콘 hover/selected/dblclick, IDE 페이드 전환, 1단계 파일 클릭, 2단계 `claude` 입력 → 부팅 응답 + prompt 색·헤더 라벨이 Claude Code 로 전환, 3단계 `@` 멘션 prefix 응답, 회고 카드 6 bullets, ESC 바탕화면 복귀.
+  - 라이브 푸시 — 사용자 사람-눈 검수 통과 후 명시 허락 필요.
+- Plan 정본 사양과의 트레이드오프: Plan_sim_v.1.0.md 254-258 의 미션 5 사양은 `code .` 명령으로 IDE 전환을 명시하지만, 학습자 오해 가능성 + KRIVET 비개발자 대상이라는 점에서 사용자 결정으로 데스크톱 아이콘 더블클릭으로 변경. `code .` 는 회고 카드 5번째 bullet "참고" 노트로만 언급해 학습 가치 보존. Plan 본문 자체는 그대로 두고 변경 사유를 이 entry 에 기재.
+
+---
+
+## [2026-05-11 20:00:09] fix(mission5): IDE 모형 전환 시 prompt line 두 개 보이는 버그 픽스
+
+- 사용자 사람-눈 검증 중 발견 (스크린샷 첨부): IDE 모형으로 전환된 후 하단 통합 터미널에 `PS C:\KRIVET\연구> 여기에 명령을 입력하고 Enter` prompt 줄이 **두 개** 표시됨. 진짜 input element 가 두 개라 placeholder 도 두 개 노출.
+- 근본 원인: `Terminal.submit()` 의 흐름이 `await this.onSubmit?.(value, this)` 종료 직후 무조건 `this.attachPromptLine()` 호출. 사전 터미널에서 `code .` 입력 → `handlePreInput` → `await this.preTerminal.printScript(...)` → `await this.transitionToIde()` 가 await chain 안에서 끝나면, `submit()` 컨텍스트의 `this` 는 여전히 사전 `Terminal` 인스턴스인데 그 객체의 `this.root` 는 `.app-terminal` 컨테이너를 가리킴(같은 참조). transitionToIde() 가 `.app-terminal` 의 내용을 IDE 모형(.ide-mock-shell 안에 새 통합 터미널 .term-window)으로 교체한 뒤 control 이 submit() 으로 되돌아가 `attachPromptLine()` 실행 → `this.root.querySelector('.term-window').appendChild(this.promptLineEl)` 가 새 IDE 통합 터미널의 .term-window 를 찾아 사전 터미널의 prompt line 을 끼워넣음. 그래서 IDE 통합 터미널의 자체 prompt line + 사전 터미널이 끼운 prompt line = 2개.
+- 픽스: `js/special/ide-mock.js` 의 `handlePreInput` 의 launchCommand 분기에서 `await this.transitionToIde()` 진입 직전에 `this.preTerminal.readOnly = true;` 토글. `attachPromptLine()` 첫 줄에 이미 `if (this.readOnly) return;` 가드가 있어 재부착을 차단.
+- 부가 영향 검토: fallbackResponse 분기는 transition 발생 안 함 → preTerminal 의 root 가 그대로라 정상. returnToPreIde() 흐름은 새 preTerminal 인스턴스(readOnly 기본 false)를 만들어 정상.
+- 검증: 라이브 `js/special/ide-mock.js` 에 `this.preTerminal.readOnly = true` 마커 노출 확인. 사용자 사람-눈 재검증 대기.
+
+---
+
+## [2026-05-11 19:52:04] Phase 5 — 미션 5 `ch3-m5-ide-mock` 구현 (로컬 검증 통과, 사용자 사람-눈 검수 + 푸시 대기)
+
+- 사용자 결정: "진입하자" — Plan 정본 (`./Plan_sim_v.1.0.md` 미션 5 섹션 254~258) 재확인 후 즉시 설계·구현 진입.
+- 시나리오 설계 — Plan 사양 그대로 두 단계 화면:
+  - **사전 터미널 단계**: 일반 `Terminal` 인스턴스(`shell: { kind: 'powershell', cwd: 'C:\\KRIVET\\연구' }`) + 환영 스크립트("같은 폴더에 보고서·CSV·참고문헌이 있지만 한 명령으로만 들춰볼 수 있어요. `code .` 입력 시 같은 폴더를 IDE 모형 안에서 열어 봅니다.")
+  - 사용자가 정확히 `code .` 입력 → 응답 스크립트 → **700ms 페이드 아웃 → IDE 마운트 → 페이드 인** (`prefers-reduced-motion: reduce` 면 즉시 점프)
+  - **IDE 모형 단계**: 타이틀바(macOS 풍 dots + workspace 라벨) / 좌측 48px 활동 표시줄(SVG 일반 아이콘 5개 — 파일/검색/소스 제어/확장/계정) / 220px 탐색기(.git 잠금 + 4 파일) / 중앙 탭바 + 에디터(라인 게터 + 미리보기) / 하단 통합 터미널(`Terminal` 클래스 재사용) / 액션블루 status bar / 우하단 워터마크 "교육용 모형 (Educational Mockup)" opacity ≈0.55
+  - 시나리오: ① 좌측에서 `2024_직업역량_보고서_초안.md` 클릭 → 에디터에 md 미리보기 + 자동 advance → ② 하단 터미널에 `git status` 입력 → 응답 스크립트(modified 표시) + 자동 advance → 회고 카드 발현
+  - **ESC 키** 핸들러: stage='ide' & !completed 일 때 `confirm()` → 사전 터미널 복귀(scenarioIndex 0 리셋). Plan 체크리스트 343 "ESC 복귀" 충족.
+- 신규 파일:
+  - `js/special/ide-mock.js` — `IdeMockMission` 클래스 (15개 메서드 + 2개 SVG 헬퍼). 핵심: `mountPreIde/handlePreInput/transitionToIde/buildIde(+ Activity/Explorer)/openFile/renderEditor/handleIdeTermInput/advanceScenario/attachEscHandler/returnToPreIde/flashTooltip/destroy`.
+  - `data/missions/ch3-m5-ide-mock.json` — `special.kind: "ide-mock"` + `preIde`(shell·welcome·launchCommand·launchResponse·fallbackResponse·transitionDurationMs:700) + `ide`(workspaceName·root·watermark·terminal·fileTree[5 entries: .git locked + 보고서.md+modified + 설문.csv + 참고문헌.bib + README.md]) + `scenarioSteps[2]` + 회고 5 bullets.
+- 코드 일반화 변경:
+  - `js/main.js` — `IdeMockMission` import, 모듈 상태 `ideMockMission`. `startCurrentMission` 의 `'ide-mock'` 분기 → 신규 `startIdeMockMission(mission)`. autocompact 와 동일하게 panel.js 가 `currentCtx` 세팅하도록 `mission:start` (specialKind: 'ide-mock') 를 mount() 호출 이전에 발행. `route:changed` 핸들러에서 `ideMockMission.destroy()` 정리. `maybeAutoStart` 의 `mission.special` 가드는 기존 그대로 유효 (ide-mock 도 special 미션이라 자동 재개 건너뜀).
+  - `js/panel.js` — `mission:start` 의 `specialKind` 받아 처리. 신규 이벤트 구독 `ide-mock:stage` (pre-ide/ide/complete) + `ide-mock:scenario` (현재 step 인덱스/총 개수/step 메타). `renderActive` 분기에 `specialKind === 'ide-mock'` 추가 → 신규 `renderIdeMockPanel(panel, ideMock)`. 단계별 카피: 사전 터미널/openFile/terminalCommand/완료 4종 + "관찰 포인트" 팁 카드.
+  - `css/special.css` — `.ide-mock-shell` grid layout(타이틀바 30px / main 1fr / statusbar 24px) + 활동표시줄·탐색기·탭바·에디터·통합 터미널·status bar·워터마크 토큰 일관 다크 IDE 톤(#0f1a28 ~ #1a2638 음영). 액션블루(`--color-action`) 강조 + 활성 파일은 액션블루 14% 옅게. modified 파일은 `--term-system`(앰버) M 배지. 전환 애니: `.ide-mock-fading-out`/`.ide-mock-fading-in` + `.ide-mock-visible` 컴비. `prefers-reduced-motion: reduce` 면 모든 transition 무효화. 모바일 분기(≤900: 활동표시줄+탐색기 축소, ≤640: 탐색기 숨김).
+- 데이터:
+  - `data/chapters.json` — `ch3-m5-ide-mock.placeholder: true` 제거 → idle 패널이 정상 "미션 시작" 버튼 노출. 활성 미션 5종 (ch1-m1/ch1-m2/ch2-m3/ch2-m4/ch3-m5), placeholder 0.
+- IDE 프레임 메모리(`feedback_ide_framing.md`) 일관 적용 — "방법론·패러다임·방식론" 단어 일절 사용 안 함. intro 첫 문장 "IDE는 새로운 개발 방법론이 아닙니다" 로 부정 형태로만 등장. 회고 5 bullets 는 모두 "도구·환경·워크스페이스" 톤. 마지막 bullet 은 "이 화면은 일반화된 IDE 레이아웃의 모형" 단순화 고지.
+- 검증 (로컬 5500, Bash bg ID `bx0cv41y4`):
+  - JSON parse — mission id 일치 / `special.kind: ide-mock` / `preIde.launchCommand: code .` / fileTree 5 / scenarioSteps 2 / chapters.json 활성 5·placeholder 0
+  - HTTP 200 — index.html / data/chapters.json / data/missions/ch3-m5-ide-mock.json (8742 B) / js/main.js (9461 B) / js/panel.js (10497 B) / js/special/ide-mock.js (15745 B) / css/special.css (12951 B)
+  - 라이브 자산 키워드 — `export class IdeMockMission`, `mountPreIde`, `handlePreInput`, `transitionToIde`, `buildIde`, `buildActivityBar`, `buildExplorer`, `renderEditor`, `handleIdeTermInput`, `advanceScenario`, `attachEscHandler`, `returnToPreIde`, `flashTooltip`, `makeActivityIconSvg`, `makeFileIconSvg` 모두 노출
+  - main.js — `import { IdeMockMission }` / `ideMockMission` 모듈 상태 / `mission.special?.kind === 'ide-mock'` 분기 / `startIdeMockMission` 정의 / `mission:start ... specialKind: 'ide-mock'`
+  - panel.js — `on('ide-mock:stage')` / `on('ide-mock:scenario')` / `specialKind === 'ide-mock'` 분기 / `renderIdeMockPanel`
+  - special.css — `.ide-mock-*` 44 occurrences (shell/titlebar/activity-bar/explorer/filetree/tabbar/editor/terminal-pane/statusbar/watermark/toast/fading-*)
+- 미수행 (의도적, 사용자 시연 위임):
+  - 사람 눈 검증 — `code .` 입력 후 700ms 페이드 전환, 활동표시줄 hover/active 상태, 파일트리 클릭 시 에디터 미리보기(라인 게터·M 배지), 잠긴 `.git` 클릭 시 토스트 안내, 하단 터미널 `git status` 응답, ESC 복귀 confirm 흐름, 회고 카드 5 bullets. 사용자가 `http://localhost:5500/#ch3/ch3-m5-ide-mock` 에서 직접 확인 예정.
+  - 라이브 푸시 — 사용자 사람-눈 검수 통과 후 명시 허락 필요.
+- 알려진 설계 트레이드오프:
+  - `code .` 외 명령은 `fallbackResponse` 로 부드럽게 안내(거부 X). IDE 안 통합 터미널도 마찬가지로 시나리오 외 명령은 dim 메시지.
+  - 에디터는 readOnly 미리보기(타이핑 X) — Plan 사양상 "에디터에 내용" 만 요구. 단순 라인 게터 + 단색 톤(언어별 살짝 다른 color).
+  - 잠긴 `.git` 폴더는 클릭 시 토스트만 — 트리 expand 없음. "git 메타 폴더는 일반 작업에서 건드리지 않아요" 메시지로 학습 가치 유지.
+  - 워터마크는 항시 표시(opacity 0.55, `pointer-events: none`) — Plan 256 "항시 표시" 사양 충족. 모바일에서는 위치 살짝 조정.
+- Pre-existing 가드 재확인: `maybeAutoStart` 가 special 미션 in_progress 상태일 때 자동 재개 건너뛰는 가드는 기존 그대로 작동. ide-mock 도 `mission.special` 이라 안전.
+
+---
+
+
 
 - 사용자 요청: "클리어 전 점검."
 - 정합성 점검 결과 (모두 정상):

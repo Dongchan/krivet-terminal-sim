@@ -7,6 +7,7 @@ import { MissionEngine } from './mission/mission-engine.js';
 import { loadMission } from './mission/mission-loader.js';
 import { ParallelTerminals } from './special/parallel-terminals.js';
 import { AutocompactMission } from './special/autocompact.js';
+import { IdeMockMission } from './special/ide-mock.js';
 import { $, el, clear } from './utils/dom.js';
 import { on, emit } from './utils/events.js';
 
@@ -15,6 +16,7 @@ let terminal = null;
 let engine = null;
 let parallelTerminals = null;
 let autocompactMission = null;
+let ideMockMission = null;
 
 async function boot() {
   chaptersRef = await loadChapters();
@@ -70,7 +72,8 @@ function bindGlobalUI() {
 
   document.addEventListener('click', (e) => {
     if (e.target.closest('.btn-start')) startCurrentMission();
-    if (e.target.closest('.btn-skip')) startCurrentMission();
+    if (e.target.closest('.btn-prev-mission')) goToPreviousMission();
+    if (e.target.closest('.btn-restart-mission')) restartCurrentMission();
     if (e.target.closest('.btn-skip-mission')) skipMission();
     if (e.target.closest('.btn-next-mission')) goToNextMission();
     if (e.target.closest('.btn-close-overlay')) closeOverlay();
@@ -90,6 +93,10 @@ function bindMissionEvents() {
     if (autocompactMission) {
       autocompactMission.destroy();
       autocompactMission = null;
+    }
+    if (ideMockMission) {
+      ideMockMission.destroy();
+      ideMockMission = null;
     }
     if (!terminal) return;
     if (engine?.mission && engine.mission.id !== getState().currentMissionId) {
@@ -114,6 +121,8 @@ async function startCurrentMission() {
       await startParallelMission(mission);
     } else if (mission.special?.kind === 'autocompact') {
       await startAutocompactMission(mission);
+    } else if (mission.special?.kind === 'ide-mock') {
+      await startIdeMockMission(mission);
     } else {
       await engine.loadAndStart(missionId);
     }
@@ -150,6 +159,19 @@ async function startAutocompactMission(mission) {
   autocompactMission.mount();
 }
 
+async function startIdeMockMission(mission) {
+  const rootEl = $('.app-terminal');
+  if (ideMockMission) ideMockMission.destroy();
+  ideMockMission = new IdeMockMission(rootEl, mission.special.config || {});
+  ideMockMission.setMission(mission);
+
+  updateProgress(mission.id, { status: 'in_progress' });
+  // panel.js가 currentCtx를 먼저 세팅하도록 mission:start 를 mount() 호출 이전에 보냄
+  emit('mission:start', { mission, stepIndex: 0, special: true, specialKind: 'ide-mock' });
+
+  ideMockMission.mount();
+}
+
 function isPlaceholder(missionId) {
   for (const chapter of chaptersRef || []) {
     const meta = chapter.missionMeta?.[missionId];
@@ -159,13 +181,46 @@ function isPlaceholder(missionId) {
 }
 
 function skipMission() {
-  if (!engine?.mission) return;
+  const state = getState();
+  const missionId = state.currentMissionId;
+  if (!missionId) return;
   if (!confirm('이 미션을 건너뛸까요?')) return;
-  const missionId = engine.mission.id;
-  import('./state.js').then(({ updateProgress }) => {
-    updateProgress(missionId, { status: 'skipped' });
-    goToNextMission();
-  });
+  updateProgress(missionId, { status: 'skipped' });
+  goToNextMission();
+}
+
+function restartCurrentMission() {
+  const state = getState();
+  const missionId = state.currentMissionId;
+  if (!missionId) return;
+  if (isPlaceholder(missionId)) {
+    alert('이 미션은 아직 준비 중입니다.');
+    return;
+  }
+  if (!confirm('이 미션을 처음부터 다시 시작할까요? 현재 진행도가 초기화됩니다.')) return;
+  updateProgress(missionId, { status: 'pending', failures: 0 });
+  if (engine) engine.mission = null;
+  // route:changed 핸들러가 special 인스턴스 destroy + 글로벌 터미널 복원 + 패널 idle 처리
+  emit('route:changed', { chapterId: state.currentChapterId, missionId });
+  startCurrentMission();
+}
+
+function goToPreviousMission() {
+  const state = getState();
+  const chapter = chaptersRef.find((c) => c.id === state.currentChapterId) || chaptersRef[0];
+  const idx = chapter.missions.indexOf(state.currentMissionId);
+  closeOverlay();
+  if (idx > 0) {
+    location.hash = `${chapter.id}/${chapter.missions[idx - 1]}`;
+    return;
+  }
+  const chapIdx = chaptersRef.indexOf(chapter);
+  if (chapIdx > 0) {
+    const prev = chaptersRef[chapIdx - 1];
+    location.hash = `${prev.id}/${prev.missions[prev.missions.length - 1]}`;
+    return;
+  }
+  // 가장 첫 미션 — 무동작 (패널 버튼이 disabled 로 그려짐)
 }
 
 function goToNextMission() {

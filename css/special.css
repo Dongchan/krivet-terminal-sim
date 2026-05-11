@@ -213,3 +213,709 @@
     max-width: none;
   }
 }
+
+/* ───────────────────────────── 미션 5 — IDE 모형 ─ */
+
+/* Desktop stage (사전) */
+
+.ide-mock-desktop {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(ellipse at 30% 25%, rgba(74, 144, 226, 0.22), transparent 60%),
+    linear-gradient(160deg, #102036 0%, #0a1626 100%);
+  border: 1px solid var(--term-bg-soft);
+  overflow: hidden;
+  color: var(--term-fg);
+  font-family: var(--font-sans);
+  transition: opacity 0.18s ease;
+}
+
+.ide-mock-desktop.ide-mock-fading-out {
+  opacity: 0;
+}
+
+.ide-mock-desktop-watermark {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  padding: 4px 10px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: rgba(232, 232, 232, 0.55);
+  background: rgba(15, 26, 40, 0.4);
+  border: 1px solid rgba(184, 195, 209, 0.18);
+  pointer-events: none;
+}
+
+.ide-mock-desktop-grid {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 110px);
+  grid-auto-rows: 110px;
+  gap: 8px 12px;
+  padding: 28px 24px;
+  align-content: start;
+  overflow: auto;
+}
+
+.ide-mock-desktop-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  padding: 6px 4px 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--term-fg);
+  cursor: pointer;
+  font: inherit;
+  text-align: center;
+  user-select: none;
+}
+
+.ide-mock-desktop-icon:hover {
+  background: rgba(74, 144, 226, 0.10);
+  border-color: rgba(74, 144, 226, 0.18);
+}
+
+.ide-mock-desktop-icon:focus {
+  outline: none;
+  background: rgba(74, 144, 226, 0.16);
+  border-color: rgba(74, 144, 226, 0.32);
+}
+
+.ide-mock-desktop-icon.is-selected {
+  background: rgba(74, 144, 226, 0.22);
+  border-color: rgba(74, 144, 226, 0.48);
+}
+
+.ide-mock-desktop-icon-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  color: var(--term-fg);
+}
+
+.ide-mock-desktop-icon.kind-app-ide .ide-mock-desktop-icon-tile {
+  color: #9cc4ff;
+}
+
+.ide-mock-desktop-icon-label {
+  font-size: 12px;
+  color: var(--term-fg);
+  line-height: 1.3;
+  max-width: 96px;
+  word-break: keep-all;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.ide-mock-desktop-icon-sublabel {
+  font-size: 10px;
+  color: var(--term-dim);
+  line-height: 1.2;
+}
+
+/* Taskbar */
+.ide-mock-taskbar {
+  flex: 0 0 36px;
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  padding: 0 8px;
+  background: rgba(8, 14, 24, 0.85);
+  backdrop-filter: blur(2px);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--term-fg-mute);
+  font-size: 12px;
+  cursor: default;
+}
+
+.ide-mock-taskbar-start {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  background: transparent;
+  border: 0;
+  color: var(--term-fg);
+  font: inherit;
+  cursor: pointer;
+}
+
+.ide-mock-taskbar-start:hover {
+  background: rgba(74, 144, 226, 0.18);
+}
+
+.ide-mock-taskbar-start-glyph {
+  font-size: 16px;
+  color: var(--color-action);
+}
+
+.ide-mock-taskbar-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  margin: 4px 0;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  color: var(--term-dim);
+  min-width: 200px;
+}
+
+.ide-mock-taskbar-search-icon {
+  font-size: 12px;
+}
+
+.ide-mock-taskbar-search-text {
+  font-size: 11px;
+}
+
+.ide-mock-taskbar-spacer {
+  flex: 1 1 auto;
+}
+
+.ide-mock-taskbar-tray {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+  font-size: 11px;
+}
+
+.ide-mock-taskbar-locale {
+  color: var(--term-fg-mute);
+  padding: 2px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ide-mock-taskbar-clock {
+  color: var(--term-fg);
+}
+
+.ide-mock-desktop-toast {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  padding: 8px 14px;
+  background: rgba(15, 26, 40, 0.95);
+  color: var(--term-fg);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  border: 1px solid var(--color-action);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+  max-width: 70%;
+  text-align: center;
+  z-index: 10;
+}
+
+.ide-mock-desktop-toast.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.ide-mock-shell {
+  position: relative;
+  display: grid;
+  grid-template-rows: 30px 1fr 24px;
+  height: 100%;
+  width: 100%;
+  max-width: 1200px;
+  background: #1a2638;
+  color: var(--term-fg);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  border: 1px solid var(--term-bg-soft);
+  overflow: hidden;
+}
+
+.ide-mock-shell.ide-mock-fading-in {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.32s ease, transform 0.32s ease;
+}
+
+.ide-mock-shell.ide-mock-fading-in.ide-mock-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Titlebar */
+.ide-mock-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  background: #0f1a28;
+  border-bottom: 1px solid #0a1320;
+  color: var(--term-fg-mute);
+  font-size: 11px;
+  user-select: none;
+}
+
+.ide-mock-titlebar-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.ide-mock-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #43526a;
+}
+
+.ide-mock-dot-r { background: #ed6a5e; }
+.ide-mock-dot-y { background: #f5bf4f; }
+.ide-mock-dot-g { background: #61c454; }
+
+.ide-mock-titlebar-text {
+  flex: 0 0 auto;
+  color: var(--term-fg);
+}
+
+.ide-mock-titlebar-meta {
+  flex: 1 1 auto;
+  text-align: center;
+  color: var(--term-dim);
+  font-size: 11px;
+}
+
+/* Main area: activity bar + explorer + center */
+.ide-mock-main {
+  display: grid;
+  grid-template-columns: 48px 220px 1fr;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Activity bar */
+.ide-mock-activity-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 0;
+  gap: 4px;
+  background: #14202f;
+  border-right: 1px solid #0a1320;
+  color: var(--term-fg-mute);
+}
+
+.ide-mock-activity-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.6;
+  position: relative;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+.ide-mock-activity-btn:hover {
+  opacity: 1;
+}
+
+.ide-mock-activity-btn.is-active {
+  opacity: 1;
+  color: var(--term-fg);
+}
+
+.ide-mock-activity-btn.is-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  background: var(--color-action);
+}
+
+/* Explorer */
+.ide-mock-explorer {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: #182434;
+  border-right: 1px solid #0a1320;
+  overflow: hidden;
+}
+
+.ide-mock-explorer-header {
+  padding: 8px 12px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--term-fg-mute);
+}
+
+.ide-mock-explorer-workspace {
+  padding: 4px 12px 6px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--term-dim);
+  border-bottom: 1px solid #0a1320;
+}
+
+.ide-mock-filetree {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+
+.ide-mock-filetree-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px;
+  cursor: pointer;
+  color: var(--term-fg-mute);
+  font-size: 12px;
+  user-select: none;
+  position: relative;
+}
+
+.ide-mock-filetree-item:hover {
+  background: rgba(74, 144, 226, 0.08);
+  color: var(--term-fg);
+}
+
+.ide-mock-filetree-item:focus {
+  outline: 1px solid var(--color-action);
+  outline-offset: -1px;
+}
+
+.ide-mock-filetree-item.is-active {
+  background: rgba(74, 144, 226, 0.18);
+  color: var(--term-fg);
+}
+
+.ide-mock-filetree-item.is-locked {
+  color: var(--term-dim);
+  cursor: help;
+}
+
+.ide-mock-filetree-item.is-modified {
+  color: var(--term-system);
+}
+
+.ide-mock-filetree-icon {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  color: currentColor;
+  opacity: 0.85;
+}
+
+.ide-mock-filetree-name {
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ide-mock-filetree-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--term-system);
+}
+
+/* Center column: tabs + editor + terminal */
+.ide-mock-center {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: #1a2638;
+}
+
+.ide-mock-tabbar {
+  flex: 0 0 30px;
+  display: flex;
+  align-items: stretch;
+  background: #14202f;
+  border-bottom: 1px solid #0a1320;
+  overflow-x: auto;
+}
+
+.ide-mock-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  font-size: 12px;
+  color: var(--term-fg-mute);
+  border-right: 1px solid #0a1320;
+  cursor: default;
+}
+
+.ide-mock-tab.is-active {
+  background: #1a2638;
+  color: var(--term-fg);
+  border-top: 1px solid var(--color-action);
+}
+
+.ide-mock-tab-close {
+  opacity: 0.5;
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* Editor area */
+.ide-mock-editor {
+  flex: 1 1 60%;
+  min-height: 0;
+  overflow: auto;
+  background: #1a2638;
+}
+
+.ide-mock-editor-empty {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  color: var(--term-dim);
+}
+
+.ide-mock-editor-empty-title {
+  font-size: 14px;
+  color: var(--term-fg-mute);
+  margin-bottom: 6px;
+}
+
+.ide-mock-editor-empty-body {
+  font-size: 12px;
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+.ide-mock-editor-doc {
+  display: flex;
+  align-items: stretch;
+  min-height: 100%;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.ide-mock-editor-gutter {
+  flex: 0 0 48px;
+  padding: 10px 8px 10px 0;
+  text-align: right;
+  color: var(--term-dim);
+  user-select: none;
+  border-right: 1px solid #0a1320;
+  background: #16202e;
+}
+
+.ide-mock-editor-line-num {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.ide-mock-editor-content {
+  flex: 1 1 auto;
+  padding: 10px 14px;
+  color: var(--term-fg);
+  white-space: pre;
+  overflow-x: auto;
+  min-width: 0;
+}
+
+.ide-mock-editor-line {
+  min-height: 1em;
+}
+
+.ide-mock-editor-doc[data-lang="markdown"] .ide-mock-editor-line {
+  color: #d6e0ec;
+}
+
+.ide-mock-editor-doc[data-lang="csv"] .ide-mock-editor-content,
+.ide-mock-editor-doc[data-lang="bibtex"] .ide-mock-editor-content {
+  color: #c8d4e0;
+}
+
+/* Integrated terminal pane */
+.ide-mock-terminal-pane {
+  flex: 0 0 38%;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid #0a1320;
+  background: var(--term-bg);
+}
+
+.ide-mock-terminal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 12px;
+  background: #14202f;
+  border-bottom: 1px solid #0a1320;
+  color: var(--term-fg-mute);
+  font-size: 11px;
+}
+
+.ide-mock-terminal-tab {
+  font-weight: 600;
+  color: var(--term-fg);
+}
+
+.ide-mock-terminal-meta {
+  color: var(--term-dim);
+}
+
+.ide-mock-terminal-root {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ide-mock-terminal-root .term-window {
+  max-width: none;
+  height: 100%;
+  border: 0;
+}
+
+/* Status bar */
+.ide-mock-statusbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 12px;
+  background: var(--color-action);
+  color: #f4f8fd;
+  font-size: 11px;
+  user-select: none;
+}
+
+.ide-mock-statusbar-spacer {
+  flex: 1 1 auto;
+}
+
+.ide-mock-statusbar-path {
+  opacity: 0.85;
+}
+
+.ide-mock-statusbar-esc {
+  opacity: 0.85;
+  font-weight: 600;
+}
+
+/* Watermark — 항시 표시 (오정보 방지) */
+.ide-mock-watermark {
+  position: absolute;
+  right: 16px;
+  bottom: 36px;
+  padding: 4px 10px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: rgba(232, 232, 232, 0.55);
+  background: rgba(15, 26, 40, 0.35);
+  border: 1px solid rgba(184, 195, 209, 0.18);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Toast */
+.ide-mock-toast {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  padding: 8px 14px;
+  background: rgba(15, 26, 40, 0.95);
+  color: var(--term-fg);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  border: 1px solid var(--color-action);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+  max-width: 60%;
+  text-align: center;
+  z-index: 10;
+}
+
+.ide-mock-toast.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ide-mock-desktop,
+  .ide-mock-desktop.ide-mock-fading-out,
+  .ide-mock-shell.ide-mock-fading-in,
+  .ide-mock-shell.ide-mock-fading-in.ide-mock-visible,
+  .ide-mock-toast,
+  .ide-mock-toast.is-visible,
+  .ide-mock-desktop-toast,
+  .ide-mock-desktop-toast.is-visible {
+    transition: none;
+    transform: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .ide-mock-desktop,
+  .ide-mock-shell {
+    max-width: none;
+  }
+  .ide-mock-main {
+    grid-template-columns: 44px 180px 1fr;
+  }
+  .ide-mock-watermark {
+    right: 8px;
+    bottom: 30px;
+    font-size: 10px;
+  }
+  .ide-mock-statusbar-esc {
+    display: none;
+  }
+  .ide-mock-desktop-grid {
+    grid-template-columns: repeat(auto-fill, 96px);
+    grid-auto-rows: 96px;
+    padding: 20px 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .ide-mock-main {
+    grid-template-columns: 40px 1fr;
+  }
+  .ide-mock-explorer {
+    display: none;
+  }
+  .ide-mock-terminal-pane {
+    flex: 0 0 45%;
+  }
+  .ide-mock-taskbar-search {
+    display: none;
+  }
+}
