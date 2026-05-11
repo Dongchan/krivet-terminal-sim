@@ -3,11 +3,12 @@
 > 이 문서는 컨텍스트 컴팩트/클리어 이후에도 다음 세션이 작업 맥락을 즉시 복원하도록 모든 작업을 빠짐없이 역순(최신이 위)으로 기록한다.
 > 매 entry의 timestamp는 작업 시점에 파이썬으로 호출해 부여한다: `python -c "from datetime import datetime; print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))"`
 >
-> **현재 단계**: Phase 1 완료(미션 1 MVP 동작) + **GitHub Pages 배포 완료** + **미션 전환 UX 보정**(터미널 clear + 미션 2~5 placeholder 카드). 다음 결정 대기 중 — Phase 2(미션 3 데이터-only 확장) / Phase 3(미션 2 병렬 터미널) / 추가 폴리시.
+> **현재 단계**: Phase 2 완료(미션 3 `ch2-m3-gui-vs-cli` 데이터-only 추가 · `/status`·`/context`·`/cost` 3 step). Ch.1 ▶ Ch.2 첫 미션 활성. 다음 결정 대기 중 — Phase 3(미션 2 병렬 터미널) / Phase 4(미션 4 오토컴팩트) / 추가 폴리시.
 > **라이브 URL**: <https://dongchan.github.io/krivet-terminal-sim/>
 > **GitHub 저장소**: <https://github.com/Dongchan/krivet-terminal-sim> (Public)
 > **로컬 서버**: `python -m http.server 5500` 백그라운드 실행 중 (Bash ID: becnmuyej, http://localhost:5500/) — 새 세션에서는 만료되어 있을 수 있으므로 필요시 재실행.
-> **계획 정본**: `D:\AI_Work\Claude\Terminal_Sim\Plan_sim_v.1.0.md` (사본 `C:\Users\krivet\.claude\plans\requirement-md-polymorphic-wozniak.md`)
+> **계획 정본**: `./Plan_sim_v.1.0.md` (Claude Plan 모드 사본은 PC마다 `~/.claude/plans/` 아래에 위치)
+> **경로 규칙**: 프로젝트 내부 파일은 항상 상대 경로(`./...`)로 참조 — 작업 PC에 따라 `D:\AI_Work\Claude\Terminal_Sim` 또는 `E:\AI_Work\krivet-terminal-sim` 등으로 절대 경로가 달라지므로 절대 경로 박지 말 것.
 > **새 세션 시작 시**: 바로 아래 "다음 세션 진입 프롬프트" 섹션을 새 채팅창에 통째로 복사-붙여넣기 하세요.
 
 ---
@@ -17,11 +18,11 @@
 > 컨텍스트 컴팩트/클리어 이후 새 채팅창을 열어 다음 박스 안의 내용을 그대로 붙여넣으면 맥락이 즉시 복원된다. **이 박스 안의 글머리표 4개와 운영 규칙 3개는 임의로 줄이지 말고 그대로 사용한다** — 신규 세션 Claude가 길잡이로 삼는다.
 
 ```
-D:\AI_Work\Claude\Terminal_Sim 프로젝트를 이어서 진행합니다. 응답은 한국어, learning/explanatory 톤을 유지하세요.
+krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D:\AI_Work\Claude\Terminal_Sim` 또는 `E:\AI_Work\krivet-terminal-sim` 등)를 이어서 진행합니다. 응답은 한국어, learning/explanatory 톤을 유지하세요.
 
 먼저 다음을 순서대로 수행하세요:
 
-1. `D:\AI_Work\Claude\Terminal_Sim\Working_history.md` 를 읽고 **상단 메타 박스 + 가장 위 entry** 를 확인하세요. 이 문서가 정본 인수인계 문서입니다. ("현재 단계" 라인 = 현재 상태의 진실값)
+1. `./Working_history.md` 를 읽고 **상단 메타 박스 + 가장 위 entry** 를 확인하세요. 이 문서가 정본 인수인계 문서입니다. ("현재 단계" 라인 = 현재 상태의 진실값)
 2. 필요하면 `Plan_sim_v.1.0.md` (계획 정본), `Requirement.md` (원본 요구사항), `README.md` (대외용 안내) 를 함께 참조하세요. Reference_Folder/References.txt 에 외부 디자인/레퍼런스 링크 있음.
 3. 현재 어디까지 와있는지, 결정 대기 중인 다음 옵션이 무엇인지 1~2문장으로 한국어 요약해 보고하세요.
 4. 사용자 다음 지시를 기다리세요. 임의로 다음 Phase 작업을 시작하지 마세요.
@@ -36,6 +37,48 @@ D:\AI_Work\Claude\Terminal_Sim 프로젝트를 이어서 진행합니다. 응답
 - 라이브 URL: https://dongchan.github.io/krivet-terminal-sim/
 - 다음 push 시점은 사용자 확인을 받은 뒤 진행. 임의 push 금지.
 ```
+
+---
+
+## [2026-05-11 16:35:34] Phase 2 — 미션 3 `ch2-m3-gui-vs-cli` 데이터-only 추가
+
+- 사용자 결정 (AskUserQuestion): "Phase 2: 미션 3 데이터-only 확장 (추천)"
+- 목표: Phase 1 인프라(Terminal/MissionEngine/스키마)가 새 미션을 데이터 추가만으로 수용하는지 검증 — 코드 0줄 수정 원칙.
+- 시나리오 설계 (Ch.2 첫 미션, "Claude Code에서만 보이는 메타 정보"):
+  - step 1 `/status` — 모델·계정·워크스페이스·세션 나이·컨텍스트 % 요약
+  - step 2 `/context` — ASCII 게이지 + 구성 항목(system prompt / loaded files / conversation / reserve) 분해
+  - step 3 `/cost` — input/output 토큰 분리, cache hit, 누적 비용, burn rate
+  - 학습 포인트: Claude.ai 같은 GUI는 모델/잔량/비용을 숨김 → CLI는 즉시 노출 → 응답이 이상해지면 `/context` 먼저 보는 습관.
+- 셸 설정: `shell.kind: "powershell"` 유지 (shell-prompt.js 건드리면 데이터-only 원칙 깨짐). intro에서 "이미 `claude` 실행해 Claude Code 세션 안에 들어와 있다"고 가정 명시.
+- 슬래시 명령은 글로벌 화이트리스트(`whoami/pwd/date/echo/cls/clear/help`)와 충돌 없음 — `matchGlobal`은 head 토큰 lookup이라 `/`로 시작하면 매칭 안됨. 별칭은 `/status` + `status` 둘 다 허용(슬래시 망각 대비).
+- 출력 line type: `blank` / `system` / `line` / `dim` 사용 (모두 renderer.js + terminal.css에 이미 정의됨, 신규 type 0).
+- 수정 파일:
+  - `data/missions/ch2-m3-gui-vs-cli.json` (신규, 3 step + intro + reflection + 각 step에 `tip` 카드)
+  - `data/chapters.json`: 미션 3의 `"placeholder": true` 한 줄만 제거 → idle 패널이 "🚧 곧 공개 예정"에서 정상 활성 미션으로 자동 전환 (`js/main.js`의 `isPlaceholder()` 가드가 데이터 기반이라 코드 변경 불필요).
+- 검증 (데이터-only라 UI 회귀 생략, 스키마+HTTP만):
+  - `python -c "import json; ..."` → JSON parse OK, steps=3, alias 셋 모두 확인, ch2-m3 placeholder='absent'
+  - 로컬 서버 (`python -m http.server 5500 --bind 127.0.0.1`, Bash ID `bmy93c8mi`):
+    - `/data/chapters.json` → 200
+    - `/data/missions/ch2-m3-gui-vs-cli.json` → 200
+    - `/data/missions/ch1-m1-direct-read.json` → 200 (회귀 없음)
+    - `/` → 200
+- 결과: 코드 0줄 수정, 데이터 2 파일(1신규 + 1수정)만으로 새 미션 1개 추가 완료. Phase 2 검증 가설("미션 1 인프라는 데이터-only 확장 가능") 입증.
+- 미수행 (의도적): 미션 4(`ch2-m4-autocompact`), 미션 2(`ch1-m2-parallel`), 미션 5(`ch3-m5-ide-mock`)는 placeholder 유지 — 각각 special 컴포넌트 필요해 데이터-only로 불가.
+
+---
+
+## [2026-05-11 16:29:25] 인수인계 문서 경로 규칙 상대 경로화 (PC 이동 대응)
+
+- 배경: 작업 PC가 바뀌면 프로젝트 루트가 `D:\AI_Work\Claude\Terminal_Sim` (이전 PC) ↔ `E:\AI_Work\krivet-terminal-sim` (현재 PC)로 달라짐. 프로젝트명은 동일하므로 절대 경로 대신 상대 경로(`./...`)로 통일하기로 결정.
+- 사용자 결정: "다른 PC에서 작업할 때는 D:, 현재 작업 PC에서는 E:니까 상대 주소로 하면 되겠다. 프로젝트 명은 같으니까 말이야."
+- 수정 (Working_history.md):
+  - 헤더 메타 박스 "계획 정본" 라인: 절대 경로 → `./Plan_sim_v.1.0.md`, Claude Plan 사본은 PC마다 `~/.claude/plans/` 아래로 일반화
+  - 헤더 메타 박스에 "경로 규칙" 라인 신설 — 향후 entry/문서 작성 시 절대 경로 박지 말 것을 명시
+  - 진입 프롬프트 박스 1행: `D:\AI_Work\Claude\Terminal_Sim 프로젝트를 이어서 진행합니다` → `krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 D:\... 또는 E:\... 등)`
+  - 진입 프롬프트 박스 1번 항목: `D:\AI_Work\Claude\Terminal_Sim\Working_history.md` → `./Working_history.md`
+- 과거 entries(현 entry 아래 모든 항목)는 그 시점의 사실 기록이므로 보정하지 않음. 이후 새로 추가되는 entry는 상대 경로 규칙 따름.
+- git 환경 메모: 새 PC에서 `git config --global --add safe.directory E:/AI_Work/krivet-terminal-sim` 1회 실행해 dubious ownership 경고 해제 완료.
+- 메모리: `feedback_path_convention.md` 신규 저장 (`MEMORY.md` 인덱스 갱신) — 새 세션도 이 규칙을 자동 로드.
 
 ---
 

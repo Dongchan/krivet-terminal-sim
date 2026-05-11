@@ -27,8 +27,7 @@
       "missionMeta": {
         "ch2-m3-gui-vs-cli": {
           "title": "미션 3 · GUI에서는 안 보이는 것",
-          "summary": "Claude Code의 컨텍스트 사용량을, 어디서 확인하나요?",
-          "placeholder": true
+          "summary": "Claude Code의 컨텍스트 사용량을, 어디서 확인하나요?"
         },
         "ch2-m4-autocompact": {
           "title": "미션 4 · 오토컴팩트 시뮬레이션",
