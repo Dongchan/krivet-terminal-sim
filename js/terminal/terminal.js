@@ -20,7 +20,19 @@ export class Terminal {
   mount() {
     this.promptText = formatPrompt({ kind: this.shell.kind, cwd: this.shell.cwd });
     this.render();
+    this.ensureRootClickFocus();
     this.focus();
+  }
+
+  ensureRootClickFocus() {
+    if (this._rootClickAttached) return;
+    this.root.addEventListener('click', (e) => {
+      if (e.target === this.inputEl) return;
+      const sel = window.getSelection?.();
+      if (sel && sel.toString().length > 0) return;
+      this.focus();
+    });
+    this._rootClickAttached = true;
   }
 
   render() {
@@ -60,6 +72,7 @@ export class Terminal {
       autocomplete: 'off',
       autocapitalize: 'off',
       spellcheck: 'false',
+      placeholder: '여기에 명령을 입력하고 Enter',
       'aria-label': '터미널 명령 입력',
     });
     promptLine.appendChild(promptSpan);

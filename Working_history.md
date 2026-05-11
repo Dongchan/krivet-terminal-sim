@@ -3,7 +3,7 @@
 > 이 문서는 컨텍스트 컴팩트/클리어 이후에도 다음 세션이 작업 맥락을 즉시 복원하도록 모든 작업을 빠짐없이 역순(최신이 위)으로 기록한다.
 > 매 entry의 timestamp는 작업 시점에 파이썬으로 호출해 부여한다: `python -c "from datetime import datetime; print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))"`
 >
-> **현재 단계**: Phase 2 완료(미션 3 `ch2-m3-gui-vs-cli` 데이터-only 추가 · `/status`·`/context`·`/cost` 3 step). Ch.1 ▶ Ch.2 첫 미션 활성. 다음 결정 대기 중 — Phase 3(미션 2 병렬 터미널) / Phase 4(미션 4 오토컴팩트) / 추가 폴리시.
+> **현재 단계**: Phase 2 완료(미션 3 활성) + **터미널 입력 UX 보강**(prompt-line 좌측 액션블루 강조선·옅은 배경, 터미널 영역 클릭 시 자동 포커스, placeholder "여기에 명령을 입력하고 Enter"). 다음 결정 대기 중 — Phase 3(미션 2 병렬 터미널) / Phase 4(미션 4 오토컴팩트) / 추가 폴리시.
 > **라이브 URL**: <https://dongchan.github.io/krivet-terminal-sim/>
 > **GitHub 저장소**: <https://github.com/Dongchan/krivet-terminal-sim> (Public)
 > **로컬 서버**: `python -m http.server 5500` 백그라운드 실행 중 (Bash ID: becnmuyej, http://localhost:5500/) — 새 세션에서는 만료되어 있을 수 있으므로 필요시 재실행.
@@ -37,6 +37,22 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 - 라이브 URL: https://dongchan.github.io/krivet-terminal-sim/
 - 다음 push 시점은 사용자 확인을 받은 뒤 진행. 임의 push 금지.
 ```
+
+---
+
+## [2026-05-11 16:46:06] 터미널 입력 UX 보강: prompt-line 강조 + 클릭 자동 포커스 + placeholder
+
+- 사용자 신고: "실습창 하단 명령어 입력 부분을 하이라이트 해주던가 해야겠어. 다른데 클릭하면 커서가 없어지는데, 어디에 뭘 입력해야 할지 헷갈리겠어."
+- 원인 분석: `.term-input`은 native input이라 `caret-color`는 포커스가 있을 때만 보임. 사용자가 패널/타이틀바/출력 영역을 클릭하면 input이 blur → 캐럿 사라짐 → 입력 위치 시각 신호 0.
+- 설계 결정 (두 가지 동시 적용):
+  - **항상 보이는 입력 줄 신호** — `.term-prompt-line` 에 좌측 2px 액션블루 보더 + 옅은 액션블루 배경(`rgba(74,144,226,0.06)`) + `:focus-within` 시 더 진한 배경(`0.14`). 포커스 잃어도 "여기가 입력 줄"이 항상 인식됨.
+  - **터미널 영역 어디든 클릭 → 자동 포커스** — `Terminal.ensureRootClickFocus()` 신설, `this.root` 에 click 리스너 한 번만 부착(`_rootClickAttached` 가드). 입력 자체 클릭은 native가 처리(early return), 사용자가 출력 텍스트를 드래그 선택한 직후(`window.getSelection().toString().length > 0`)에는 포커스 가로채지 않음.
+  - **placeholder 안내** — input에 `placeholder="여기에 명령을 입력하고 Enter"` 추가, 입력 시작하면 자동 사라짐.
+- 1차 시도/회전: `mousedown` 이벤트로 구현했다가, 사용자가 출력 텍스트 드래그 선택을 시작할 때 mousedown 시점엔 selection이 비어있어 가로채일 가능성을 발견 → `click` 이벤트(mouseup 후 발생, selection 확정 시점)로 변경.
+- 수정 파일:
+  - `css/terminal.css`: `.term-prompt-line` 에 padding/border-left/background/transition, `.term-prompt-line:focus-within`, `.term-input::placeholder` 추가
+  - `js/terminal/terminal.js`: `mount()` 에서 `ensureRootClickFocus()` 호출, 신규 메서드 추가, `makePromptLine()` 의 input 속성에 `placeholder` 추가
+- 검증 (로컬): `css/terminal.css`, `js/terminal/terminal.js` 모두 200 (`http://127.0.0.1:5500/`), 파일 내용에 변경 반영 확인. UI/UX 결함이 핵심이라 실제 시연 검증은 라이브 푸시 후 사용자가 진행 예정.
 
 ---
 
