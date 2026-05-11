@@ -40,6 +40,20 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 
 ---
 
+## [2026-05-11 17:03:58] 미션 3 확장 푸시 + 라이브 자산 키워드 검증
+
+- 사용자 결정: "푸시 진행" (직전 호환성 우려에 대해 "본인 외 접속자 없어 무시 가능"으로 정리 후)
+- `git push origin main`: `5522096..e4a8fd3  main -> main` 성공
+- Pages 빌드 폴링: 13회(10초 간격), duration **165,640 ms (~166초)** — 평소 25~30초 대비 길었지만 정상 `built`. (긴 이유는 빌드 큐 혼잡 가능성)
+- 라이브 자산 GET + grep (4 URL × 200):
+  - `/js/terminal/shell-prompt.js` — `kind === 'claude'` 분기 노출
+  - `/js/terminal/terminal.js` — `setPrompt({ cwd, kind })`, `refreshTitlebar()`, `'Claude Code'` 라벨 모두 노출
+  - `/js/mission/mission-engine.js` — `applyEffects`, `effects.setShell`, `terminal.refreshTitlebar` 호출 노출
+  - `/data/missions/ch2-m3-gui-vs-cli.json` — steps 6개(`step-launch-claude`, …, `step-mention-multi`), step 0 effects=`{setShell: {kind: 'claude', cwd: 'C:\\KRIVET\\연구'}}`, alias 셋 모두 정상 직렬화
+- 사람 눈 검증은 사용자가 직접: <https://dongchan.github.io/krivet-terminal-sim/#ch2/ch2-m3-gui-vs-cli>. 본인 브라우저는 5 step 버전 잔여 진행 상태가 있을 수 있으니 우측 상단 **[처음부터]** 또는 시크릿 창으로 step 0 부터 진입 권장.
+
+---
+
 ## [2026-05-11 16:55:47] 미션 3 확장: `@` 멘션 step 2개 + `claude` 접속 step 0 + 셸 전환 효과
 
 - 사용자 요청 (두 단계, 같은 흐름으로 묶음):
