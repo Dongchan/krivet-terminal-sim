@@ -47,6 +47,27 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 
 ---
 
+## [2026-05-11 19:40:25] /clear 직전 점검 — Phase 4 완료 + IDE 프레임 메모리 안착 확인
+
+- 사용자 요청: "클리어 전 점검."
+- 정합성 점검 결과 (모두 정상):
+  - `git status` clean, `HEAD = origin/main = fa5a561` (라이브 deploy 된 커밋과 일치)
+  - 라이브 빌드 commit: `fa5a561` `built` · duration 25,638 ms (~26초) — verification entry 와 동기화
+  - 메모리 디렉토리 (`C:\Users\chant\.claude\projects\E--AI-Work-krivet-terminal-sim\memory\`): `MEMORY.md` + 4 feedback 파일 (`working_history` / `path_convention` / `push_workflow` / **`ide_framing` ← 이번 세션 신규**)
+  - `MEMORY.md` 인덱스 4 항목으로 일치
+  - Working_history 메타박스 "현재 단계" = "Phase 4 완료 (Ch.1·Ch.2 모두 활성, 라이브 deploy)" → 진실값 일치
+  - 진입 프롬프트 박스 "다음 작업 후보" = Phase 5 미션 5 IDE 모형 + 직전 작업 메모 정확
+- 이번 세션 작업 요약 (`12ffcc4..fa5a561` · 4 커밋):
+  - `5566289` feat(mission4): 오토컴팩트 시뮬레이션 — 게이지 + 5턴 누적 + 85% 임계 자동 압축
+  - `491e9bd` docs: Phase 4 푸시·라이브 검증 entry
+  - `b0af36b` fix(copy): Ch.3·미션 5 — IDE를 방법론이 아닌 도구로 명확화
+  - `fa5a561` docs: IDE 프레임 보강 푸시·검증 entry
+- 메모리 1종 신규 (이번 세션): `feedback_ide_framing.md` — Ch.3/미션 5 작성 시 "방법론·패러다임·방식론" 단어 금지, "도구·환경·워크스페이스" 프레임 통일. 향후 Phase 5 가 자동 로드해 따름.
+- 다음 세션 진입 시 새로 보강할 점 없음 — 진입 프롬프트 박스만 그대로 복사-붙여넣기 하면 Phase 5 점검·설계부터 즉시 시작 가능.
+- 향후 Phase 5 가 끝나면: 진입 프롬프트 박스의 "다음 작업" 섹션을 갱신/제거(stale 방지), 메타박스 "현재 단계" 라인은 자연스럽게 Phase 6 (폴리시) 또는 완료 상태로.
+
+---
+
 ## [2026-05-11 19:38:51] IDE 프레임 보강 푸시 + 라이브 카피 검증
 
 - 사용자 결정: "푸시 진행" (옵션 A — 별도 푸시)
