@@ -38,12 +38,39 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 - 다음 push 시점은 사용자 확인을 받은 뒤 진행. 임의 push 금지. main 직접 푸시는 사용자가 매 사이클 명시 허락("푸시 진행", "메인 푸시" 등) 줄 때만.
 
 다음 작업 후보 (사용자 확인 후 결정):
-- **Phase 5 — 미션 5 IDE 모형** (`ch3-m5-ide-mock`, 현재 `data/chapters.json` 에서 `placeholder: true`).
-- 사양 정본: `./Plan_sim_v.1.0.md` "특수 미션 처리 — 미션 5" 섹션 (`special.kind: "ide-mock"`, 좌측 사이드바 SVG 일반 아이콘, 중앙 에디터, 하단 통합 터미널, 워터마크 "교육용 모형 (Educational Mockup)", `code .` 입력 → 화면 전환 → 가짜 파일트리 클릭 → 에디터 내용 → 내장 터미널 `git status`).
-- 선행 코드 작업: `js/special/ide-mock.js` 신설, `main.js` 의 special 분기에 `'ide-mock'` 추가, IDE 레이아웃 CSS, Terminal 클래스 재사용(임베드 검증).
-- 직전에 끝난 작업: Phase 4 미션 4 오토컴팩트 — 게이지 + 5턴 누적 + 85% 임계 도달 시 30%로 압축 애니메이션 + disclaimer 모달. 로컬 검증/사용자 검수 후 푸시했음 (verification entry 확인).
-- Phase 5 시작 흐름: ① Plan 미션 5 섹션 재확인 → ② 사용자에게 진행 확인 → ③ 점검·설계 → ④ 구현 → ⑤ 푸시 (사용자 명시 허락 후).
+- **Phase 6 — 폴리시** (Plan_sim_v.1.0.md 305).
+  - **README.md 정비** (Plan 288-293) — 라이브 데모 링크 / 한국어 한 문단 소개 / 로컬 실행법(`python -m http.server` / Live Server / `npx serve`) / 미션 추가 가이드 1쪽 (KRIVET 동료용, JSON 만 수정해 새 미션 추가하는 비개발자 가이드) / MIT 또는 CC-BY 라이선스 표기.
+  - **reduced-motion 회귀 점검** — `prefers-reduced-motion: reduce` 환경에서 미션 1·2·4·5 의 모든 transition/animation 비활성 정상 동작 확인 (특히 ide-mock 페이드 + autocompact 게이지 + parallel typing).
+  - **사운드 토글** (선택, 우선순위 낮음) — 글로벌 헤더에 무음/소리 토글 + `state.preferences.sound` (이미 state.js 에 자리 있음) 사용.
+- 직전에 끝난 작업: Phase 5 미션 5 IDE 모형 — 데스크톱 풍 사전 화면(폴더·IDE 앱 아이콘) + IDE 모형 아이콘 더블클릭 → IDE 모형 진입 → 시나리오 3단계(보고서.md 클릭 → `claude` 입력해 PowerShell→Claude Code 셸 전환 → `@2024_직업역량_보고서_초안.md` 멘션) + 전 미션 공통 패널 액션 바(이전·새로 시작·건너뛰기). 라이브 deploy 됨 (commit `0f2f6dd` feat, `d77c19d` verification).
+- 참고 (Plan 정본과의 차이): Plan_sim_v.1.0.md 254-258 의 미션 5 사양은 `code .` + `git status` 이지만 사용자 결정으로 데스크톱 아이콘 더블클릭 + Claude Code 부팅 + `@` 멘션으로 변경됨 (Working_history 2026-05-11 20:13:35 entry 참조). Plan 정본 본문 자체는 그대로 유지 — Phase 6 에서 plan 정본 동기화 여부도 함께 결정 가능.
+- Phase 6 시작 흐름: ① Plan 폴리시 섹션 + 현재 README.md 상태 점검 → ② 사용자에게 우선순위 확인(README 우선? 미션 추가 가이드 우선? reduced-motion 회귀 점검 우선?) → ③ 작성 → ④ 푸시 (사용자 명시 허락 후).
 ```
+
+---
+
+## [2026-05-11 21:51:49] /clear 직전 점검 — Phase 5 완료 + 진입 프롬프트 박스 Phase 6 으로 갱신
+
+- 사용자 요청: "클리어 점검. 이후 다음 단계 수행 프롬프트 제시."
+- 정합성 점검 결과 (모두 정상):
+  - `git status` clean, `HEAD = origin/main = d77c19d` (Phase 5 verification entry 커밋과 일치)
+  - 라이브 빌드 latest commit: `0f2f6dd` (feat), duration 23,655 ms (~23.6초) — verification 커밋 `d77c19d` 의 빌드도 큐에 들어갔겠지만 latest 갱신은 시간차 있을 수 있음. 외부 노출 자산은 이미 `0f2f6dd` 빌드로 모두 반영됨(Working_history.md 변경만 있는 `d77c19d` 는 사용자 노출 X)
+  - 메모리 디렉토리 (`C:\Users\chant\.claude\projects\E--AI-Work-krivet-terminal-sim\memory\`): `MEMORY.md` + 4 feedback 파일 (`working_history` / `path_convention` / `push_workflow` / `ide_framing`) — 이번 세션 신규 추가 없음
+  - `MEMORY.md` 인덱스 4 항목으로 일치
+  - Working_history 메타박스 "현재 단계" = "Phase 5 완료 (전체 미션 5종 라이브 deploy)" → 진실값 일치
+  - 진입 프롬프트 박스 "다음 작업 후보" 섹션을 **Phase 6 폴리시(README / reduced-motion 회귀 / 사운드 토글) 흐름으로 통째 갱신**. Plan 정본과의 미션 5 사양 차이(20:13:35 entry 참조)도 박스 안에 명시해 다음 세션이 Plan 본문만 읽고 혼란 받지 않도록 보강.
+- 이번 세션 작업 요약 (`b21e6be..d77c19d` · 2 커밋):
+  - `0f2f6dd` feat(mission5): 미션 5 IDE 모형 — 데스크톱 + 아이콘 더블클릭 + Claude Code 부팅 + `@` 멘션 시나리오 (+ 전 미션 공통 패널 액션 바)
+  - `d77c19d` docs: Phase 5 푸시·라이브 검증 entry + 메타박스 갱신
+- 이번 세션 내 Working_history entry 5건 (역순):
+  - 21:48:30 Phase 5 푸시·라이브 검증
+  - 20:20:10 전 미션 공통 패널 액션 바 통일 (이전·새로 시작·건너뛰기)
+  - 20:13:35 미션 5 재설계 (사전 터미널 → 데스크톱 + 아이콘 + Claude Code 부팅 + `@` 멘션) — 사용자 피드백 3회 반영
+  - 20:00:09 fix(mission5): IDE 모형 전환 시 prompt line 두 개 보이는 버그 픽스
+  - 19:52:04 미션 5 1차 구현 (사전 터미널 + `git status` 시나리오, 이후 재설계로 대체됨)
+- 메모리 신규: **없음** (이번 세션). 기존 4종 메모리(`working_history` / `path_convention` / `push_workflow` / `ide_framing`)는 그대로 적용·유지 — 특히 `ide_framing` 의 "방법론·패러다임 단어 금지 / 도구·환경 통일" 규칙이 미션 5 모든 카피(intro / panel / 회고 6 bullets) 에서 일관 준수됨.
+- 다음 세션 진입 시 보강할 점: 없음. 진입 프롬프트 박스만 그대로 복사-붙여넣기 하면 Phase 6 점검·설계부터 즉시 시작 가능.
+- 향후 Phase 6 가 끝나면: 진입 프롬프트 박스의 "다음 작업 후보" 섹션을 갱신/제거(stale 방지), 메타박스 "현재 단계" 라인은 "Phase 6 완료" 또는 "프로덕션 준비 완료" 로.
 
 ---
 
