@@ -3,7 +3,7 @@
 > 이 문서는 컨텍스트 컴팩트/클리어 이후에도 다음 세션이 작업 맥락을 즉시 복원하도록 모든 작업을 빠짐없이 역순(최신이 위)으로 기록한다.
 > 매 entry의 timestamp는 작업 시점에 파이썬으로 호출해 부여한다: `python -c "from datetime import datetime; print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))"`
 >
-> **현재 단계**: **Phase 3 미션 2 활성** — 병렬 터미널(좌/우 분할, pandoc .md→.docx 변환 + 7z 폴더 백업 자동 동시 시연). `js/special/parallel-terminals.js` 신설, `Terminal` 에 `readOnly` 옵션, `mission-loader` 가 `special.kind` 분기, `panel` 에 '🚀 자동 진행 중' 카드, `index.html` 에 `special.css` link. **Ch.1 완성** (m1·m2 활성). 다음 결정 대기 중 — Phase 4(미션 4 오토컴팩트) / Phase 5(미션 5 IDE 모형) / 추가 폴리시.
+> **현재 단계**: **Phase 3 완료 (Ch.1 모두 활성)** — 미션 1 / 미션 2 병렬 터미널 / 미션 3 (Claude Code 접속 + `@` 멘션) 모두 라이브에서 동작. **다음 작업 결정 완료: Phase 4 미션 4 오토컴팩트 시뮬레이션** — `./data/chapters.json` 의 `ch2-m4-autocompact.placeholder: true` 유지 중, 사양은 `./Plan_sim_v.1.0.md` 의 "미션 4 — 오토컴팩트" 섹션 정본. 사용자 확인 후 시작.
 > **라이브 URL**: <https://dongchan.github.io/krivet-terminal-sim/>
 > **GitHub 저장소**: <https://github.com/Dongchan/krivet-terminal-sim> (Public)
 > **로컬 서버**: `python -m http.server 5500` 백그라운드 실행 중 (Bash ID: becnmuyej, http://localhost:5500/) — 새 세션에서는 만료되어 있을 수 있으므로 필요시 재실행.
@@ -35,8 +35,32 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 추가 컨텍스트:
 - GitHub 저장소: https://github.com/Dongchan/krivet-terminal-sim (Public, main 브랜치 루트 서빙)
 - 라이브 URL: https://dongchan.github.io/krivet-terminal-sim/
-- 다음 push 시점은 사용자 확인을 받은 뒤 진행. 임의 push 금지.
+- 다음 push 시점은 사용자 확인을 받은 뒤 진행. 임의 push 금지. main 직접 푸시는 사용자가 매 사이클 명시 허락("푸시 진행", "메인 푸시" 등) 줄 때만.
+
+다음 작업 (결정 완료 · 사용자 확인 후 시작):
+- **Phase 4 — 미션 4 오토컴팩트 시뮬레이션** (`ch2-m4-autocompact`).
+- 사양 정본: `./Plan_sim_v.1.0.md` "특수 미션 처리 — 미션 4" 섹션 (컨텍스트 게이지 `[████████░░] 142,300 / 200,000`, 사용자 더미 질문 5~7회 누적, 85% 임계치 도달 시 시스템 메시지 + 게이지 30%로 줄어드는 애니메이션 + 모의 요약, 모달 고지 "실제 동작을 단순화한 시뮬레이션").
+- 데이터 스키마: `special: { kind: "autocompact", config: { tokenBudget, messages[], compactionThreshold } }`.
+- 선행 코드 작업: `js/special/autocompact.js` 신설, `main.js` 의 special 분기에 `'autocompact'` 추가, 게이지 컴포넌트 CSS, 임계치 도달 시 자동 압축 + reflection 모달.
+- Phase 4 시작 흐름: ① Plan 미션 4 섹션 재확인 → ② 사용자에게 진행 확인 → ③ 점검·설계 → ④ 구현 → ⑤ 푸시 (사용자 명시 허락 후).
 ```
+
+---
+
+## [2026-05-11 17:43:20] /clear 직전 점검 + Phase 4 진입 메모 삽입 + 메모리 보강
+
+- 사용자 요청: "다음 페이즈로 가기 전, 클리어 점검. 점검 후, 페이즈4부터 시작 프롬프트 삽입."
+- 정합성 점검 결과 (모두 정상):
+  - `git status` clean, `HEAD = origin/main = c1603e1` (라이브 deploy 된 커밋과 일치)
+  - 라이브 빌드: `c1603e1` `built` — 마지막 verification entry 와 동기화
+  - 메모리 디렉토리: `MEMORY.md` + `feedback_path_convention.md` 만 — 이번 세션의 push 워크플로/인수인계 운영 규칙은 미저장
+- 메타박스 "현재 단계" 갱신: "Phase 3 완료 (Ch.1 모두 활성) + **다음 작업 결정 완료: Phase 4 미션 4 오토컴팩트**" 로 변경. 더 이상 "결정 대기 중" 아님.
+- 진입 프롬프트 박스 내부에 **"다음 작업 (결정 완료 · 사용자 확인 후 시작)"** 섹션 신설. Phase 4 사양 정본 위치, special.kind 신규('autocompact'), 데이터 스키마, 선행 코드 작업 목록(`js/special/autocompact.js`, 게이지 컴포넌트 등), 시작 흐름 5 단계 명시. 다음 세션 Claude 가 박스만 보고 Phase 4 점검·설계부터 즉시 시작 가능.
+- 메모리 2종 신규 (PC: `C:\Users\chant\.claude\projects\E--AI-Work-krivet-terminal-sim\memory\`):
+  - `feedback_working_history.md` — Working_history.md 가 정본 인수인계 문서, timestamp 파이썬 호출 규칙, 메타박스 "현재 단계" 진실값, 진입 프롬프트 stale-free 설계, 작업/검증 entry 분리 패턴.
+  - `feedback_push_workflow.md` — main 직접 푸시는 사용자 명시 허락마다 필요(이전 허락 standing 아님), Pages 빌드 폴링(보통 25~30초, 가끔 2~3분) → 자산 grep 검증 → verification entry 별도 커밋의 2단 사이클.
+- `MEMORY.md` 인덱스 3 항목으로 갱신.
+- 향후 Phase 4 가 끝나면: 진입 프롬프트 박스의 "다음 작업" 섹션을 갱신/제거(stale 방지), 메타박스 "현재 단계" 라인은 자연스럽게 Phase 5 로.
 
 ---
 
