@@ -6,6 +6,7 @@ import { Terminal } from './terminal/terminal.js';
 import { MissionEngine } from './mission/mission-engine.js';
 import { loadMission } from './mission/mission-loader.js';
 import { ParallelTerminals } from './special/parallel-terminals.js';
+import { AutocompactMission } from './special/autocompact.js';
 import { $, el, clear } from './utils/dom.js';
 import { on, emit } from './utils/events.js';
 
@@ -13,6 +14,7 @@ let chaptersRef = null;
 let terminal = null;
 let engine = null;
 let parallelTerminals = null;
+let autocompactMission = null;
 
 async function boot() {
   chaptersRef = await loadChapters();
@@ -85,6 +87,10 @@ function bindMissionEvents() {
       parallelTerminals.destroy();
       parallelTerminals = null;
     }
+    if (autocompactMission) {
+      autocompactMission.destroy();
+      autocompactMission = null;
+    }
     if (!terminal) return;
     if (engine?.mission && engine.mission.id !== getState().currentMissionId) {
       engine.mission = null;
@@ -106,6 +112,8 @@ async function startCurrentMission() {
     const mission = await loadMission(missionId);
     if (mission.special?.kind === 'parallel') {
       await startParallelMission(mission);
+    } else if (mission.special?.kind === 'autocompact') {
+      await startAutocompactMission(mission);
     } else {
       await engine.loadAndStart(missionId);
     }
@@ -127,6 +135,19 @@ async function startParallelMission(mission) {
 
   // 마운트 직후 startAll — 약간의 시각적 텀을 줘 사용자가 분할 레이아웃을 인식하게 함
   setTimeout(() => parallelTerminals?.startAll(), 400);
+}
+
+async function startAutocompactMission(mission) {
+  const rootEl = $('.app-terminal');
+  if (autocompactMission) autocompactMission.destroy();
+  autocompactMission = new AutocompactMission(rootEl, mission.special.config || {});
+  autocompactMission.setMission(mission);
+
+  updateProgress(mission.id, { status: 'in_progress' });
+  // panel.js가 currentCtx를 세팅한 뒤에 mount()의 emitTurnPanel이 들어와야 첫 예시 질문이 패널에 뜸
+  emit('mission:start', { mission, stepIndex: 0, special: true, specialKind: 'autocompact' });
+
+  autocompactMission.mount();
 }
 
 function isPlaceholder(missionId) {
@@ -206,6 +227,11 @@ async function maybeAutoStart() {
   if (!missionId) return;
   const progress = state.progress[missionId];
   if (progress && progress.status === 'in_progress') {
+    // special 미션은 steps 가 없어 engine.loadAndStart 가 throw — 자동 재개 대신 idle 로 두고 사용자가 다시 "미션 시작" 누르게 함
+    try {
+      const mission = await loadMission(missionId);
+      if (mission.special) return;
+    } catch (_) { return; }
     await engine.loadAndStart(missionId);
   }
 }

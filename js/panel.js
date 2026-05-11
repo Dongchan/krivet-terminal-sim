@@ -9,8 +9,8 @@ export function initPanel(chapters) {
   chaptersRef = chapters;
   renderIdle();
   on('route:changed', () => { currentCtx = null; renderIdle(); });
-  on('mission:start', ({ mission, stepIndex, special }) => {
-    currentCtx = { mission, stepIndex, hint: null, failures: 0, special: !!special };
+  on('mission:start', ({ mission, stepIndex, special, specialKind }) => {
+    currentCtx = { mission, stepIndex, hint: null, failures: 0, special: !!special, specialKind: specialKind || null };
     renderActive();
   });
   on('mission:step-changed', (payload) => {
@@ -21,6 +21,16 @@ export function initPanel(chapters) {
       hint: payload.hint,
       failures: payload.failures,
     };
+    renderActive();
+  });
+  on('autocompact:turn', (payload) => {
+    if (!currentCtx) return;
+    currentCtx.autocompact = { phase: 'turn', ...payload };
+    renderActive();
+  });
+  on('autocompact:compacting', (payload) => {
+    if (!currentCtx) return;
+    currentCtx.autocompact = { phase: 'compacting', ...payload };
     renderActive();
   });
 }
@@ -63,7 +73,7 @@ function renderIdle() {
 
 function renderActive() {
   if (!currentCtx || !chaptersRef) return;
-  const { mission, stepIndex, totalSteps, hint, failures, special } = currentCtx;
+  const { mission, stepIndex, totalSteps, hint, failures, special, specialKind, autocompact } = currentCtx;
   const chapter = chaptersRef.find((c) => c.id === mission.chapterId) || chaptersRef[0];
   const step = mission.steps?.[stepIndex];
 
@@ -74,7 +84,9 @@ function renderActive() {
   panel.appendChild(el('h1', { class: 'panel-title' }, [mission.title]));
   panel.appendChild(el('p', { class: 'panel-body' }, [mission.intro?.bodyMarkdown?.split('\n\n')[0] || '']));
 
-  if (special) {
+  if (special && specialKind === 'autocompact') {
+    renderAutocompactPanel(panel, autocompact);
+  } else if (special) {
     panel.appendChild(el('div', { class: 'panel-step' }, [
       el('div', { class: 'panel-step-label' }, ['🚀 자동 진행 중']),
       el('div', { class: 'panel-step-text' }, ['좌/우 두 터미널이 같은 시간에 다른 작업을 처리합니다. 두 작업이 끝나면 회고 카드가 떠요.']),
@@ -113,4 +125,33 @@ function makeInstruction(text) {
     else node.appendChild(document.createTextNode(part));
   });
   return node;
+}
+
+function renderAutocompactPanel(panel, autocompact) {
+  if (autocompact?.phase === 'compacting') {
+    panel.appendChild(el('div', { class: 'panel-step' }, [
+      el('div', { class: 'panel-step-label' }, ['⚠ 임계치 도달 — 자동 압축 중']),
+      el('div', { class: 'panel-step-text' }, ['컨텍스트가 85%를 넘어 Claude Code 가 이전 대화를 요약으로 압축하고 있어요. 게이지가 어떻게 떨어지는지 보세요.']),
+    ]));
+    return;
+  }
+
+  const phase = autocompact?.phase;
+  const turn = autocompact?.turnIndex ?? 0;
+  const total = autocompact?.totalTurns ?? 5;
+  const nextHint = autocompact?.nextPromptHint;
+
+  panel.appendChild(el('div', { class: 'panel-step' }, [
+    el('div', { class: 'panel-step-label' }, [phase ? `대화 진행 (${turn}/${total} 턴)` : '💬 자유롭게 대화해 보세요']),
+    el('div', { class: 'panel-step-text' }, [
+      '우측 터미널의 `> ` 프롬프트에 질문을 입력하면 Claude Code 가 응답하고, 상단 게이지가 그만큼 차오릅니다. 게이지가 85% 에 닿으면 자동 압축이 발동돼요.',
+    ]),
+  ]));
+
+  if (nextHint) {
+    panel.appendChild(el('div', { class: 'panel-tip' }, [
+      el('div', { class: 'panel-tip-label' }, ['예시 질문 (그대로 또는 자유롭게)']),
+      makeInstruction('`' + nextHint + '`'),
+    ]));
+  }
 }

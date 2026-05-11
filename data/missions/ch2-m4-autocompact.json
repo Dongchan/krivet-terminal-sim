@@ -1,0 +1,144 @@
+{
+  "id": "ch2-m4-autocompact",
+  "chapterId": "ch2",
+  "title": "미션 4 · 오토컴팩트 시뮬레이션",
+  "order": 4,
+  "estimatedMinutes": 6,
+  "intro": {
+    "headline": "컨텍스트가 가득 차면, 모델은 무엇을 잊고 무엇을 남기나요?",
+    "bodyMarkdown": "이전 미션에서 본 컨텍스트 게이지는 대화가 길어질수록 차오릅니다. 게이지가 가득 차면 모델은 더 이상 새 입력을 받지 못해 응답이 끊기거나 헛소리를 하기 시작해요.\n\nClaude Code 는 이 한계에 가까워지면 자동으로 컨텍스트를 압축(auto-compact) 합니다 — 이전 대화를 짧은 요약으로 축약하고, 그 자리에 다시 토큰 여유를 만드는 동작이에요.\n\n이번 미션에서는 우측 상단에 게이지를 띄워 놓고, 자유롭게 몇 번 질문을 보내며 게이지가 임계치(85%) 에 닿는 순간을 직접 봅니다. 그 순간 시뮬레이터가 자동 압축 애니메이션을 실행해 게이지가 어떻게 줄어드는지 보여줘요."
+  },
+  "special": {
+    "kind": "autocompact",
+    "config": {
+      "tokenBudget": 1000000,
+      "startTokens": 700000,
+      "compactionThreshold": 0.85,
+      "afterCompactionRatio": 0.30,
+      "model": "claude-opus-4-7",
+      "shell": { "kind": "claude", "cwd": "C:\\KRIVET\\연구" },
+      "welcomeScript": [
+        { "type": "system", "text": "● Anthropic · Claude Code  (educational mock)" },
+        { "type": "line",   "text": "  Connected as researcher@krivet.re.kr" },
+        { "type": "line",   "text": "  Model       : claude-opus-4-7  (Opus 4.7 · 1M context)" },
+        { "type": "line",   "text": "  Workspace   : C:\\KRIVET\\연구" },
+        { "type": "blank" },
+        { "type": "dim",    "text": "  이전 미션의 세션을 이어받았습니다 — 보고서 초안 · 설문 원본 · 참고문헌 이미 로드됨." },
+        { "type": "dim",    "text": "  자유롭게 질문을 입력해 보세요. 상단 게이지가 어떻게 차오르는지 보세요." },
+        { "type": "blank" }
+      ],
+      "userPrompts": [
+        {
+          "label": "보고서 초안에서 핵심 결론 3개만 뽑아줘",
+          "tokensAdded": 31000,
+          "responseScript": [
+            { "type": "blank" },
+            { "type": "dim",    "text": "● Thinking ... (reading 2024_직업역량_보고서_초안.md)" },
+            { "type": "line",   "text": "  1. 청년층 직업역량 격차는 학력보다 직무 경험 누적에서 비롯됨." },
+            { "type": "line",   "text": "  2. 디지털 리터러시 지표는 2018→2024 사이 0.42 → 0.61 로 상승." },
+            { "type": "line",   "text": "  3. AI 협업 능력은 새로운 핵심 직업역량으로 부상 (응답자 78%)." },
+            { "type": "blank" }
+          ]
+        },
+        {
+          "label": "설문조사_원본.csv 의 응답자 연령대 분포를 표로 보여줘",
+          "tokensAdded": 38000,
+          "responseScript": [
+            { "type": "blank" },
+            { "type": "dim",    "text": "● Reading 설문조사_원본.csv (3,214 rows × 28 cols) ..." },
+            { "type": "line",   "text": "  연령대        응답자수    비율" },
+            { "type": "line",   "text": "  ────────────────────────────────" },
+            { "type": "line",   "text": "  20–29세        842        26.2%" },
+            { "type": "line",   "text": "  30–39세      1,103        34.3%" },
+            { "type": "line",   "text": "  40–49세        687        21.4%" },
+            { "type": "line",   "text": "  50–59세        412        12.8%" },
+            { "type": "line",   "text": "  60세 이상      170         5.3%" },
+            { "type": "blank" }
+          ]
+        },
+        {
+          "label": "참고문헌.bib 에서 2023년 이후 출판된 것만 정리해줘",
+          "tokensAdded": 28000,
+          "responseScript": [
+            { "type": "blank" },
+            { "type": "dim",    "text": "● Filtering 참고문헌.bib (year >= 2023) ..." },
+            { "type": "line",   "text": "  [1] Choi & Park (2024) — Reskilling pathways in Korean public sector." },
+            { "type": "line",   "text": "  [2] OECD (2024)        — Future of Work: Korea country brief." },
+            { "type": "line",   "text": "  [3] Han et al. (2023)  — Generative AI literacy in clerical roles." },
+            { "type": "line",   "text": "  [4] KRIVET (2023)      — 직업능력개발 통계연보 (제27호)." },
+            { "type": "dim",    "text": "  총 4건 (필터 전 19건 → 2023+ 4건)" },
+            { "type": "blank" }
+          ]
+        },
+        {
+          "label": "방법론 섹션을 영어로 번역해줘",
+          "tokensAdded": 42000,
+          "responseScript": [
+            { "type": "blank" },
+            { "type": "dim",    "text": "● Translating §3 Methodology (1,820 → 1,640 words) ..." },
+            { "type": "line",   "text": "  3. Methodology" },
+            { "type": "line",   "text": "    This study employed a mixed-methods design combining a nationwide" },
+            { "type": "line",   "text": "    online survey (N=3,214) with semi-structured interviews (N=42)." },
+            { "type": "line",   "text": "    Quantitative items were drawn from KRIVET's 2018 baseline panel" },
+            { "type": "line",   "text": "    and supplemented with 14 new AI-literacy questions piloted in Q1 2024." },
+            { "type": "dim",    "text": "  ... (전문 826 line, 일부 발췌)" },
+            { "type": "blank" }
+          ]
+        },
+        {
+          "label": "지금까지 정리한 내용을 임원 보고용 1쪽 슬라이드로 요약해줘",
+          "tokensAdded": 34000,
+          "responseScript": [
+            { "type": "blank" },
+            { "type": "dim",    "text": "● Synthesizing prior 4 turns into a single-slide brief ..." },
+            { "type": "line",   "text": "  ┌──────────────────────────────────────────────────────────┐" },
+            { "type": "line",   "text": "  │  KRIVET · 직업역량 2024 — 임원 보고용 요약              │" },
+            { "type": "line",   "text": "  ├──────────────────────────────────────────────────────────┤" },
+            { "type": "line",   "text": "  │  · 핵심 결론 3건 (직무경험·디지털·AI 협업)              │" },
+            { "type": "line",   "text": "  │  · 응답자 3,214명 — 30대 34% 최다                       │" },
+            { "type": "line",   "text": "  │  · 2023+ 참고문헌 4건 신규 인용                          │" },
+            { "type": "line",   "text": "  │  · 방법론: 설문 + 인터뷰 혼합, AI 리터러시 14문항 신설  │" },
+            { "type": "line",   "text": "  └──────────────────────────────────────────────────────────┘" },
+            { "type": "blank" }
+          ]
+        }
+      ],
+      "compaction": {
+        "preScript": [
+          { "type": "blank" },
+          { "type": "system", "text": "⚠ Context limit approaching · 85% threshold reached (873,000 / 1,000,000 tok)" },
+          { "type": "dim",    "text": "● Auto-compact triggered — summarizing prior conversation to free tokens ..." },
+          { "type": "blank" }
+        ],
+        "compactDurationMs": 1800,
+        "postScript": [
+          { "type": "blank" },
+          { "type": "system", "text": "● Compaction summary  (5 turns → 1 condensed block)" },
+          { "type": "line",   "text": "  [Summary 1/1] Researcher가 보고서 초안의 핵심 결론 3건, 설문 응답자 연령" },
+          { "type": "line",   "text": "                분포(N=3,214), 2023+ 참고문헌 4건, 방법론 §3 영어 번역," },
+          { "type": "line",   "text": "                임원 보고용 1쪽 슬라이드 요약을 차례로 요청·확정함." },
+          { "type": "blank" },
+          { "type": "dim",    "text": "  • Loaded files (3 files) 는 그대로 유지 — 다시 @멘션할 필요 없음." },
+          { "type": "dim",    "text": "  • 이전 대화 원문은 요약으로 대체됨 (모델은 요약만 기억합니다)." },
+          { "type": "blank" },
+          { "type": "system", "text": "● Compaction complete · Context use 87.3% → 30.0%  (570,000 tok 확보)" },
+          { "type": "blank" }
+        ]
+      }
+    }
+  },
+  "completion": {
+    "type": "specialComplete",
+    "reflection": {
+      "headline": "방금 본 것 — 모델의 '단기 기억' 이 다시 가벼워졌어요",
+      "bullets": [
+        "컨텍스트는 무한하지 않습니다. 1,000,000 토큰처럼 보여도 시스템 프롬프트·로드한 파일·대화 누적이 모두 같은 통을 공유해요.",
+        "임계치(85%) 에 닿으면 Claude Code 는 자동으로 이전 대화를 한 줄 요약 블록으로 압축해 빈자리를 만듭니다. 이번 시뮬레이션에서는 87.3% → 30% 로 떨어지는 모습을 봤어요.",
+        "압축은 '잊어버림' 입니다 — 요약은 원문보다 거칠고, 미세한 표현·인용 형식·중간 단계 추론은 사라져요. 정확한 인용이 필요한 문장은 압축 전에 따로 저장해야 안전합니다.",
+        "수동으로 `/compact` 또는 `/clear` 를 부르거나, `@` 멘션을 줄여 컨텍스트를 가볍게 관리하는 습관이 응답 품질을 지키는 길이에요.",
+        "주의 · 실제 임계치·압축 비율·요약 알고리즘은 모델 버전마다 다릅니다. 이 미션은 그 동작을 직관적으로 보여주는 단순화된 모형입니다."
+      ],
+      "nextHint": "Ch.3 미션 5: 터미널만으로 부족할 때 — 코드와 셸을 한 화면에 두는 IDE 의 등장."
+    }
+  }
+}

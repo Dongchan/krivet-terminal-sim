@@ -3,7 +3,7 @@
 > 이 문서는 컨텍스트 컴팩트/클리어 이후에도 다음 세션이 작업 맥락을 즉시 복원하도록 모든 작업을 빠짐없이 역순(최신이 위)으로 기록한다.
 > 매 entry의 timestamp는 작업 시점에 파이썬으로 호출해 부여한다: `python -c "from datetime import datetime; print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))"`
 >
-> **현재 단계**: **Phase 3 완료 (Ch.1 모두 활성)** — 미션 1 / 미션 2 병렬 터미널 / 미션 3 (Claude Code 접속 + `@` 멘션) 모두 라이브에서 동작. **다음 작업 결정 완료: Phase 4 미션 4 오토컴팩트 시뮬레이션** — `./data/chapters.json` 의 `ch2-m4-autocompact.placeholder: true` 유지 중, 사양은 `./Plan_sim_v.1.0.md` 의 "미션 4 — 오토컴팩트" 섹션 정본. 사용자 확인 후 시작.
+> **현재 단계**: **Phase 4 구현 완료 (Ch.2 모두 활성, 로컬 검증 단계)** — 미션 1 / 미션 2 병렬 / 미션 3 (`@` 멘션) / **미션 4 오토컴팩트** 모두 활성. `ch2-m4-autocompact.json` 신규, `js/special/autocompact.js` 신설, `chapters.json` placeholder 제거. **사용자 로컬 사람-눈 검증 대기 중** — 검증 통과 후 푸시 예정. **다음 작업 후보: Phase 5 미션 5 IDE 모형** (`ch3-m5-ide-mock`, 현재 placeholder).
 > **라이브 URL**: <https://dongchan.github.io/krivet-terminal-sim/>
 > **GitHub 저장소**: <https://github.com/Dongchan/krivet-terminal-sim> (Public)
 > **로컬 서버**: `python -m http.server 5500` 백그라운드 실행 중 (Bash ID: becnmuyej, http://localhost:5500/) — 새 세션에서는 만료되어 있을 수 있으므로 필요시 재실행.
@@ -37,17 +37,50 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 - 라이브 URL: https://dongchan.github.io/krivet-terminal-sim/
 - 다음 push 시점은 사용자 확인을 받은 뒤 진행. 임의 push 금지. main 직접 푸시는 사용자가 매 사이클 명시 허락("푸시 진행", "메인 푸시" 등) 줄 때만.
 
-다음 작업 (결정 완료 · 사용자 확인 후 시작):
-- **Phase 4 — 미션 4 오토컴팩트 시뮬레이션** (`ch2-m4-autocompact`).
-- 사양 정본: `./Plan_sim_v.1.0.md` "특수 미션 처리 — 미션 4" 섹션 (컨텍스트 게이지 `[████████░░] 142,300 / 200,000`, 사용자 더미 질문 5~7회 누적, 85% 임계치 도달 시 시스템 메시지 + 게이지 30%로 줄어드는 애니메이션 + 모의 요약, 모달 고지 "실제 동작을 단순화한 시뮬레이션").
-- 데이터 스키마: `special: { kind: "autocompact", config: { tokenBudget, messages[], compactionThreshold } }`.
-- 선행 코드 작업: `js/special/autocompact.js` 신설, `main.js` 의 special 분기에 `'autocompact'` 추가, 게이지 컴포넌트 CSS, 임계치 도달 시 자동 압축 + reflection 모달.
-- Phase 4 시작 흐름: ① Plan 미션 4 섹션 재확인 → ② 사용자에게 진행 확인 → ③ 점검·설계 → ④ 구현 → ⑤ 푸시 (사용자 명시 허락 후).
+다음 작업 후보 (사용자 확인 후 결정):
+- **Phase 5 — 미션 5 IDE 모형** (`ch3-m5-ide-mock`, 현재 `data/chapters.json` 에서 `placeholder: true`).
+- 사양 정본: `./Plan_sim_v.1.0.md` "특수 미션 처리 — 미션 5" 섹션 (`special.kind: "ide-mock"`, 좌측 사이드바 SVG 일반 아이콘, 중앙 에디터, 하단 통합 터미널, 워터마크 "교육용 모형 (Educational Mockup)", `code .` 입력 → 화면 전환 → 가짜 파일트리 클릭 → 에디터 내용 → 내장 터미널 `git status`).
+- 선행 코드 작업: `js/special/ide-mock.js` 신설, `main.js` 의 special 분기에 `'ide-mock'` 추가, IDE 레이아웃 CSS, Terminal 클래스 재사용(임베드 검증).
+- 직전에 끝난 작업: Phase 4 미션 4 오토컴팩트 — 게이지 + 5턴 누적 + 85% 임계 도달 시 30%로 압축 애니메이션 + disclaimer 모달. 로컬 검증/사용자 검수 후 푸시했음 (verification entry 확인).
+- Phase 5 시작 흐름: ① Plan 미션 5 섹션 재확인 → ② 사용자에게 진행 확인 → ③ 점검·설계 → ④ 구현 → ⑤ 푸시 (사용자 명시 허락 후).
 ```
 
 ---
 
-## [2026-05-11 17:43:20] /clear 직전 점검 + Phase 4 진입 메모 삽입 + 메모리 보강
+## [2026-05-11 18:21:18] Phase 4 — 미션 4 `ch2-m4-autocompact` 오토컴팩트 시뮬레이션 구현 (로컬 검증 완료, 사용자 사람-눈 검수 대기)
+
+- 사용자 결정: "진행하자" — Plan 정본 (`./Plan_sim_v.1.0.md` 미션 4 섹션) 재확인 후 즉시 설계·구현 진입.
+- 시나리오 설계 — 미션 3 의 1M 컨텍스트 모델(Opus 4.7) 연속성 유지하기 위해 `tokenBudget: 1,000,000` 채택 (Plan 의 `200,000` 예시는 작성 당시 placeholder 수치로 판단). 시작 70% (700,000 tok) — 미션 3 끝 시점(40.3%) 에서 누적 더 쌓인 가정. 5턴 사전정의 더미 질문이 순차적으로 토큰을 더해 마지막 5번째 턴이 정확히 85% 임계치 돌파:
+  - T1: +31,000 → 731,000 (73.1%) — "보고서 핵심 결론 3개"
+  - T2: +38,000 → 769,000 (76.9%) — "설문 연령대 분포 표"
+  - T3: +28,000 → 797,000 (79.7%) — "참고문헌 2023+ 만"
+  - T4: +42,000 → 839,000 (83.9%) — "방법론 영어 번역"
+  - T5: +34,000 → 873,000 (87.3%) ← 임계 돌파 → 자동 압축 → 30.0% (300,000 tok)
+- 신규 파일:
+  - `js/special/autocompact.js` — `AutocompactMission` 클래스. `mount/handleInput/runCompaction/animateGauge/showDisclaimer/destroy`. 게이지는 위쪽 띠로 자체 렌더링(외부 CSS 클래스 `.autocompact-gauge` + `.autocompact-gauge-bar`), 색 단계 3종 (`tier-safe` <70% / `tier-warn` 70~85% / `tier-danger` ≥85%). 게이지 변화는 `requestAnimationFrame` 기반 ease-out cubic 자체 애니메이션(600ms 일반 턴 / 1800ms 압축). `prefers-reduced-motion: reduce` 면 즉시 점프. 사용자 입력은 자유 텍스트로 받되 응답·토큰은 `turnIndex` 로 deterministic 진행. 압축 후엔 `completed=true` 로 추가 입력 차단(친절한 dim 메시지로 회고 모달 안내).
+  - `data/missions/ch2-m4-autocompact.json` — `special.kind: "autocompact"` + 5턴 `userPrompts[]` + `compaction.preScript/postScript`. 회고 `bullets` 5개 (마지막 bullet 은 "단순화된 모형" 재고지 — 오정보 방지). `completion.type: "specialComplete"`.
+- 코드 일반화 변경:
+  - `js/main.js` — `AutocompactMission` import, 모듈 상태 `autocompactMission` 추가. `startCurrentMission` 의 `mission.special?.kind === 'autocompact'` 분기 → `startAutocompactMission(mission)` 신설. **이벤트 순서 주의**: `mount()` 안의 `emitTurnPanel()` 이 panel.js `currentCtx` 세팅보다 먼저 들어가지 않도록, `emit('mission:start', ...)` → `autocompactMission.mount()` 순서로 보정. `route:changed` 핸들러에서 `autocompactMission.destroy()` 정리.
+  - `js/panel.js` — `mission:start` 페이로드의 `specialKind` 받아 `currentCtx.specialKind` 저장. 신규 이벤트 구독 `autocompact:turn` (다음 예시 질문 카드 갱신) + `autocompact:compacting` (압축 중 안내). `renderActive` 가 `specialKind === 'autocompact'` 면 신규 `renderAutocompactPanel(panel, autocompact)` 호출 — 일반 step 카드 대신 "💬 자유롭게 대화" + "예시 질문 (그대로 또는 자유롭게)" 코드 카드를 띄움. 압축 phase 에서는 "⚠ 임계치 도달 — 자동 압축 중" 라벨.
+  - `css/special.css` — `.autocompact-wrapper`(flex column full height), `.autocompact-gauge`(다크 배경 위쪽 띠 + 헤더·트랙·numeric), `.autocompact-gauge-bar`(width transition + 3 tier 색), `.autocompact-terminal`(flex 1 + min-height 0). 신규 `.disclaimer-overlay` + `.disclaimer-card` 풀스크린 모달 (액션블루 상단 보더, 본문 + 3 bullets + "이해했어요 — 시작하기" 버튼). 모바일(≤900px) `max-width: none`.
+- 데이터:
+  - `data/chapters.json` — `ch2-m4-autocompact.placeholder: true` 제거 → idle 패널이 정상 "미션 시작" 버튼 노출, `chapters.json` 키만 갱신해 자동 활성화.
+- 검증 (로컬 5500, 코드 0회 회귀 의심 없음):
+  - JSON parse OK, 토큰 수학 검증 (T5 가 정확히 임계 돌파, 873,000 = preScript 텍스트와 일치, 87.3% = postScript "87.3% → 30.0%" 와 일치)
+  - 자산 6 종 HTTP 200 (`ch2-m4-autocompact.json`, `js/special/autocompact.js`, `css/special.css`, `js/main.js`, `js/panel.js`, `data/chapters.json`)
+  - 신규 코드 키워드 노출 확인 — `class AutocompactMission`, `runCompaction`, `animateGauge`, `showDisclaimer`, `startAutocompactMission`, `autocompactMission`, `specialKind`, `autocompact:turn`, `autocompact:compacting`, `renderAutocompactPanel`, `.autocompact-gauge`, `.disclaimer-overlay`, `tier-warn`, `tier-danger`
+  - chapters.json placeholder 상태 — 활성 4 (ch1-m1/ch1-m2/ch2-m3/ch2-m4) + placeholder 1 (ch3-m5)
+- 미수행 (의도적, 사용자 시연 위임):
+  - 사람 눈 검증 — disclaimer 모달 동작, 게이지 색 단계 전환(70% / 85%), 5턴 입력하며 게이지 차오름 시각 효과, 5턴째 자동 압축 애니메이션(87.3% → 30%, 1.8s ease-out), 회고 모달 발현. 사용자가 `http://localhost:5500/#ch2/ch2-m4-autocompact` 에서 직접 확인 예정.
+  - 라이브 푸시 — 사용자가 사람 눈 검증 통과시킨 후 명시 허락 필요.
+- 알려진 설계 트레이드오프:
+  - 사용자 입력은 자유 텍스트지만 응답·토큰은 사전정의 turn 인덱스대로 진행. "예시 질문 그대로 또는 자유롭게" 카드로 안내. 진짜 LLM 응답이 아니라는 점은 disclaimer 에서 한 번 더 명시.
+  - 게이지 색은 `--term-error` (빨강) / `--term-system` (앰버) / 그린(#6ec07a 신규) 으로 디자인 토큰 톤 안에서 해결. 신규 컬러 토큰은 추가하지 않고 인라인.
+- Pre-existing 버그 가드 추가: `maybeAutoStart` 가 special 미션을 자동 재개하려 들면 `engine.loadAndStart` 가 `mission.steps.length` 접근에서 throw — parallel 미션부터 잠재해 있던 문제. 사용자 검증 중 새로고침 가능성 있어 `mission.special` 이면 자동 재개 건너뛰고 사용자가 다시 "미션 시작" 누르게 가드. 자동 재개 흐름은 일반 step 미션에만 적용 유지.
+
+---
+
+
 
 - 사용자 요청: "다음 페이즈로 가기 전, 클리어 점검. 점검 후, 페이즈4부터 시작 프롬프트 삽입."
 - 정합성 점검 결과 (모두 정상):

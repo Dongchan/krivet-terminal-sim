@@ -41,3 +41,175 @@
     gap: 24px;
   }
 }
+
+/* ───────────────────────────── 미션 4 — 오토컴팩트 ─ */
+
+.autocompact-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.autocompact-gauge {
+  flex: 0 0 auto;
+  padding: 10px 14px 12px;
+  background: var(--term-bg);
+  border: 1px solid var(--term-bg-soft);
+  color: var(--term-fg);
+  font-family: var(--font-mono);
+}
+
+.autocompact-gauge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.autocompact-gauge-label {
+  color: var(--term-fg-mute);
+  text-transform: uppercase;
+}
+
+.autocompact-gauge-meta {
+  color: var(--term-dim);
+}
+
+.autocompact-gauge-track {
+  position: relative;
+  width: 100%;
+  height: 10px;
+  background: var(--term-bg-soft);
+  overflow: hidden;
+}
+
+.autocompact-gauge-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--color-action);
+  transition: background-color 0.3s ease;
+}
+
+.autocompact-gauge.tier-safe .autocompact-gauge-bar {
+  background: #6ec07a;
+}
+
+.autocompact-gauge.tier-warn .autocompact-gauge-bar {
+  background: var(--term-system);
+}
+
+.autocompact-gauge.tier-danger .autocompact-gauge-bar {
+  background: var(--term-error);
+}
+
+.autocompact-gauge-numeric {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.autocompact-gauge-percent {
+  color: var(--term-fg);
+  font-weight: 600;
+}
+
+.autocompact-gauge-tokens {
+  color: var(--term-dim);
+}
+
+.autocompact-terminal {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.autocompact-terminal .term-window {
+  max-width: none;
+  height: 100%;
+}
+
+/* Disclaimer modal — 시뮬레이션 안내 (오정보 방지) */
+
+.disclaimer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 34, 56, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  pointer-events: none;
+}
+
+.disclaimer-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.disclaimer-card {
+  background: var(--color-bg);
+  color: var(--color-text);
+  max-width: 540px;
+  width: 100%;
+  padding: 28px 28px 24px;
+  border-top: 3px solid var(--color-action);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  font-family: var(--font-sans);
+}
+
+.disclaimer-tag {
+  display: inline-block;
+  color: var(--color-action);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.disclaimer-title {
+  margin: 0 0 12px;
+  font-size: 22px;
+  color: var(--color-navy);
+}
+
+.disclaimer-body {
+  margin: 0 0 12px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.disclaimer-bullets {
+  margin: 0 0 20px;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--color-text-mute);
+}
+
+.disclaimer-bullets li {
+  margin-bottom: 6px;
+}
+
+.disclaimer-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-disclaimer-dismiss {
+  /* btn-primary 토큰 그대로 사용 */
+}
+
+@media (max-width: 900px) {
+  .autocompact-wrapper {
+    max-width: none;
+  }
+}
