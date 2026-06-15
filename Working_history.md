@@ -60,7 +60,19 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
   - 배선: `route:changed` 리스너 맨 앞에서 호출 + boot 끝(`maybeAutoStart` 직후)에서 1회 직접 호출(부팅 시 첫 `route:changed` 는 `bindMissionEvents` 리스너 부착 전에 발생하므로).
   - `index.html` 정적 placeholder → `💬 미션을 불러오는 중…` (깊은 링크 진입 시 잘못된 문구 깜빡임 방지).
 - **라이브 검증** (Playwright, `http://localhost:5500`): 5개 라우트 순회 결과 전부 기대값 일치 — 미션1 "두 개의 터미널, 두 배의 속도" / 미션2 "GUI에서는 안 보이는 것" / 미션3 "오토컴팩트 시뮬레이션" / 미션4 "터미널 + 에디터를 한 화면에" / **미션5 "🎉 모든 미션을 마쳤어요!"**. 콘솔 에러는 `favicon.ico` 404(기존, 무관)뿐. 부팅 로그 정상.
-- **상태**: 로컬 커밋/푸시 미진행 — 사용자 명시 허락("푸시 진행" 등) 대기. 변경 파일: `js/main.js`, `index.html`.
+- **상태**: 커밋·푸시 완료 — 아래 `[2026-06-16 08:12:14]` entry 참조. 변경 파일: `js/main.js`, `index.html`, `Working_history.md`.
+
+---
+
+## [2026-06-16 08:12:14] 푸터 동적화 푸시 + 라이브 검증 (commit `ef5fd47`)
+
+- 사용자 명시 허락: "푸시 진행."
+- 커밋: **`ef5fd47`** "fix(footer): 다음 미션 예고 동적화 — 미션 5 잔존 placeholder 제거" (3 files, +80/-1). 최초 커밋 시 Bash 도구에 PowerShell here-string(`@'...'@`)을 잘못 써서 제목에 `@ ` 접두가 붙음 → `git commit --amend -F -`(heredoc)로 정정 후 푸시(푸시 전이라 안전).
+- 푸시: `d10c974..ef5fd47  main -> main` 성공. `git rev-list --left-right --count origin/main...main` → `0 0` (완전 동기화).
+- **라이브 검증** (Pages 빌드 폴링, 캐시 무력화 쿼리스트링): **시도 2회(~16초)** 만에 반영 확인.
+  - `https://dongchan.github.io/krivet-terminal-sim/js/main.js` → `formatFooterHint` 함수 + `'🎉 모든 미션을 마쳤어요!'` 문구 존재.
+  - `.../index.html` → `.footer-hint` 가 `💬 미션을 불러오는 중…` 로 교체됨(옛 하드코딩 "두 개의 터미널…" 제거 확인).
+- 교훈(메모): **Bash 도구에서는 heredoc(`<<'EOF'`)을 쓸 것** — PowerShell here-string 문법은 `@` 가 리터럴로 들어간다.
 
 ---
 
