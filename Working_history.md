@@ -47,6 +47,23 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 
 ---
 
+## [2026-06-16 08:09:25] 푸터 "다음 미션 예고" 동적화 — 미션 5 잔존 placeholder 버그 픽스
+
+- **계기**: 새 세션에서 GitHub 원격(`d10c974`, Phase 6 완료)과 로컬(`2006970`, Phase 1) 비교 → 23커밋 뒤처짐 확인 후 `git pull --ff-only` 로 동기화(머지 없이 fast-forward). 이후 사용자 발견: "5번째 미션 마지막으로 가면, 두 개의 터미널로 시작하는 메세지가 있다."
+- **진단**: `index.html` 의 `.footer-hint` 가 `💬 다음 미션 예고: 두 개의 터미널, 두 배의 속도` 로 **하드코딩**되어 있고 `js/` 어디서도 갱신하지 않음(검색 0건). 모든 미션에서 동일 문구 → 미션 5(마지막)에서는 ① 다음 미션이 없는데 예고가 뜨고 ② 그 내용이 미션 2임. 이미 `Working_history.md:501` 에 "알려진 정적 어색함, 추후 폴리시" 로 기록돼 있던 항목.
+- **사용자 결정**(AskUserQuestion): 동적 갱신. 미리보기 승인 — 미션 1→"두 개의 터미널…", 미션 3→"오토컴팩트 시뮬레이션", 미션 5→"🎉 모든 미션을 마쳤어요!".
+- **구현** (`js/main.js`):
+  - `findNextMission(chapterId, missionId)` 추가 — `goToNextMission` 의 순회 규칙 재사용(챕터 내 다음 → 다음 챕터 첫 미션 → 마지막이면 `null`).
+  - `describeMission(chapter, missionId)` — `chapters.json` 의 `missionMeta` 에서 `{title, summary, chapterTitle}` 추출.
+  - `updateFooterHint()` — 현재 라우트 기준 `.footer-hint` 재렌더.
+  - `formatFooterHint(next)` — 콘텐츠 결정 함수. 다음 있으면 `title.split('·').pop().trim()` 로 "미션 N · " 접두 제거, `null` 이면 마무리 문구.
+  - 배선: `route:changed` 리스너 맨 앞에서 호출 + boot 끝(`maybeAutoStart` 직후)에서 1회 직접 호출(부팅 시 첫 `route:changed` 는 `bindMissionEvents` 리스너 부착 전에 발생하므로).
+  - `index.html` 정적 placeholder → `💬 미션을 불러오는 중…` (깊은 링크 진입 시 잘못된 문구 깜빡임 방지).
+- **라이브 검증** (Playwright, `http://localhost:5500`): 5개 라우트 순회 결과 전부 기대값 일치 — 미션1 "두 개의 터미널, 두 배의 속도" / 미션2 "GUI에서는 안 보이는 것" / 미션3 "오토컴팩트 시뮬레이션" / 미션4 "터미널 + 에디터를 한 화면에" / **미션5 "🎉 모든 미션을 마쳤어요!"**. 콘솔 에러는 `favicon.ico` 404(기존, 무관)뿐. 부팅 로그 정상.
+- **상태**: 로컬 커밋/푸시 미진행 — 사용자 명시 허락("푸시 진행" 등) 대기. 변경 파일: `js/main.js`, `index.html`.
+
+---
+
 ## [2026-05-11 22:24:48] Phase 6-3 푸시 + 라이브 검증 (commit `344bbaf`)
 
 - 사용자 명시 허락: "메인푸시 진행."

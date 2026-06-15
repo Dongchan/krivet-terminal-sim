@@ -37,6 +37,7 @@ async function boot() {
   bindMissionEvents();
 
   await maybeAutoStart();
+  updateFooterHint(); // 부팅 시 첫 route:changed 는 리스너 부착 전이라 한 번 직접 갱신
 
   console.info('[KRIVET 터미널 시뮬레이터] Phase 1 부트 완료');
 }
@@ -85,6 +86,7 @@ function bindMissionEvents() {
     showCompletionOverlay(mission);
   });
   on('route:changed', () => {
+    updateFooterHint();
     // 이전 미션 출력 잔재 제거. 사용자가 미션을 시작하면 다시 mount하므로 안전.
     if (parallelTerminals) {
       parallelTerminals.destroy();
@@ -241,6 +243,66 @@ function goToNextMission() {
     return;
   }
   alert('모든 미션을 완료했습니다! 🎉');
+}
+
+// 현재 미션의 "다음 미션"을 찾는다. goToNextMission 의 순회 규칙과 동일:
+// 같은 챕터의 다음 → 없으면 다음 챕터의 첫 미션 → 그것도 없으면 null(마지막).
+function findNextMission(chapterId, missionId) {
+  const chapter = chaptersRef?.find((c) => c.id === chapterId);
+  if (!chapter) return null;
+  const idx = chapter.missions.indexOf(missionId);
+
+  if (idx >= 0 && idx < chapter.missions.length - 1) {
+    return describeMission(chapter, chapter.missions[idx + 1]);
+  }
+  const chapIdx = chaptersRef.indexOf(chapter);
+  if (chapIdx >= 0 && chapIdx < chaptersRef.length - 1) {
+    const nextChapter = chaptersRef[chapIdx + 1];
+    return describeMission(nextChapter, nextChapter.missions[0]);
+  }
+  return null; // 마지막 미션 — 다음 없음
+}
+
+// 챕터 + 미션 id 로 표시에 필요한 메타를 모은다.
+function describeMission(chapter, missionId) {
+  const meta = chapter.missionMeta?.[missionId] || {};
+  return {
+    chapterId: chapter.id,
+    missionId,
+    title: meta.title || missionId,        // 예: "미션 2 · 두 개의 터미널, 두 배의 속도"
+    summary: meta.summary || '',            // 예: "탐색기에선 불가능했던 '동시에' 를 체험합니다."
+    chapterTitle: chapter.title || '',
+  };
+}
+
+// 현재 라우트 기준으로 푸터 한 줄을 다시 그린다.
+function updateFooterHint() {
+  const hintEl = $('.footer-hint');
+  if (!hintEl) return;
+  const state = getState();
+  const next = findNextMission(state.currentChapterId, state.currentMissionId);
+  hintEl.textContent = formatFooterHint(next);
+}
+
+/**
+ * 푸터의 "다음 미션 예고" 한 줄 문구를 만든다. (← 콘텐츠 결정 지점)
+ *
+ * @param {object|null} next - 다음 미션 정보. 마지막 미션이면 null.
+ *   next = { title, summary, chapterTitle, chapterId, missionId }
+ * @returns {string} 푸터에 표시할 문구
+ *
+ * 결정 포인트:
+ *  1) next 가 있을 때 — 무엇을 보여줄지:
+ *     · next.title.split('·').pop().trim()  →  "두 개의 터미널, 두 배의 속도" (승인한 미리보기)
+ *     · next.summary                        →  "탐색기에선 불가능했던 '동시에' 를 체험합니다."
+ *  2) next 가 null(마지막)일 때 — 어떤 마무리 문구를 보여줄지.
+ */
+function formatFooterHint(next) {
+  if (!next) {
+    return '🎉 모든 미션을 마쳤어요!';
+  }
+  const label = next.title.split('·').pop().trim();
+  return `💬 다음 미션 예고: ${label}`;
 }
 
 function showCompletionOverlay(mission) {
