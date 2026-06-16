@@ -43,6 +43,12 @@ export function initPanel(chapters) {
     currentCtx.ideMock = { ...(currentCtx.ideMock || {}), scenario: payload };
     renderActive();
   });
+  on('orchestration:stage', (payload) => {
+    if (!currentCtx) return;
+    // 각 이벤트는 완전한 스냅샷 — 병합하면 paused 플래그가 다음 단계까지 남으므로 교체한다.
+    currentCtx.orch = { ...payload };
+    renderActive();
+  });
 }
 
 function renderIdle() {
@@ -78,7 +84,7 @@ function renderIdle() {
 
 function renderActive() {
   if (!currentCtx || !chaptersRef) return;
-  const { mission, stepIndex, totalSteps, hint, failures, special, specialKind, autocompact, ideMock } = currentCtx;
+  const { mission, stepIndex, totalSteps, hint, failures, special, specialKind, autocompact, ideMock, orch } = currentCtx;
   const chapter = chaptersRef.find((c) => c.id === mission.chapterId) || chaptersRef[0];
   const step = mission.steps?.[stepIndex];
 
@@ -93,6 +99,8 @@ function renderActive() {
     renderAutocompactPanel(panel, autocompact);
   } else if (special && specialKind === 'ide-mock') {
     renderIdeMockPanel(panel, ideMock);
+  } else if (special && specialKind === 'orchestration') {
+    renderOrchestrationPanel(panel, orch);
   } else if (special) {
     panel.appendChild(el('div', { class: 'panel-step' }, [
       el('div', { class: 'panel-step-label' }, ['🚀 자동 진행 중']),
@@ -290,4 +298,49 @@ function renderIdeMockPanel(panel, ideMock) {
       '좌측 탐색기에서 파일을 클릭하거나 하단 터미널을 사용해 보세요. ESC 를 누르면 바탕화면으로 되돌아갑니다.',
     ]),
   ]));
+}
+
+function renderOrchestrationPanel(panel, orch) {
+  const act = orch?.act || 'naive';
+
+  const COPY = {
+    naive: {
+      label: '① 막무가내 — 한 세션에 다',
+      text: '논문을 통째로 한 세션에 던졌어요. 위쪽 게이지가 빨갛게 차오르는 걸 보세요 — 컨텍스트가 포화되면 앞부분을 잊고 결과가 흐려집니다.',
+    },
+    decompose: {
+      label: '② 동적 워크플로우 — 독립은 동시, 의존은 대기',
+      text: '오케스트레이터가 의존성을 보고 정합니다 — 서로 독립인 ①목차·②이론·③방법론은 한꺼번에(병렬) 던지고, 그 결과가 필요한 ④정합성만 기다렸다 실행합니다. 각 에이전트의 미니 게이지가 낮게(초록) 유지되는 것에도 주목하세요.',
+    },
+    synthesis: {
+      label: '③ 종합 — 결과를 하나로',
+      text: '오케스트레이터가 네 에이전트의 결과를 모아 분석 메모를 작성합니다. 같은 논문인데, 막무가내 때보다 훨씬 또렷하죠.',
+    },
+    done: {
+      label: '✨ 시연 완료',
+      text: '막무가내(빨강) vs 분업(초록)의 차이를 봤어요 — 회고 카드를 확인해 주세요.',
+    },
+  };
+
+  const c = COPY[act] || COPY.naive;
+  panel.appendChild(el('div', { class: 'panel-step' }, [
+    el('div', { class: 'panel-step-label' }, [c.label]),
+    el('div', { class: 'panel-step-text' }, [c.text]),
+  ]));
+
+  if (orch?.paused && act !== 'done') {
+    panel.appendChild(el('div', { class: 'panel-tip' }, [
+      el('div', { class: 'panel-tip-label' }, ['✋ 확인 후 진행']),
+      el('div', { class: 'panel-step-text' }, ['이 단계를 다 보았으면 우측 상단의 ‘다음 →’ 버튼을 눌러 넘어가세요.']),
+    ]));
+  }
+
+  if (act === 'naive') {
+    panel.appendChild(el('div', { class: 'panel-tip' }, [
+      el('div', { class: 'panel-tip-label' }, ['관찰 포인트']),
+      el('div', { class: 'panel-step-text' }, [
+        '이게 미션 4에서 본 그 컨텍스트 게이지예요. 한 세션에 너무 많이 담으면 바로 이렇게 됩니다.',
+      ]),
+    ]));
+  }
 }

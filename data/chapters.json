@@ -46,6 +46,19 @@
           "summary": "IDE는 새로운 개발 방법론이 아니라, 여러 도구를 한 워크스페이스에 모은 환경입니다. 그 차이를 직접 체험합니다."
         }
       }
+    },
+    {
+      "id": "ch4",
+      "shortLabel": "Ch.4",
+      "title": "혼자 다 하지 않기",
+      "summary": "한 작업을 여러 전문 에이전트에게 나눠 맡기면, 더 빠르고 더 또렷합니다.",
+      "missions": ["ch4-m6-agent-orchestration"],
+      "missionMeta": {
+        "ch4-m6-agent-orchestration": {
+          "title": "미션 6 · 혼자 다 하지 않기 — 에이전트 분업",
+          "summary": "논문 한 편을 막무가내로 분석하면 컨텍스트가 포화됩니다. 전문 에이전트로 나누면 어떻게 달라지는지 봅니다."
+        }
+      }
     }
   ]
 }

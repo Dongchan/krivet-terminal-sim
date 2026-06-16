@@ -8,6 +8,7 @@ import { loadMission } from './mission/mission-loader.js';
 import { ParallelTerminals } from './special/parallel-terminals.js';
 import { AutocompactMission } from './special/autocompact.js';
 import { IdeMockMission } from './special/ide-mock.js';
+import { OrchestrationMission } from './special/orchestration.js';
 import { $, el, clear } from './utils/dom.js';
 import { on, emit } from './utils/events.js';
 
@@ -17,6 +18,7 @@ let engine = null;
 let parallelTerminals = null;
 let autocompactMission = null;
 let ideMockMission = null;
+let orchestrationMission = null;
 
 async function boot() {
   chaptersRef = await loadChapters();
@@ -100,6 +102,10 @@ function bindMissionEvents() {
       ideMockMission.destroy();
       ideMockMission = null;
     }
+    if (orchestrationMission) {
+      orchestrationMission.destroy();
+      orchestrationMission = null;
+    }
     if (!terminal) return;
     if (engine?.mission && engine.mission.id !== getState().currentMissionId) {
       engine.mission = null;
@@ -125,6 +131,8 @@ async function startCurrentMission() {
       await startAutocompactMission(mission);
     } else if (mission.special?.kind === 'ide-mock') {
       await startIdeMockMission(mission);
+    } else if (mission.special?.kind === 'orchestration') {
+      await startOrchestrationMission(mission);
     } else {
       await engine.loadAndStart(missionId);
     }
@@ -172,6 +180,19 @@ async function startIdeMockMission(mission) {
   emit('mission:start', { mission, stepIndex: 0, special: true, specialKind: 'ide-mock' });
 
   ideMockMission.mount();
+}
+
+async function startOrchestrationMission(mission) {
+  const rootEl = $('.app-terminal');
+  if (orchestrationMission) orchestrationMission.destroy();
+  orchestrationMission = new OrchestrationMission(rootEl, mission.special.config || {});
+  orchestrationMission.setMission(mission);
+
+  updateProgress(mission.id, { status: 'in_progress' });
+  // panel.js 가 currentCtx 를 먼저 세팅하도록 mission:start 를 mount() 이전에 보냄
+  emit('mission:start', { mission, stepIndex: 0, special: true, specialKind: 'orchestration' });
+
+  orchestrationMission.mount();
 }
 
 function isPlaceholder(missionId) {

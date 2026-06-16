@@ -3,7 +3,7 @@
 > 이 문서는 컨텍스트 컴팩트/클리어 이후에도 다음 세션이 작업 맥락을 즉시 복원하도록 모든 작업을 빠짐없이 역순(최신이 위)으로 기록한다.
 > 매 entry의 timestamp는 작업 시점에 파이썬으로 호출해 부여한다: `python -c "from datetime import datetime; print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))"`
 >
-> **현재 단계**: **Phase 6 완료** — README 정비(`bf084bb`) + MIT LICENSE + reduced-motion 회귀 픽스(`e5500d6`) + Plan 정본 미션 5 사양 동기화. 사운드 토글은 사용자 결정으로 건너뜀. **다음 후보(우선순위 없음)**: Phase 7 선택적 확장 / 미션 추가 / 미션 카피 폴리시 / 디자인 보강. 사용자 결정 대기.
+> **현재 단계**: **Phase 6 완료 + 미션 6 신설·동적 재설계(로컬, 푸시 대기)** — Phase 6(README·LICENSE·a11y) 라이브 완료 후, 푸터 동적화 픽스(`ef5fd47`, 푸시됨)에 이어 **Ch.4 「혼자 다 하지 않기」 미션 6**을 신설하고 **동적 워크플로우(독립=병렬 동시 / 의존=대기 후)**로 재설계. 신규 `special.kind:"orchestration"` + `js/special/orchestration.js`. 라이브 검증(Playwright) 통과, **아직 커밋/푸시 안 함 — 사용자 검토·허락 대기**. 자세한 건 가장 위 두 entry 참조. **다음 후보**: 미션 6 에이전트 result 콘텐츠 다듬기 / 미션 7(git 안전망) / Phase 7 선택 확장.
 > **라이브 URL**: <https://dongchan.github.io/krivet-terminal-sim/>
 > **GitHub 저장소**: <https://github.com/Dongchan/krivet-terminal-sim> (Public)
 > **로컬 서버**: `python -m http.server 5500` 백그라운드 실행 중 (Bash ID: becnmuyej, http://localhost:5500/) — 새 세션에서는 만료되어 있을 수 있으므로 필요시 재실행.
@@ -61,6 +61,54 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
   - `index.html` 정적 placeholder → `💬 미션을 불러오는 중…` (깊은 링크 진입 시 잘못된 문구 깜빡임 방지).
 - **라이브 검증** (Playwright, `http://localhost:5500`): 5개 라우트 순회 결과 전부 기대값 일치 — 미션1 "두 개의 터미널, 두 배의 속도" / 미션2 "GUI에서는 안 보이는 것" / 미션3 "오토컴팩트 시뮬레이션" / 미션4 "터미널 + 에디터를 한 화면에" / **미션5 "🎉 모든 미션을 마쳤어요!"**. 콘솔 에러는 `favicon.ico` 404(기존, 무관)뿐. 부팅 로그 정상.
 - **상태**: 커밋·푸시 완료 — 아래 `[2026-06-16 08:12:14]` entry 참조. 변경 파일: `js/main.js`, `index.html`, `Working_history.md`.
+
+---
+
+## [2026-06-16 09:54:45] 미션 6 — 단계 게이트 추가 (자동 재생 → 확인 후 다음)
+
+- **계기**: 사용자 "화면이 한 번에 쭈욱 이어지니 무슨 내용인지 알 수 없다. 확인하고 다음으로 넘기는 게 낫다." → 자동 재생(~10초 연속)을 **단계별 '다음 →' 게이트**로 전환.
+- **구현** (`js/special/orchestration.js`):
+  - 배너를 `bannerLabelEl`(라벨) + `nextBtnEl`('다음 →' 버튼, 기본 hidden) 구조로. `setBanner()` 헬퍼.
+  - `awaitNext(label)` — 버튼 노출 후 클릭까지 Promise 대기. 클릭 시 resolve + 버튼 숨김. `orchestration:stage {paused:true}` emit.
+  - 게이트 3곳: ① 막무가내 후("다음 → 분업 방식 보기") → ② 병렬 burst 후 stage 루프 내("다음 → 의존 단계 실행") → ③ 분업 완료 후 종합 전("다음 → 종합 결과 보기"). 그 뒤 종합→회고 카드.
+  - `destroy()`에서 대기 중 `nextResolve` 풀어 run() 루프가 alive=false로 탈출하게.
+- **패널** (`js/panel.js`): `orchestration:stage` 핸들러를 병합→**교체**로 수정(매 이벤트가 완전 스냅샷이라 paused 플래그가 다음 단계까지 남던 버그 방지). paused 시 '✋ 확인 후 진행 — 다음 → 누르세요' 팁 표시.
+- **CSS** (`css/special.css`): `.orch-banner` flex 양끝 배치 + `.orch-banner-next`(액션 블루 버튼, 펄스 애니메이션, reduced-motion 시 정지).
+- **라이브 검증** (Playwright, 클릭 구동): Gate1 등장 + `stayedPaused=true`(1.5초 후에도 자동 진행 안 함) → Gate2 `완료✓|완료✓|완료✓|대기` → Gate3 `완료✓|완료✓|완료✓|완료✓` → 종합→회고 카드. 각 게이트 버튼 라벨·배너 기대값 일치.
+- **상태**: 로컬만, **커밋/푸시 미진행** — 미션 6(신설+동적+게이트) 전체가 아직 한 번도 푸시 안 됨. 사용자 검토·허락 대기.
+
+---
+
+## [2026-06-16 09:46:34] 미션 6 → 동적 워크플로우로 재설계 (순차+병렬 혼합)
+
+- **계기**: 사용자 "순서대로도 좋고, 다이나믹 워크플로우처럼 병렬로도 좋을듯." → AskUserQuestion으로 "하나의 동적 워크플로우" 확정(독립=동시 팬아웃, 의존=대기 후).
+- **개념 보정**: 기존 미션 6은 ①목차→②③→④의 계단형 의존이었음. 이를 **의존성 그래프 기반 동적 워크플로우**로 재배치 — ①목차·②이론·③방법론을 모두 독립으로 보고 **stage 1 동시 디스패치**, ④정합성만 stage 2(의존). "무작정 순차도 무작정 병렬도 아니다"가 메시지.
+- **변경 파일**:
+  - `ch4-m6-agent-orchestration.json`: theory·method stage 2→1, rigor stage 3→2. orchestrator에 `stageNotes`(stage별 동적 판단 내레이션) 추가, intro 갱신, agent role을 (독립)/(의존) 표기로, 회고 bullet 3 동적 워크플로우로 교체.
+  - `js/special/orchestration.js`: orchestrator 영역을 `orchLogEl`(여러 줄)로, 각 stage 시작 전 `stageNotes[stage]` 한 줄 내레이션 출력. 배너 "② 동적 워크플로우". `orchLogEl/synthesisBox` 생성자·destroy 정리.
+  - `js/panel.js`: decompose 카피를 동적 워크플로우(독립 동시/의존 대기)로 갱신.
+  - `css/special.css`: `.orch-orchestrator` flex-column + `.orch-orch-note`(dim) 추가.
+- **라이브 검증** (Playwright): `sawThreeParallel=true`. t=3.6 내레이션 "독립 3건 → 동시 디스패치" → t=4.2 `진행중|진행중|진행중|대기`(①②③ 병렬, ④ 대기) → t=6.0 두번째 내레이션 "④는 결과 필요 → 대기" → t=6.6 ④ 단독 실행 → 종합 → 회고 카드. 의존성 그래프 동작 시각적 확증.
+- **상태**: 로컬만, **커밋/푸시 미진행** — 사용자 검토·허락 대기. (미션 6 신설 + 동적 재설계가 아직 한 번도 푸시 안 됨.)
+
+---
+
+## [2026-06-16 09:33:33] 미션 6 신설 — Ch.4 「혼자 다 하지 않기」 에이전트 분업(오케스트레이션)
+
+- **계기**: 사용자가 "여러 세션 동시 실행 병렬작업" 미션을 제안 → 논의 끝에 더 연구 친화적인 **"한 문서를 전문 서브에이전트로 분업(오케스트레이션)"** 개념으로 발전. AskUserQuestion 2회로 ① 후보 A(병렬) → ② 빌드 방향 B(오케스트레이션, 나쁜 예→분업 2막 + DAG 의존성) 확정.
+- **개념**: Act1 막무가내 단일 세션(컨텍스트 포화=빨강) → Act2 전문 에이전트 분업(각자 가벼움=초록), DAG = `stage` 번호로 인코딩(①목차 → ②이론+③방법론 동시 → ④정합성·한계 종합) → Act3 종합. Ch.2(컨텍스트 한계)를 해법으로 회수하는 캡스톤.
+- **신규 파일 3개**:
+  - `data/missions/ch4-m6-agent-orchestration.json` — special.kind `orchestration`. naive 스크립트 + agents[](stage/peakRatio/runMs/result) + orchestrator.synthesis. 문서: `직업훈련_참여가_임금에_미치는_효과.pdf`(가상).
+  - `js/special/orchestration.js` — `OrchestrationMission` 클래스. autocompact 패턴 답습(disclaimer·게이지·reduced-motion·`mission:completed`). DAG는 stage 오름차순 `Promise.all`. Act1 게이지는 `.autocompact-gauge` 클래스 재사용(tier-danger 빨강 자동).
+  - css/special.css 끝에 `미션 6` 섹션(orch-wrapper/banner/naive/board/agents/mini-gauge/synthesis + 900px 스택 + reduced-motion).
+- **수정 파일 3개**:
+  - `data/chapters.json` — ch4 블록 추가(missions=[ch4-m6-agent-orchestration]).
+  - `js/main.js` — import + `orchestrationMission` 변수 + startCurrentMission 디스패치(`kind==='orchestration'`) + `startOrchestrationMission()` + route:changed destroy.
+  - `js/panel.js` — `on('orchestration:stage')` 구독 + renderActive 분기 + `renderOrchestrationPanel()`(act별 카피: naive/decompose/synthesis/done).
+- **무결성**: `node --check` 3개 JS OK, JSON 2개 parse OK.
+- **라이브 검증** (Playwright, localhost:5500): 미션 시작→디스클레이머→자동 실행 28회 폴링. **DAG 동작 확증** — t=3.6 `진행중|대기|대기|대기`(①단독) → t=4.8 `완료✓|진행중|진행중|대기`(②③ 동시) → t=7.2 `완료✓|완료✓|완료✓|진행중`(④) → t=9.0 전부 완료 → t=10.2 회고 카드("왜 한 세션에 다 안 넣고, 나눴을까요?"). naive 게이지 tier-safe→tier-danger(빨강), 에이전트 미니게이지 최종 12/18/16/20%(초록·낮음) 대비 확인. 콘솔 에러는 favicon 404뿐.
+- **보너스**: 직전 동적 푸터 픽스 덕에 미션 5 푸터가 자동으로 "다음 미션 예고: 혼자 다 하지 않기 — 에이전트 분업"으로, 진행률 [0/6]·Ch.4 네비 자동 반영(추가 작업 0).
+- **상태**: 로컬 작업만, **커밋/푸시 미진행** — 사용자 검토 + 명시 허락 대기. 다듬을 후보: 에이전트 result 텍스트(KRIVET 실제 업무 표현), 문서명/방법론 디테일, 세션 수.
 
 ---
 
