@@ -233,11 +233,15 @@
   <ol>
     <li><a href="https://nodejs.org" target="_blank" rel="noopener">nodejs.org</a> 접속</li>
     <li><strong>LTS</strong>(안정 버전) 버튼을 눌러 내려받기 <span class="os win">Windows</span> <code class="inline">.msi</code> · <span class="os mac">Mac</span> <code class="inline">.pkg</code></li>
-    <li>받은 설치 파일을 실행해 설치합니다. 대부분 '다음'으로 진행하되, <span class="os win">Windows</span>는 중간 'Add to PATH' 항목을 꼭 확인하세요(아래 설명).</li>
+    <li>받은 설치 파일을 실행해 <strong>기본 설정 그대로('다음'만 눌러)</strong> 설치합니다. <span class="os win">Windows</span>는 이렇게만 해도 환경변수(PATH)가 자동 등록됩니다(아래 설명).</li>
   </ol>
   <div class="callout tip">
-    <span class="ti"><span class="os win">Windows</span> 'Add to PATH'는 꼭 켜 두세요 (환경변수 PATH)</span>
-    <p>설치 중 <strong>'Custom Setup'</strong> 화면에 <code class="inline">Add to PATH</code> 항목이 있습니다. node·npm 명령을 <strong>아무 터미널에서나 쓸 수 있게 환경변수(PATH)에 등록</strong>하는 항목으로, <strong>기본으로 켜져 있으니 끄지 말고 그대로</strong> 두세요. 이게 빠지면 바로 아래의 '<strong>node를 찾을 수 없습니다</strong>' 오류가 납니다. 그다음 'Tools for Native Modules'(추가 도구 자동 설치) 체크박스는 <strong>이 안내서에선 필요 없으니 그냥 두면 됩니다.</strong></p>
+    <span class="ti"><span class="os win">Windows</span> '환경변수' 설정은 자동입니다 (PATH)</span>
+    <p>기본 설정 그대로 설치하면 node·npm 명령이 <strong>아무 터미널에서나 되도록 환경변수(PATH)에 자동 등록</strong>됩니다. 별도의 '환경변수 설정 화면'이 따로 뜨지 않아도 정상이니 안심하세요. (설치 중 'Custom Setup' 단계의 <code class="inline">Add to PATH</code> 항목이 기본으로 켜져 있어서 그렇습니다. 일부러 끄지만 마세요.)</p>
+  </div>
+  <div class="callout warn">
+    <span class="ti"><span class="os win">Windows</span> 설치 끝에 검은 PowerShell 창이 뜬다면?</span>
+    <p>설치 마지막에 <strong>'Tools for Native Modules'</strong>(추가 도구 자동 설치)를 체크하면, 설치가 끝난 뒤 <strong>검은 PowerShell 창이 저절로 떠서 Chocolatey·Python 같은 도구를 한참 설치</strong>합니다. 처음 보면 당황스럽지만 <strong>오류도 바이러스도 아니라 정상</strong>입니다. 이 안내서에는 <strong>필요 없으니</strong>, 설치할 때 그 체크박스를 <strong>켜지 않으면</strong> 이 창이 안 뜹니다. 이미 떴다면 끝날 때까지 두었다가 안내대로 아무 키나 눌러 닫으면 됩니다(중간에 그냥 닫아도 괜찮습니다).</p>
   </div>
   <p>설치가 끝나면 잘 깔렸는지 확인합니다. 터미널을 엽니다.</p>
   <ul>
@@ -264,10 +268,21 @@ npm --version</code></pre>
     <div class="bar"><span>터미널 · 설치</span><button class="copy" onclick="cp(this)">복사</button></div>
     <pre><code>npm install -g @anthropic-ai/claude-code</code></pre>
   </div>
-  <p>설치 후, 작업할 폴더에서 아래를 입력하면 실행됩니다. 처음 실행하면 브라우저가 열려 로그인합니다.</p>
+  <p>설치 후, 작업할 폴더에서 아래를 입력하면 실행됩니다.</p>
   <div class="code">
     <div class="bar"><span>터미널 · 실행 / 로그인</span><button class="copy" onclick="cp(this)">복사</button></div>
     <pre><code>claude</code></pre>
+  </div>
+  <p>처음 <code class="inline">claude</code>를 실행하면 <strong>계정 연결(로그인)</strong> 과정을 거칩니다.</p>
+  <ol>
+    <li>로그인 방식을 묻습니다. <strong>구독 계정으로 쓰려면 'Claude account'</strong> 쪽을 고릅니다(회사 API 키가 있으면 'Anthropic Console' 선택).</li>
+    <li>자동으로 <strong>브라우저가 열립니다.</strong> claude.ai에 로그인한 뒤 <strong>'Authorize'(승인)</strong>를 누릅니다.</li>
+    <li>브라우저가 안 열리면, 터미널에 표시된 <strong>인증 주소(URL)를 복사해 브라우저에 직접</strong> 붙여 넣으세요. 코드가 나오면 그 코드를 터미널에 붙여 넣습니다.</li>
+    <li>승인되면 터미널로 돌아와 <strong>연결 완료</strong>. 이후엔 다시 로그인할 필요 없이 바로 실행됩니다.</li>
+  </ol>
+  <div class="callout note">
+    <span class="ti">처음 실행 때 더 나올 수 있는 질문</span>
+    <p>색상 테마 선택, '이 폴더를 신뢰하느냐(trust)' 같은 질문이 한두 개 더 나올 수 있습니다. 테마는 아무거나, 신뢰 질문은 <strong>Yes</strong>를 고르면 됩니다.</p>
   </div>
   <p>잘 깔렸는지 확인하려면:</p>
   <div class="code">
@@ -286,6 +301,7 @@ claude doctor</code></pre>
     <div class="bar"><span>터미널 · 실행 / 로그인</span><button class="copy" onclick="cp(this)">복사</button></div>
     <pre><code>codex</code></pre>
   </div>
+  <p>Codex도 처음 <code class="inline">codex</code>를 실행하면 비슷하게 <strong>ChatGPT 계정 로그인(브라우저 인증)</strong>을 거칩니다.</p>
   <div class="callout note">
     <span class="ti">참고</span>
     <p>이 외에도 Google <strong>Gemini CLI</strong>, <strong>Antigravity</strong> 등 여러 도구가 있습니다. 발표에서는 터미널에서 <code class="inline">claude</code>, <code class="inline">codex</code>, <code class="inline">agy</code> 처럼 한 단어만 입력해 실행하는 모습을 보여드렸습니다.</p>
@@ -337,8 +353,9 @@ claude doctor</code></pre>
   </div>
   <p>이제 이 폴더가 작업 무대가 됩니다. 폴더 안의 파일을 읽히고, 새 파일을 만들게 하고, 코드를 돌릴 수 있습니다.</p>
   <div class="callout note">
-    <span class="ti"><span class="os win">Windows</span> VS Code 터미널을 cmd로</span>
-    <p>VS Code 기본 터미널이 cmd가 아닐 수 있습니다. 터미널 패널 오른쪽 <strong>+ 옆 ∨(아래 화살표) → 기본 프로필 선택 → Command Prompt</strong>를 고르면 cmd로 통일됩니다. (이 안내서의 명령은 어느 터미널에서도 동작합니다.)</p>
+    <span class="ti"><span class="os win">Windows</span> VS Code 터미널은 cmd로 바꿔 두세요</span>
+    <p>VS Code에서 터미널을 열면 보통 <strong>PowerShell</strong>이 먼저 뜹니다. 그런데 PowerShell에서는 보안 정책 때문에 <strong>npm으로 설치한 명령(claude·codex 등)이 막혀 실행이 안 되는 경우</strong>가 있습니다. 그래서 기본 터미널을 <strong>cmd(명령 프롬프트)로 바꿔 두는 것을 권장</strong>합니다.</p>
+    <p><strong>바꾸는 법:</strong> 터미널 패널 오른쪽 위 <strong>+ 옆의 ∨(아래 화살표) → 'Select Default Profile'(기본 프로필 선택) → 'Command Prompt'</strong> 선택 → 그 다음 여는 터미널부터 cmd로 뜹니다. (지금 열린 PowerShell 터미널은 휴지통 아이콘으로 닫고 새로 열면 cmd가 됩니다.)</p>
   </div>
 
   <div class="callout tip">
