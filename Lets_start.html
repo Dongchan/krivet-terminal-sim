@@ -233,8 +233,12 @@
   <ol>
     <li><a href="https://nodejs.org" target="_blank" rel="noopener">nodejs.org</a> 접속</li>
     <li><strong>LTS</strong>(안정 버전) 버튼을 눌러 내려받기 <span class="os win">Windows</span> <code class="inline">.msi</code> · <span class="os mac">Mac</span> <code class="inline">.pkg</code></li>
-    <li>받은 설치 파일을 실행하고 '다음'만 눌러 설치(기본값 그대로)</li>
+    <li>받은 설치 파일을 실행해 설치합니다. 대부분 '다음'으로 진행하되, <span class="os win">Windows</span>는 중간 'Add to PATH' 항목을 꼭 확인하세요(아래 설명).</li>
   </ol>
+  <div class="callout tip">
+    <span class="ti"><span class="os win">Windows</span> 'Add to PATH'는 꼭 켜 두세요 (환경변수 PATH)</span>
+    <p>설치 중 <strong>'Custom Setup'</strong> 화면에 <code class="inline">Add to PATH</code> 항목이 있습니다. node·npm 명령을 <strong>아무 터미널에서나 쓸 수 있게 환경변수(PATH)에 등록</strong>하는 항목으로, <strong>기본으로 켜져 있으니 끄지 말고 그대로</strong> 두세요. 이게 빠지면 바로 아래의 '<strong>node를 찾을 수 없습니다</strong>' 오류가 납니다. 그다음 'Tools for Native Modules'(추가 도구 자동 설치) 체크박스는 <strong>이 안내서에선 필요 없으니 그냥 두면 됩니다.</strong></p>
+  </div>
   <p>설치가 끝나면 잘 깔렸는지 확인합니다. 터미널을 엽니다.</p>
   <ul>
     <li><span class="os win">Windows</span> 시작 메뉴에서 <strong>명령 프롬프트(cmd)</strong> 검색해 실행</li>
@@ -248,7 +252,7 @@ npm --version</code></pre>
   <p>각각 <code class="inline">v22.x.x</code> 처럼 숫자가 나오면 성공입니다.</p>
   <div class="callout warn">
     <span class="ti">'node를 찾을 수 없습니다' 라고 나오면</span>
-    <p>설치 후 <strong>터미널을 완전히 껐다 다시 켜세요.</strong> 새 프로그램 경로가 적용되려면 재시작이 필요합니다.</p>
+    <p>설치 후 <strong>터미널을 완전히 껐다 다시 켜세요.</strong> 새 프로그램 경로(PATH)가 적용되려면 재시작이 필요합니다. 그래도 안 되면 위 'Add to PATH'가 꺼진 채 설치된 경우이니, Node.js를 다시 설치하며 그 항목을 켜 주세요.</p>
   </div>
 
   <!-- 3 -->
