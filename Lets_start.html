@@ -233,15 +233,16 @@
   <ol>
     <li><a href="https://nodejs.org" target="_blank" rel="noopener">nodejs.org</a> 접속</li>
     <li><strong>LTS</strong>(안정 버전) 버튼을 눌러 내려받기 <span class="os win">Windows</span> <code class="inline">.msi</code> · <span class="os mac">Mac</span> <code class="inline">.pkg</code></li>
-    <li>받은 설치 파일을 실행해 <strong>기본 설정 그대로('다음'만 눌러)</strong> 설치합니다. <span class="os win">Windows</span>는 이렇게만 해도 환경변수(PATH)가 자동 등록됩니다(아래 설명).</li>
+    <li>받은 설치 파일을 실행해 '다음'으로 진행합니다. <span class="os win">Windows</span>는 환경변수(PATH)가 자동 등록되고, 마지막의 <strong>'추가 도구 자동 설치'는 체크하는 걸 권장</strong>합니다(아래 설명).</li>
   </ol>
   <div class="callout tip">
     <span class="ti"><span class="os win">Windows</span> '환경변수' 설정은 자동입니다 (PATH)</span>
     <p>기본 설정 그대로 설치하면 node·npm 명령이 <strong>아무 터미널에서나 되도록 환경변수(PATH)에 자동 등록</strong>됩니다. 별도의 '환경변수 설정 화면'이 따로 뜨지 않아도 정상이니 안심하세요. (설치 중 'Custom Setup' 단계의 <code class="inline">Add to PATH</code> 항목이 기본으로 켜져 있어서 그렇습니다. 일부러 끄지만 마세요.)</p>
   </div>
-  <div class="callout warn">
-    <span class="ti"><span class="os win">Windows</span> 설치 끝에 검은 PowerShell 창이 뜬다면?</span>
-    <p>설치 마지막에 <strong>'Tools for Native Modules'</strong>(추가 도구 자동 설치)를 체크하면, 설치가 끝난 뒤 <strong>검은 PowerShell 창이 저절로 떠서 Chocolatey·Python 같은 도구를 한참 설치</strong>합니다. 처음 보면 당황스럽지만 <strong>오류도 바이러스도 아니라 정상</strong>입니다. 이 안내서에는 <strong>필요 없으니</strong>, 설치할 때 그 체크박스를 <strong>켜지 않으면</strong> 이 창이 안 뜹니다. 이미 떴다면 끝날 때까지 두었다가 안내대로 아무 키나 눌러 닫으면 됩니다(중간에 그냥 닫아도 괜찮습니다).</p>
+  <div class="callout tip">
+    <span class="ti"><span class="os win">Windows</span> '추가 도구 자동 설치'는 체크하는 걸 권장합니다</span>
+    <p>설치 마지막에 <strong>'Tools for Native Modules'</strong>(추가 도구 자동 설치) 체크박스가 있습니다. 데이터 분석을 하다 보면 <strong>Python 같은 도구가 어차피 필요</strong>한데, 이걸 체크하면 한 번에 깔아 주니 <strong>체크를 권장</strong>합니다.</p>
+    <p>체크하면 설치가 끝난 뒤 <strong>검은 PowerShell 창이 저절로 떠서</strong> Chocolatey·Python 등을 <strong>한참(수 분 이상) 설치</strong>합니다. 처음 보면 당황스럽지만 <strong>오류도 바이러스도 아니라 정상</strong>이니, 끝날 때까지 두었다가 안내가 나오면 아무 키나 눌러 닫으세요. (용량이 크고 관리자 권한이 필요할 수 있습니다.)</p>
   </div>
   <p>설치가 끝나면 잘 깔렸는지 확인합니다. 터미널을 엽니다.</p>
   <ul>
