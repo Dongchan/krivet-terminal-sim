@@ -182,7 +182,7 @@
       <li><a href="#s2">Node.js 설치 (CLI의 토대)</a></li>
       <li><a href="#s3">CLI 도구 설치 (Claude·ChatGPT)</a></li>
       <li><a href="#s4">VS Code 설치</a></li>
-      <li><a href="#s5">프로젝트 열기 / 만들기</a></li>
+      <li><a href="#s5">작업 폴더 만들기</a></li>
       <li><a href="#s6">VS Code 통합 터미널에서 실행</a></li>
       <li><a href="#s7">마크다운(.md) 파일 만들기</a></li>
       <li><a href="#s8">'@' 기호로 파일 읽히기</a></li>
@@ -202,7 +202,7 @@
   </ul>
   <p>전체 흐름은 이렇습니다.</p>
   <div class="callout note">
-    <p style="margin:0;"><strong>① LLM 구독</strong> → <strong>② Node.js 설치</strong> → <strong>③ CLI 설치(claude·codex)</strong> → <strong>④ VS Code 설치</strong> → <strong>⑤ 프로젝트 폴더 열기</strong> → <strong>⑥ 터미널에서 LLM 실행</strong> → <strong>⑦ 마크다운으로 지시 작성</strong> → <strong>⑧ '@'로 파일 읽히기</strong> → <strong>⑨ 분석 실행</strong></p>
+    <p style="margin:0;"><strong>① LLM 구독</strong> → <strong>② Node.js 설치</strong> → <strong>③ CLI 설치(claude·codex)</strong> → <strong>④ VS Code 설치</strong> → <strong>⑤ 작업 폴더 만들기</strong> → <strong>⑥ 터미널에서 LLM 실행</strong> → <strong>⑦ 마크다운으로 지시 작성</strong> → <strong>⑧ '@'로 파일 읽히기</strong> → <strong>⑨ 분석 실행</strong></p>
   </div>
 
   <!-- 1 -->
@@ -305,27 +305,18 @@ claude doctor</code></pre>
   </div>
 
   <!-- 5 -->
-  <h2 id="s5"><span class="num">5</span>프로젝트 열기 / 만들기</h2>
+  <h2 id="s5"><span class="num">5</span>작업 폴더 만들기</h2>
   <p>LLM에게 작업을 시키려면, 먼저 작업할 <strong>'폴더(프로젝트)'</strong>를 정해야 합니다. LLM은 그 폴더 안의 파일들을 보고 일합니다.</p>
 
-  <h3>방법 A. 새 폴더로 시작</h3>
   <ol>
-    <li>바탕화면 등에 새 폴더를 하나 만듭니다(예: <code class="inline">my-analysis</code>).</li>
+    <li>새 폴더를 하나 만듭니다(예: <code class="inline">my-analysis</code>).</li>
     <li>VS Code에서 <strong>File → Open Folder</strong> (<kbd>Ctrl</kbd>+<kbd>K</kbd> 다음 <kbd>Ctrl</kbd>+<kbd>O</kbd>) 로 그 폴더를 엽니다.</li>
     <li>"Do you trust the authors of the files in this folder?" 가 뜨면 <strong>Yes, I trust</strong>를 누릅니다.</li>
   </ol>
 
-  <h3>방법 B. 이미 있는 프로젝트 받아서 열기</h3>
-  <p>이번 데모처럼 누군가 만들어 둔 프로젝트를 받으려면 <strong>git</strong>으로 내려받거나(클론), 압축(ZIP)으로 받아 풉니다. git 클론 예시:</p>
-  <div class="code">
-    <div class="bar"><span>터미널 · 프로젝트 받기(예시)</span><button class="copy" onclick="cp(this)">복사</button></div>
-    <pre><code><span class="c"># &lt;주소&gt; 자리에 받을 저장소 주소를 넣습니다</span>
-git clone &lt;주소&gt;</code></pre>
-  </div>
-  <p>받은 폴더를 <strong>File → Open Folder</strong>로 열면 됩니다.</p>
-  <div class="callout note">
-    <span class="ti">git이 없다고 나오면</span>
-    <p><span class="os win">Windows</span> <a href="https://git-scm.com/download/win" target="_blank" rel="noopener">Git for Windows</a>를 설치하세요(Claude Code 사용에도 권장). <span class="os mac">Mac</span> 터미널에서 <code class="inline">git</code>을 처음 치면 설치 안내가 뜹니다.</p>
+  <div class="callout warn">
+    <span class="ti"><span class="os win">Windows</span> 폴더는 C 드라이브 말고 D 드라이브에 만드세요</span>
+    <p>작업을 하다 보면 데이터·설치 파일·결과물이 쌓여 <strong>용량이 빠르게 늘어납니다.</strong> 그래서 새 작업 폴더는 윈도우가 설치된 <strong>시스템 드라이브(C:)가 아니라, 여유 있는 다른 작업 드라이브(예: <code class="inline">D:\work\my-analysis</code>)</strong>에 만드는 것을 권장합니다. C 드라이브가 가득 차면 컴퓨터 전체가 느려지거나 멈출 수 있습니다. <span class="os mac">Mac</span>은 보통 디스크가 하나라 그대로 두면 됩니다.</p>
   </div>
 
   <!-- 6 -->
@@ -418,7 +409,7 @@ git clone &lt;주소&gt;</code></pre>
   </div>
   <div class="callout warn">
     <span class="ti">이 데모 프로젝트 파일이 필요하면</span>
-    <p>발표에서 사용한 프로젝트(KEEP I 패널 분석)는 별도 저장소에 있습니다. 접근 권한이 필요할 수 있으니 발표자에게 문의하세요. 핵심은 <strong>나만의 폴더에서 위 흐름을 그대로 따라 하는 것</strong>입니다.</p>
+    <p>발표에서 사용한 프로젝트(KEEP I 패널 분석) 파일이 필요하면 발표자에게 요청하세요. 핵심은 <strong>나만의 폴더에서 위 흐름을 그대로 따라 하는 것</strong>입니다.</p>
   </div>
 
   <!-- 10 -->
