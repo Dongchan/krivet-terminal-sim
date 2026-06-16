@@ -3,7 +3,7 @@
 > 이 문서는 컨텍스트 컴팩트/클리어 이후에도 다음 세션이 작업 맥락을 즉시 복원하도록 모든 작업을 빠짐없이 역순(최신이 위)으로 기록한다.
 > 매 entry의 timestamp는 작업 시점에 파이썬으로 호출해 부여한다: `python -c "from datetime import datetime; print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))"`
 >
-> **현재 단계**: **Phase 6 완료 + 미션 6 신설·동적 재설계(로컬, 푸시 대기)** — Phase 6(README·LICENSE·a11y) 라이브 완료 후, 푸터 동적화 픽스(`ef5fd47`, 푸시됨)에 이어 **Ch.4 「혼자 다 하지 않기」 미션 6**을 신설하고 **동적 워크플로우(독립=병렬 동시 / 의존=대기 후)**로 재설계. 신규 `special.kind:"orchestration"` + `js/special/orchestration.js`. 라이브 검증(Playwright) 통과, **아직 커밋/푸시 안 함 — 사용자 검토·허락 대기**. 자세한 건 가장 위 두 entry 참조. **다음 후보**: 미션 6 에이전트 result 콘텐츠 다듬기 / 미션 7(git 안전망) / Phase 7 선택 확장.
+> **현재 단계**: **미션 6 라이브 완료 (총 6미션, Ch.1~Ch.4)** — Ch.4 「혼자 다 하지 않기」 미션 6(에이전트 분업/동적 워크플로우/단계 게이트)을 `580b019`로 푸시·Pages 검증 완료. 신규 `special.kind:"orchestration"` (`js/special/orchestration.js`). 워킹트리 clean. **다음 후보**: 미션 6 에이전트 result 콘텐츠 다듬기 / 미션 7(git 안전망) / Phase 7 선택 확장.
 > **라이브 URL**: <https://dongchan.github.io/krivet-terminal-sim/>
 > **GitHub 저장소**: <https://github.com/Dongchan/krivet-terminal-sim> (Public)
 > **로컬 서버**: `python -m http.server 5500` 백그라운드 실행 중 (Bash ID: becnmuyej, http://localhost:5500/) — 새 세션에서는 만료되어 있을 수 있으므로 필요시 재실행.
@@ -61,6 +61,16 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
   - `index.html` 정적 placeholder → `💬 미션을 불러오는 중…` (깊은 링크 진입 시 잘못된 문구 깜빡임 방지).
 - **라이브 검증** (Playwright, `http://localhost:5500`): 5개 라우트 순회 결과 전부 기대값 일치 — 미션1 "두 개의 터미널, 두 배의 속도" / 미션2 "GUI에서는 안 보이는 것" / 미션3 "오토컴팩트 시뮬레이션" / 미션4 "터미널 + 에디터를 한 화면에" / **미션5 "🎉 모든 미션을 마쳤어요!"**. 콘솔 에러는 `favicon.ico` 404(기존, 무관)뿐. 부팅 로그 정상.
 - **상태**: 커밋·푸시 완료 — 아래 `[2026-06-16 08:12:14]` entry 참조. 변경 파일: `js/main.js`, `index.html`, `Working_history.md`.
+
+---
+
+## [2026-06-16 09:58:15] 미션 6 푸시 + 라이브 검증 (commit `580b019`)
+
+- 사용자 명시 허락: "커밋, 푸쉬."
+- 커밋: **`580b019`** "feat(mission6): Ch.4 「혼자 다 하지 않기」 에이전트 분업(동적 워크플로우)" — 7 files, +833/-2. 신규 2(`ch4-m6-agent-orchestration.json`, `js/special/orchestration.js`) + 수정 5(`chapters.json`, `main.js`, `panel.js`, `special.css`, `Working_history.md`). Bash heredoc(`<<'EOF'`)로 커밋 메시지 정상.
+- 푸시: `b333615..580b019  main -> main`. `rev-list` → `0 0` 동기화.
+- **라이브 검증** (Pages 폴링, 캐시 무력화): **시도 3회(~24초)**. `js/special/orchestration.js` HTTP 200, `data/missions/ch4-m6-agent-orchestration.json` HTTP 200, `data/chapters.json`에 `"ch4"` + `"혼자 다 하지 않기"` + `ch4-m6-agent-orchestration` 포함 확인.
+- 미션 6(신설 + 동적 워크플로우 + 단계 게이트) 전체가 이제 라이브. 총 미션 6개, Ch.1~Ch.4.
 
 ---
 
