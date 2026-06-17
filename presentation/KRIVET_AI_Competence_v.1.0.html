@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM을 활용한 데이터 분석 · KRIVET 포럼</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+<style>
+/* ===== KRIVET 포럼 디자인 토큰 : 크림 종이 위 손그림 강의 노트 ===== */
+:root{
+  --paper:#F5F2EB; --card:#FBF8F2; --ink:#32302C; --body:#4A453E;
+  --muted:#6E675D; --header:#7A7263; --terra:#C05A38; --terra-dk:#A84B2F;
+  --terra-lt:#D98E6B; --charcoal:#3B3631; --line:rgba(59,54,49,.16); --mat:#1b1916;
+  --font:'KoPub Dotum','KoPubDotum Medium','Pretendard','Gowun Dodum','Noto Sans KR',system-ui,sans-serif;
+  --hand:'Nanum Pen Script','Gaegu',cursive;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font);color:var(--body);background:var(--paper);overflow:hidden;-webkit-font-smoothing:antialiased;position:relative}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 0%,rgba(255,255,255,.45),transparent 60%),radial-gradient(120% 120% at 50% 120%,rgba(120,90,60,.10),transparent 55%)}
+body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E")}
+
+.shell{position:relative;z-index:2;display:flex;flex-direction:column;height:100%}
+.topbar{display:flex;align-items:center;gap:14px;padding:11px 22px 9px;flex:0 0 auto}
+.brand{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--muted);white-space:nowrap}
+.brand .mk{width:22px;height:22px;border-radius:7px 6px 8px 6px;background:var(--terra);color:#fff;display:grid;place-items:center;font-family:var(--hand);font-size:17px;line-height:1;transform:rotate(-4deg);box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.brand b{color:var(--ink);font-weight:400}
+.sec-now{margin-left:6px;font-size:12.5px;color:var(--terra-dk);border-left:1px solid var(--line);padding-left:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:42vw}
+.spacer{flex:1}
+.counter{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px;white-space:nowrap}
+.counter b{color:var(--ink)}
+.tbtn{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--body);border-radius:10px;height:34px;padding:0 12px;display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-family:inherit;font-size:12.5px;transition:.16s;white-space:nowrap}
+.tbtn:hover{border-color:var(--terra);color:var(--terra-dk);transform:translateY(-1px)}
+.tbtn svg{width:15px;height:15px}
+.tbtn .k{font-size:10px;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:0 4px;line-height:15px}
+
+.deck-area{flex:1;min-height:0;display:grid;place-items:center;padding:6px 10px 2px;position:relative}
+.frame{position:relative;aspect-ratio:16/9;width:min(94vw,148vh);max-height:99%;background:var(--paper);border-radius:16px;overflow:hidden;box-shadow:0 24px 60px -22px rgba(45,32,20,.5),0 4px 14px -6px rgba(45,32,20,.3);border:1px solid rgba(59,54,49,.10);container-type:size}
+.frame::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(255,255,255,.5),inset 0 -40px 80px -50px rgba(120,80,50,.25)}
+
+.slide{position:absolute;inset:0;opacity:0;visibility:hidden;pointer-events:none;padding:2.6cqw 6cqw 3.4cqw;display:flex;flex-direction:column;transition:opacity .34s ease;font-size:2.18cqw;line-height:1.45;color:var(--body);word-break:keep-all;overflow-wrap:anywhere}
+.slide.active{opacity:1;visibility:visible;pointer-events:auto}
+.slide-inner{display:flex;flex-direction:column;gap:.5em;height:100%;min-height:0}
+.slide-inner>.eyebrow{margin-bottom:-.1em}
+.slide.active .slide-inner>*{animation:rise .5s cubic-bezier(.2,.75,.25,1) both}
+.slide.active .slide-inner>*:nth-child(1){animation-delay:.04s}
+.slide.active .slide-inner>*:nth-child(2){animation-delay:.11s}
+.slide.active .slide-inner>*:nth-child(3){animation-delay:.18s}
+.slide.active .slide-inner>*:nth-child(4){animation-delay:.25s}
+.slide.active .slide-inner>*:nth-child(5){animation-delay:.32s}
+.slide.active .stagger>*{animation:rise .5s cubic-bezier(.2,.75,.25,1) both}
+.slide.active .stagger>*:nth-child(1){animation-delay:.16s}
+.slide.active .stagger>*:nth-child(2){animation-delay:.26s}
+.slide.active .stagger>*:nth-child(3){animation-delay:.36s}
+.slide.active .stagger>*:nth-child(4){animation-delay:.46s}
+.slide.active .stagger>*:nth-child(5){animation-delay:.56s}
+@keyframes rise{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:none}}
+
+.eyebrow{display:flex;align-items:center;gap:.5em;font-size:.82em;color:var(--header)}
+.eyebrow .dot{width:.5em;height:.5em;border-radius:50%;background:var(--terra);box-shadow:0 0 0 .18em rgba(192,90,56,.16)}
+.title{font-size:1.95em;line-height:1.16;color:var(--ink);font-weight:400;letter-spacing:-.01em}
+.title.sm{font-size:1.58em}
+.sub{font-size:.96em;color:var(--muted);max-width:46em}
+.lead{font-size:1.04em;color:var(--body)}
+.ink{color:var(--ink)}.tr{color:var(--terra-dk)}.mut{color:var(--muted)}
+
+.ul{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 16' preserveAspectRatio='none'%3E%3Cpath d='M3,9 C50,4 100,12 150,7 C175,4.5 190,9 197,8' fill='none' stroke='%23A84B2F' stroke-width='3.6' stroke-linecap='round'/%3E%3Cpath d='M6,13 C60,11 110,14.5 160,11 C180,9.6 192,12 196,12' fill='none' stroke='%23D98E6B' stroke-width='2' stroke-linecap='round' opacity='.85'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:0 1.05em;background-size:100% .42em;padding-bottom:.18em}
+.circ{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 92' preserveAspectRatio='none'%3E%3Cpath d='M34,12 C96,2 182,4 206,30 C221,49 192,78 118,85 C52,91 7,76 7,47 C7,24 64,10 152,15' fill='none' stroke='%23C05A38' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center;background-size:108% 150%;padding:0 .35em;color:var(--ink)}
+.hand{font-family:var(--hand);color:var(--terra);font-size:1.85em;line-height:1;transform:rotate(-3deg);align-self:flex-start}
+.hand.r{transform:rotate(2.5deg)}
+
+/* 카드 : 가독성 위해 content-height + 세로 중앙 정렬(빈 직사각형 방지) */
+.cards{display:grid;gap:1.1em;min-height:0;align-content:center}
+.cols-2{grid-template-columns:1fr 1fr}
+.cols-3{grid-template-columns:1fr 1fr 1fr}
+.cols-4{grid-template-columns:repeat(4,1fr)}
+.grow{flex:1;min-height:0}
+.sk-card{position:relative;background:var(--card);border:2px solid var(--charcoal);border-radius:16px 13px 17px 12px;padding:.95em 1.1em;display:flex;flex-direction:column;gap:.38em;box-shadow:.18em .26em 0 rgba(59,54,49,.10)}
+.sk-card::after{content:"";position:absolute;inset:3px 4px 5px 3px;border:1px solid rgba(59,54,49,.22);border-radius:13px 16px 11px 15px;pointer-events:none}
+.sk-card.accent{border-color:var(--terra-dk)}
+.sk-card.accent::after{border-color:rgba(168,75,47,.3)}
+.sk-card .lab{font-size:1.02em;color:var(--ink);display:flex;align-items:center;gap:.5em}
+.sk-card .desc{font-size:.84em;color:var(--body);line-height:1.42}
+.sk-card .big{font-family:var(--hand);font-size:1.7em;color:var(--terra);line-height:1}
+.sk-card .ko{font-size:.74em;color:var(--muted)}
+
+.ic{width:1.95em;height:1.95em;flex:0 0 auto;border-radius:9px;border:1.6px solid var(--terra-dk);color:var(--terra-dk);display:grid;place-items:center;background:rgba(192,90,56,.07)}
+.ic svg{width:1.15em;height:1.15em}
+.ic.ink{border-color:var(--charcoal);color:var(--charcoal);background:rgba(59,54,49,.05)}
+
+.chip{display:inline-flex;align-items:center;gap:.4em;font-size:.76em;background:rgba(59,54,49,.06);border:1px solid var(--line);border-radius:8px;padding:.25em .6em;color:var(--body);white-space:nowrap}
+.chip.tr{background:rgba(192,90,56,.1);border-color:rgba(192,90,56,.3);color:var(--terra-dk)}
+.chip.code{font-family:'Consolas','Courier New',monospace;background:#2b2824;color:#f3ead9;border:none}
+.chips{display:flex;flex-wrap:wrap;gap:.5em;align-items:center}
+.note{font-size:.77em;color:var(--muted);background:rgba(192,90,56,.06);border-left:3px solid var(--terra);border-radius:0 8px 8px 0;padding:.45em .75em}
+.strip{font-size:.82em;color:var(--body);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.5em .85em;text-align:center}
+.strip b{color:var(--terra-dk);font-weight:400}
+
+.media{flex:1;min-height:0;display:flex;gap:1.1em;align-items:stretch}
+.col-txt{display:flex;flex-direction:column;gap:.5em;justify-content:center}
+.frame-m{position:relative;flex:1;min-height:0;border-radius:14px;overflow:hidden;background:#efe9dd;border:1px solid var(--line);box-shadow:0 .7em 1.6em -.5em rgba(45,32,20,.4);display:flex;align-items:center;justify-content:center}
+.frame-m.dark{background:var(--mat)}
+.frame-m img,.frame-m video{width:100%;height:100%;object-fit:contain;display:block}
+.frame-m .cap{position:absolute;left:0;bottom:0;right:0;font-size:.7em;color:#f4ead9;background:linear-gradient(0deg,rgba(20,16,12,.82),transparent);padding:1.1em .8em .5em;pointer-events:none}
+.frame-m .src{position:absolute;right:.5em;top:.5em;font-size:.6em;color:#d9cdb9;background:rgba(20,16,12,.55);border-radius:6px;padding:.2em .5em}
+
+/* 영상 프레임 : 검은 매트 없이 영상 실제 크기에 딱 맞춤 */
+.vstage{flex:1;min-height:0;display:flex;flex-direction:column;gap:.4em}
+.vrow{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.vrow img,.vrow video{max-width:100%;max-height:100%;width:auto;height:auto;display:block;border-radius:14px;box-shadow:0 .7em 1.6em -.5em rgba(45,32,20,.4)}
+.vcap{flex:0 0 auto;text-align:center;font-size:.74em;color:var(--muted)}
+.vcap b{color:var(--terra-dk);font-weight:400}
+/* 영상 슬라이드 : 헤더를 압축해 영상을 최대 크기로 */
+.slide.vmax{padding:1.7cqw 3.2cqw 1.9cqw}
+.slide.vmax .slide-inner{gap:.3em}
+.slide.vmax .title{font-size:1.32em}
+.slide.vmax .eyebrow{display:none}
+.vinfo{flex:0 0 auto;display:flex;gap:.7em;align-items:stretch}
+.vinfo>*{flex:1;min-width:0}
+
+.flow{display:flex;align-items:stretch;gap:.4em;flex-wrap:wrap;justify-content:center}
+.step{flex:1 1 0;min-width:0;background:var(--card);border:1.6px solid var(--line);border-radius:11px;padding:.5em .45em;text-align:center;font-size:.78em;color:var(--body);display:flex;flex-direction:column;gap:.15em;justify-content:center;position:relative}
+.step .t{font-size:.66em;color:var(--header)}
+.step .d{font-size:.66em;color:var(--muted)}
+.step.llm{border-color:rgba(192,90,56,.45);background:rgba(192,90,56,.07)}
+.step.human{border-color:var(--charcoal);background:rgba(59,54,49,.06);color:var(--ink)}
+.step.human .t{color:var(--terra-dk)}
+.harw{width:1.5em;flex:0 0 auto;align-self:center;color:var(--terra)}
+.flow-legend{display:flex;gap:1.2em;font-size:.78em;color:var(--muted);justify-content:center}
+.flow-legend i{display:inline-block;width:.8em;height:.8em;border-radius:3px;margin-right:.35em;vertical-align:-1px}
+
+.editor{flex:1;min-height:0;background:#272420;border-radius:12px;overflow:hidden;box-shadow:0 .7em 1.6em -.5em rgba(45,32,20,.45);display:flex;flex-direction:column;font-family:'Consolas','D2Coding','Courier New',monospace}
+.editor .bar{display:flex;align-items:center;gap:.45em;padding:.5em .8em;background:#1f1c19;color:#cdbfa9;font-size:.72em}
+.editor .bar i{width:.7em;height:.7em;border-radius:50%}
+.editor .body{padding:.7em 1em;font-size:.8em;line-height:1.6;color:#e9ddc8;overflow:auto;white-space:pre-wrap}
+.md-h{color:#e08a5a}.md-h2{color:#e0a86a}.md-b{color:#9fb98c}.md-t{color:#cdbfa9}.md-s{color:#d8c08a}
+
+.orch{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;gap:.2em;justify-content:center;position:relative}
+.leader{background:var(--charcoal);color:#f4ead9;border-radius:13px;padding:.55em 1.1em;display:flex;align-items:center;gap:.6em;font-size:.9em;box-shadow:.18em .26em 0 rgba(59,54,49,.18)}
+.leader .badge{font-family:'Consolas','Courier New',monospace;background:var(--terra);color:#fff;border-radius:6px;padding:.05em .4em;font-size:.78em}
+.fan{width:74%;height:2.2em;color:var(--terra)}
+.subs{display:grid;grid-template-columns:repeat(4,1fr);gap:.7em;width:100%}
+.agent{background:var(--card);border:1.6px solid var(--charcoal);border-radius:12px;padding:.55em .55em;text-align:center;font-size:.74em;color:var(--ink);display:flex;flex-direction:column;gap:.2em;box-shadow:.12em .2em 0 rgba(59,54,49,.1)}
+.agent .f{font-family:'Consolas','Courier New',monospace;font-size:.76em;color:var(--body)}
+.agent .m{font-size:.64em;color:var(--terra-dk)}
+
+.arts{display:grid;grid-template-columns:repeat(2,1fr);gap:.7em;align-content:center}
+.art{background:var(--card);border:1.6px solid var(--line);border-radius:12px;padding:.6em .7em;display:flex;flex-direction:column;gap:.2em;align-items:flex-start}
+.art .lab{font-size:.86em;color:var(--ink);display:flex;align-items:center;gap:.4em}
+.art .desc{font-size:.7em;color:var(--muted)}
+.art .q{font-size:.72em;color:var(--terra-dk);margin-left:auto}
+
+.stat{display:flex;flex-direction:column;gap:.05em}
+.stat .v{font-family:var(--hand);font-size:1.7em;color:var(--terra);line-height:1}
+.stat .l{font-size:.7em;color:var(--muted)}
+
+.slide-no{display:none}
+
+.cover{align-items:flex-start;justify-content:center;gap:.2em}
+.cover .big-t{font-size:3.3em;line-height:1.12;color:var(--ink);font-weight:400;letter-spacing:-.02em}
+.cover .meta{display:flex;gap:1.4em;font-size:.92em;color:var(--muted);margin-top:1.3em;align-items:center}
+.cover .meta b{color:var(--ink);font-weight:400}
+.qa{align-items:center;justify-content:center;text-align:center}
+.qa .big-t{font-size:4.6em;font-family:var(--hand);color:var(--terra);line-height:1}
+
+.dotbar{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:7px;padding:8px 22px 12px}
+.dgroup{display:flex;gap:3px;align-items:center}
+.dgroup+.dgroup{margin-left:9px;padding-left:9px;border-left:1px solid var(--line)}
+.dot{width:13px;height:5px;border-radius:3px;background:rgba(59,54,49,.18);cursor:pointer;transition:.18s;border:none;padding:0}
+.dot:hover{background:var(--terra-lt);transform:scaleY(1.5)}
+.dot.on{background:var(--terra);width:20px}
+.dot.done{background:rgba(192,90,56,.4)}
+.hint{margin-left:14px;font-size:11px;color:var(--muted);white-space:nowrap}
+.hint b{color:var(--header);font-weight:400}
+
+.nav{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--terra-dk);cursor:pointer;display:grid;place-items:center;transition:.18s;box-shadow:0 4px 12px -4px rgba(45,32,20,.3)}
+.nav:hover{background:var(--terra);color:#fff;transform:translateY(-50%) scale(1.08)}
+.nav:disabled{opacity:.3;cursor:default;transform:translateY(-50%)}
+.nav.prev{left:14px}.nav.next{right:14px}
+.nav svg{width:20px;height:20px}
+
+.overview{position:fixed;inset:0;z-index:50;background:rgba(34,30,26,.62);backdrop-filter:blur(6px);display:none;flex-direction:column}
+.overview.show{display:flex;animation:fade .2s both}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.ov-head{display:flex;align-items:center;gap:14px;padding:16px 26px;color:#f4ead9}
+.ov-head .t{font-size:17px;color:#fff}
+.ov-head .s{font-size:13px;color:#d6c9b5}
+.ov-body{flex:1;overflow:auto;padding:4px 26px 26px}
+.ov-sec{margin-bottom:18px}
+.ov-sec h4{color:#f0e3cf;font-size:12.5px;font-weight:400;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.ov-sec h4 .b{width:8px;height:8px;border-radius:2px;background:var(--terra)}
+.ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:12px}
+.ov-card{background:var(--card);border:1px solid rgba(255,255,255,.1);border-radius:12px;aspect-ratio:16/9;padding:12px;cursor:pointer;transition:.16s;position:relative;display:flex;flex-direction:column;gap:4px;overflow:hidden;text-align:left;font-family:inherit}
+.ov-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px -8px rgba(0,0,0,.5);border-color:var(--terra)}
+.ov-card.on{outline:2.5px solid var(--terra);outline-offset:1px}
+.ov-card .n{font-size:11px;color:var(--terra-dk);font-variant-numeric:tabular-nums}
+.ov-card .ttl{font-size:12.5px;color:var(--ink);line-height:1.35;flex:1;overflow:hidden}
+.ov-card .ico{position:absolute;right:9px;bottom:8px;color:rgba(192,90,56,.45)}
+.ov-card .ico svg{width:18px;height:18px}
+
+:fullscreen .deck-area{padding:0}
+:fullscreen .frame{border-radius:0;box-shadow:none;width:auto;height:100%;max-height:100%;max-width:100vw}
+:fullscreen .topbar,:fullscreen .dotbar{background:rgba(245,242,235,.85)}
+@media (max-width:680px){.sec-now{display:none}.hint{display:none}}
+@media print{@page{size:1280px 720px;margin:0}
+  .topbar,.dotbar,.nav,.overview{display:none!important}
+  .deck-area{display:block;padding:0}
+  .frame{width:1280px;height:720px;max-height:none;border-radius:0;box-shadow:none;page-break-after:always}
+  .slide{opacity:1!important;visibility:visible!important;position:relative;font-size:15.5px}
+  .slide-inner>*,.stagger>*{animation:none!important}}
+.cur{animation:blink 1s steps(1) infinite;color:#A84B2F}
+@keyframes blink{50%{opacity:0}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="rough" x="-5%" y="-30%" width="110%" height="160%"><feTurbulence type="fractalNoise" baseFrequency="0.018 0.03" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.4"/></filter>
+  <symbol id="ic-cutoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/><path d="M6 19 18 7" stroke-width="1.9"/></symbol>
+  <symbol id="ic-window" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 8h18M7 12h10M7 15.5h6"/></symbol>
+  <symbol id="ic-session" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h11a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H9l-4 3v-3a2 2 0 0 1-1-2V7a2 2 0 0 1 0-2Z"/><path d="M20 9v6a2 2 0 0 1-2 2"/></symbol>
+  <symbol id="ic-coin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v9M9.5 9.7c0-1.3 1.1-2 2.5-2s2.5.8 2.5 2-1.1 1.8-2.5 1.8-2.5.6-2.5 1.9 1.1 2 2.5 2 2.5-.7 2.5-2"/></symbol>
+  <symbol id="ic-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2.2"/></symbol>
+  <symbol id="ic-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="6.5" width="11" height="11" rx="2"/><path d="M9.5 9.5h5v5h-5z"/><path d="M9 3.5v3M15 3.5v3M9 17.5v3M15 17.5v3M3.5 9h3M3.5 15h3M17.5 9h3M17.5 15h3"/></symbol>
+  <symbol id="ic-at" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a2.5 2.5 0 0 0 5 0v-1a9 9 0 1 0-3.5 7.1"/></symbol>
+  <symbol id="ic-term" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3M13 15h4"/></symbol>
+  <symbol id="ic-ide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M3 8h6"/><path d="m13 10 2.5 2-2.5 2"/></symbol>
+  <symbol id="ic-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 15V9l3 3 3-3v6M17 9v4.5M15 12l2 2.2 2-2.2"/></symbol>
+  <symbol id="ic-robot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="8" width="14" height="11" rx="3"/><circle cx="12" cy="4" r="1"/><path d="M12 5v3M9.5 12.5v1.5M14.5 12.5v1.5M3 12v3M21 12v3"/></symbol>
+  <symbol id="ic-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.5h8l5 5V21a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1Z"/><path d="M14 2.5v5h5M8.5 13h7M8.5 16.5h7"/></symbol>
+  <symbol id="ic-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16h16"/><path d="M8 16v-4M12 16V8M16 16v-6"/></symbol>
+  <symbol id="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5 11-12"/></symbol>
+  <symbol id="ic-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></symbol>
+  <symbol id="ic-merge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v4a6 6 0 0 0 6 6 6 6 0 0 1 6 6v2M18 3v4M18 3l-2.5 2.5M18 3l2.5 2.5"/></symbol>
+  <symbol id="ic-brain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5a2.5 2.5 0 0 0-2.5 2.5A2.5 2.5 0 0 0 5 12a2.5 2.5 0 0 0 1.5 4.5A2.5 2.5 0 0 0 9 19a2.5 2.5 0 0 0 3-2.5V7.5A2.5 2.5 0 0 0 9 5Z"/><path d="M15 5a2.5 2.5 0 0 1 2.5 2.5A2.5 2.5 0 0 1 19 12a2.5 2.5 0 0 1-1.5 4.5A2.5 2.5 0 0 1 15 19a2.5 2.5 0 0 1-3-2.5"/></symbol>
+  <symbol id="ic-q" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.5 9.2c0-1.5 1.2-2.4 2.6-2.4s2.5.9 2.5 2.3c0 2-2.5 2.2-2.5 3.9"/><path d="M12 16.4v.01"/></symbol>
+  <symbol id="ic-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2 2 0 0 1 6 4h6v15H6a2 2 0 0 0-2 1.5Z"/><path d="M20 5.5A2 2 0 0 0 18 4h-6v15h6a2 2 0 0 1 2 1.5Z"/></symbol>
+  <symbol id="ic-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l5.5-3.5z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="ic-route" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="4" r="2.5"/><circle cx="18" cy="16" r="2.5"/><path d="M8.5 4H14a4 4 0 0 1 0 8h-4a4 4 0 0 0 0 8"/></symbol>
+  <symbol id="ic-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="ic-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+</defs></svg>
+
+<div class="shell">
+  <header class="topbar">
+    <div class="brand"><span class="mk">직</span> 한국직업능력연구원 · <b>KRIVET 포럼</b></div>
+    <div class="sec-now" id="secNow">시작</div>
+    <div class="spacer"></div>
+    <div class="counter"><b id="curN">1</b> / <span id="totN">33</span></div>
+    <button class="tbtn" id="fsBtn" title="전체화면 (F)"><svg><use href="#ic-full"/></svg></button>
+    <button class="tbtn" id="ovBtn" title="전체 슬라이드 보기 (O)"><svg><use href="#ic-grid"/></svg> 전체보기 <span class="k">O</span></button>
+  </header>
+
+  <div class="deck-area">
+    <button class="nav prev" id="prevBtn" aria-label="이전"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div class="frame" id="deck">
+
+      <!-- 1 표지 -->
+      <section class="slide active" data-sec="0" data-title="LLM을 활용한 데이터 분석" data-ico="ic-doc">
+        <div class="slide-inner cover">
+          <div class="eyebrow"><span class="dot"></span> KRIVET AI 활용 역량강화</div>
+          <h1 class="big-t">LLM을 활용한<br><span class="ul">데이터 분석</span></h1>
+          <div class="meta"><span><b>26.06.22</b> (MON)</span><span style="color:var(--line)">|</span><span><b>박동찬</b> · 직무능력연구센터</span></div>
+        </div>
+        <div class="slide-no">01</div>
+      </section>
+
+      <!-- 2 발표 순서 -->
+      <section class="slide" data-sec="0" data-title="발표 순서" data-ico="ic-route">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 발표 순서</div>
+          <h2 class="title">오늘은 터미널에서 <span class="ul">시작</span>해, 환경을 갖추고, 실제 분석까지</h2>
+          <div class="cards cols-3 grow stagger">
+            <div class="sk-card"><div class="lab"><span class="big">1</span></div><div class="lab ink">터미널 기반 LLM 활용</div></div>
+            <div class="sk-card"><div class="lab"><span class="big">2</span></div><div class="lab ink">데이터 분석 환경 구축 (IDE)</div></div>
+            <div class="sk-card accent"><div class="lab"><span class="big">3</span></div><div class="lab ink">KEEP I 패널데이터 분석 예시</div></div>
+          </div>
+          <div class="strip">터미널 <b>→</b> 환경 구축 <b>→</b> 실제 분석 · 이 흐름을 그대로 따라갑니다</div>
+        </div>
+        <div class="slide-no">02</div>
+      </section>
+
+      <!-- 3 바보가 될까 -->
+      <section class="slide" data-sec="1" data-title="내 LLM은 왜 바보가 될까?" data-ico="ic-robot">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 터미널 기반 LLM 활용</div>
+          <h2 class="title">내 LLM은 왜 <span class="circ">바보</span>가 될까?</h2>
+          <p class="sub">똑똑하던 AI가 갑자기 엉뚱해지는 데는, 두 가지 구조적 이유가 있습니다.</p>
+          <div class="cards cols-2 grow stagger">
+            <div class="sk-card"><div class="lab"><span class="ic"><svg><use href="#ic-cutoff"/></svg></span> 첫째 · 지식 컷오프</div><div class="ko">Knowledge Cutoff</div><div class="desc">학습한 시점 이후에 일어난 일은 알지 못합니다.</div></div>
+            <div class="sk-card"><div class="lab"><span class="ic"><svg><use href="#ic-window"/></svg></span> 둘째 · 컨텍스트 윈도우</div><div class="ko">Context Window</div><div class="desc">한 번에 기억할 수 있는 양에 한계가 있습니다.</div></div>
+          </div>
+          <div class="strip">이 둘은 '약점'이 아니라 <b>'관리 대상'</b>입니다 · 지금부터 하나씩 살펴봅니다</div>
+        </div>
+        <div class="slide-no">03</div>
+      </section>
+
+      <!-- 4 지식 컷오프 -->
+      <section class="slide" data-sec="1" data-title="지식 컷오프 (Cont'd)" data-ico="ic-cutoff">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 내 LLM은 왜 바보가 될까? (Cont'd)</div>
+          <h2 class="title sm">첫째, 지식 <span class="ul">컷오프</span> (Knowledge Cutoff)</h2>
+          <div class="media">
+            <div class="col-txt" style="flex:0 0 40%">
+              <p class="lead">LLM은 '학습이 끝난 시점'까지만 세상을 압니다. 그 이후의 사건·도구·문법 변화는 모릅니다.</p>
+              <div class="sk-card" style="padding:.6em .8em"><div class="ko">예) Claude Opus 4.8 의 지식 컷오프</div><div class="big">2026년 1월</div></div>
+              <div class="note">모르는 것을 '아는 척' 답하면 그게 바로 할루시네이션입니다. <b>최신 정보는 사람이 보강</b>해야 합니다.</div>
+            </div>
+            <div class="vstage"><div class="vrow"><img src="asset/Model_Cutoff_light.png" alt="모델별 지식 컷오프"></div><div class="vcap">모델별 지식 컷오프 (공식 문서) · platform.claude.com</div></div>
+          </div>
+        </div>
+        <div class="slide-no">04</div>
+      </section>
+
+      <!-- 5 컨텍스트 윈도우 -->
+      <section class="slide" data-sec="1" data-title="컨텍스트 윈도우 (Cont'd)" data-ico="ic-window">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 내 LLM은 왜 바보가 될까? (Cont'd)</div>
+          <h2 class="title sm">둘째, 컨텍스트 <span class="ul">윈도우</span> (Context Window)</h2>
+          <div class="media">
+            <div class="col-txt" style="flex:1">
+              <p class="lead">컨텍스트 윈도우는 모델이 '한 번에' 기억하는 <b class="ink">작업 공간</b>입니다.</p>
+              <p class="sub" style="font-size:.9em">한 세션이 길게 이어지면 이 공간이 넘쳐, 오래된 맥락이 밀려나고 엉뚱한 답을 내놓습니다.</p>
+              <div class="chips"><span class="chip">대화가 짧을 때 · 여유</span><span class="chip tr">길어지면 · 가득 참 ↓</span></div>
+              <div class="sk-card accent" style="padding:.55em .8em"><div class="desc"><b class="tr">그 순간, LLM이 멍청해집니다.</b> "왜 기억을 못 해?!" 다그쳐도 소용없고, 그것마저 토큰 낭비입니다.</div></div>
+            </div>
+            <div class="vstage" style="flex:.85"><div class="vrow"><img src="asset/Reference6_context_window.png" alt="컨텍스트 윈도우 사용량"></div><div class="vcap">컨텍스트 윈도우가 차오르는 모습</div></div>
+          </div>
+          <div class="strip">컨텍스트 윈도우 관리는 결국 <b>사용자의 몫</b>입니다</div>
+        </div>
+        <div class="slide-no">05</div>
+      </section>
+
+      <!-- 6 세션 -->
+      <section class="slide" data-sec="1" data-title="세션이란? (Cont'd)" data-ico="ic-session">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 내 LLM은 왜 바보가 될까? (Cont'd)</div>
+          <h2 class="title sm">흔히 쓰는 GUI에서 '<span class="ul">세션</span>(Session)'은 무엇일까요?</h2>
+          <div class="media">
+            <div class="vstage" style="flex:1.6"><div class="vrow"><img src="asset/Session_gui_framed.png" alt="Claude와 ChatGPT 세션 목록"></div><div class="vcap">왼쪽 Claude · 오른쪽 ChatGPT</div></div>
+            <div class="col-txt" style="flex:0 0 32%">
+              <p class="lead">Claude · ChatGPT 모두 '최근(Recents)' 목록의 <b class="ink">각 항목이 하나의 세션</b>, 세션마다 컨텍스트 윈도우가 따로 주어집니다.</p>
+              <p class="sub" style="font-size:.86em">그래서 한 세션이 길어질수록 컨텍스트가 넘쳐, <b class="tr">할루시네이션 가능성이 커집니다.</b></p>
+            </div>
+          </div>
+        </div>
+        <div class="slide-no">06</div>
+      </section>
+
+      <!-- 7 무엇과 싸워야 -->
+      <section class="slide" data-sec="1" data-title="우리는 무엇과 싸워야 하는가?" data-ico="ic-cpu">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 터미널 기반 LLM 활용</div>
+          <h2 class="title">우리는 무엇과 <span class="circ">싸워야</span> 하는가?</h2>
+          <p class="sub">LLM을 잘 쓰려면, 눈에 잘 안 보이는 세 가지 비용을 의식해야 합니다.</p>
+          <div class="cards cols-3 grow stagger">
+            <div class="sk-card"><div class="lab"><span class="ic"><svg><use href="#ic-coin"/></svg></span> 비용</div><div class="big">토큰 (Token)</div></div>
+            <div class="sk-card"><div class="lab"><span class="ic"><svg><use href="#ic-clock"/></svg></span> 시간</div><div class="big">처리 시간</div></div>
+            <div class="sk-card"><div class="lab"><span class="ic"><svg><use href="#ic-cpu"/></svg></span> 저장공간</div><div class="big">Storage · RAM · GPU</div></div>
+          </div>
+          <div class="strip">쓸수록 늘어나는 이 셋을, 늘 의식하며 다뤄야 합니다</div>
+        </div>
+        <div class="slide-no">07</div>
+      </section>
+
+      <!-- 8 토큰 확인 -->
+      <section class="slide" data-sec="1" data-title="내가 쓴 토큰, 어디서 확인?" data-ico="ic-coin">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 우리는 무엇과 싸워야 하는가? (Cont'd)</div>
+          <h2 class="title sm">내가 쓴 <span class="ul">토큰</span>, 어디서 확인할까요?</h2>
+          <div class="media">
+            <div class="vstage"><div class="vrow"><img src="asset/Usage_framed.png" alt="웹 사용량"></div><div class="vcap"><b>웹 (GUI)</b> · 사용률·한도(%)는 보이지만 대화별 토큰 수는 직접 안 보입니다</div></div>
+            <div class="vstage"><div class="vrow"><img src="asset/Terminal_framed.png" alt="터미널 사용량"></div><div class="vcap"><b>터미널</b> · 상태줄에 토큰·비용·사용률이 실시간으로 표시됩니다</div></div>
+          </div>
+        </div>
+        <div class="slide-no">08</div>
+      </section>
+
+      <!-- 9 양질의 결과 흐름 -->
+      <section class="slide" data-sec="1" data-title="'양질'의 결과엔 시간이 든다" data-ico="ic-route">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 우리는 무엇과 싸워야 하는가? (Cont'd)</div>
+          <h2 class="title sm">LLM으로 '<span class="ul">양질</span>'의 결과를 얻으려면, 시간이 꽤 걸립니다</h2>
+          <div class="flow grow" style="align-content:center">
+            <div class="step human"><span class="t">사람</span>1 요청 명확화<span class="d">무엇을·왜 할지 정의</span></div>
+            <svg class="harw" viewBox="0 0 40 24" filter="url(#rough)"><path d="M3 12h28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M25 6l9 6-9 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="step llm"><span class="t">LLM</span>2 계획</div>
+            <div class="step llm"><span class="t">LLM</span>3 계획 검증</div>
+            <div class="step llm"><span class="t">LLM</span>4 계획 수정</div>
+            <div class="step llm"><span class="t">LLM</span>5 작업 수행</div>
+            <div class="step llm"><span class="t">LLM</span>6 작업 검증</div>
+            <svg class="harw" viewBox="0 0 40 24" filter="url(#rough)"><path d="M3 12h28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M25 6l9 6-9 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="step human"><span class="t">사람</span>7 결과 검증<span class="d">맞는지 최종 확인·책임</span></div>
+          </div>
+          <div class="flow-legend">
+            <span><i style="background:var(--charcoal)"></i>사람 · 방향을 정하고 결과를 책임집니다</span>
+            <span><i style="background:rgba(192,90,56,.5)"></i>LLM · 반복 실행을 맡깁니다</span>
+          </div>
+          <div class="strip">결국 시작과 끝은 <b>사람의 몫</b>입니다 · (아마도) 재실행 반복</div>
+        </div>
+        <div class="slide-no">09</div>
+      </section>
+
+      <!-- 10 터미널 쓰면 뭐 달라져 -->
+      <section class="slide" data-sec="1" data-title="터미널 쓰면 뭐 달라져?" data-ico="ic-at">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 알겠고, 그래서 터미널 쓰면 뭐 달라져?</div>
+          <h2 class="title sm">터미널을 쓰면 <span class="ul">뭐가 좋을까요</span>?</h2>
+          <div class="cards cols-2 grow stagger">
+            <div class="sk-card"><div class="lab"><span class="ic ink"><svg><use href="#ic-window"/></svg></span> 웹 (GUI)</div><div class="desc">데이터 파일이 여러 개라도 <b>업로드 개수·용량 제한</b>. 필요한 만큼 다 못 올립니다.</div></div>
+            <div class="sk-card accent"><div class="lab"><span class="ic"><svg><use href="#ic-at"/></svg></span> 터미널 · '@'로 해결</div><div class="desc">로컬 폴더·파일을 직접 지정해 범위 제한 없이 모두 참조.</div><div class="chips"><span class="chip code">@데이터/</span><span class="chip code">@코드/</span><span class="chip code">@설문지.sav</span></div></div>
+          </div>
+          <div class="strip">참조할 파일과 폴더의 범위를, <b>내가 직접</b> 정합니다</div>
+        </div>
+        <div class="slide-no">10</div>
+      </section>
+
+      <!-- 11 어떻게 쓰는데 CLI -->
+      <section class="slide" data-sec="1" data-title="터미널에서 어떻게 쓰는데?" data-ico="ic-term">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 터미널에서 LLM을 어떻게 쓸 수 있는데?</div>
+          <h2 class="title sm">사전 설치는 필요하지만 <span class="ul">간단</span>합니다</h2>
+          <p class="sub">주요 LLM 모두 터미널에서 · 터미널로 쓰는 이 방식을 <b class="ink">CLI</b> (Command Line Interface) 라고 합니다.</p>
+          <div class="cards cols-4 grow stagger">
+            <div class="sk-card"><div class="lab ink">Claude</div><svg class="harw" viewBox="0 0 40 18" style="width:2.2em;align-self:center"><path d="M3 9h28" fill="none" stroke="var(--terra)" stroke-width="2" stroke-linecap="round"/><path d="M26 4l8 5-8 5" fill="none" stroke="var(--terra)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="lab"><span class="chip tr">Claude Code</span></div></div>
+            <div class="sk-card"><div class="lab ink">ChatGPT</div><svg class="harw" viewBox="0 0 40 18" style="width:2.2em;align-self:center"><path d="M3 9h28" fill="none" stroke="var(--terra)" stroke-width="2" stroke-linecap="round"/><path d="M26 4l8 5-8 5" fill="none" stroke="var(--terra)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="lab"><span class="chip tr">Codex</span></div></div>
+            <div class="sk-card"><div class="lab ink">Gemini</div><svg class="harw" viewBox="0 0 40 18" style="width:2.2em;align-self:center"><path d="M3 9h28" fill="none" stroke="var(--terra)" stroke-width="2" stroke-linecap="round"/><path d="M26 4l8 5-8 5" fill="none" stroke="var(--terra)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="lab"><span class="chip tr">Gemini CLI</span></div></div>
+            <div class="sk-card"><div class="lab ink">Google</div><svg class="harw" viewBox="0 0 40 18" style="width:2.2em;align-self:center"><path d="M3 9h28" fill="none" stroke="var(--terra)" stroke-width="2" stroke-linecap="round"/><path d="M26 4l8 5-8 5" fill="none" stroke="var(--terra)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="lab"><span class="chip tr">Antigravity</span></div></div>
+          </div>
+          <div class="strip">익숙한 그 LLM, <b>터미널에서 그대로</b> 씁니다</div>
+        </div>
+        <div class="slide-no">11</div>
+      </section>
+
+      <!-- 12 claude codex agy -->
+      <section class="slide" data-sec="1" data-title="claude · codex · agy 만 입력" data-ico="ic-term">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 터미널에서 어떻게 쓰는데? (Cont'd)</div>
+          <h2 class="title sm">터미널에서 <span class="ul">claude, codex, agy</span> 만 입력하면 됩니다</h2>
+          <div class="media">
+            <div class="editor" style="flex:1.4">
+              <div class="bar"><i style="background:#e06a4a"></i><i style="background:#e0b24a"></i><i style="background:#7fb06a"></i> <span style="margin-left:.4em">Terminal</span></div>
+              <div class="body" style="font-size:1.05em"><span style="color:#8a8275">PS D:\KRIVET&gt; </span><span id="typed" style="color:#e08a5a">claude</span><span class="cur">▋</span></div>
+            </div>
+            <div class="col-txt" style="flex:0 0 36%">
+              <div class="chips"><span class="chip code">claude</span><span class="chip code">codex</span><span class="chip code">agy</span></div>
+              <p class="sub" style="font-size:.86em">설치만 끝나면, 이후엔 명령 한 줄이 전부입니다.</p>
+            </div>
+          </div>
+        </div>
+        <div class="slide-no">12</div>
+      </section>
+
+      <!-- 13 불편한데 IDE -->
+      <section class="slide" data-sec="2" data-title="불편한데?? → IDE" data-ico="ic-ide">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 환경 구축</div>
+          <h2 class="title sm">불편한데?? · 까만 화면 하나로 뭘 하라는 건지...</h2>
+          <div class="media">
+            <div class="col-txt" style="flex:0 0 38%">
+              <div class="sk-card" style="padding:.6em .8em"><div class="ko">까만 화면의 막막함</div><div class="desc">지금 어디에 있는 거지? 원하는 폴더로 어떻게 가지? 그 안엔 뭐가 들어 있지? DOS 명령어를 외워야 하나?</div></div>
+            </div>
+            <div class="sk-card accent grow" style="justify-content:center">
+              <div class="lab"><span class="ic"><svg><use href="#ic-ide"/></svg></span> 그래서, IDE를 씁니다</div>
+              <div class="ko">통합 개발 환경 (Integrated Dev. Environment)</div>
+              <div class="desc" style="margin-top:.3em">· 파일 탐색기 내장<br>· 통합 터미널 (여러 개 동시)<br>· 검증용 코드 생성에 강점 (Python·R·Stata)</div>
+            </div>
+          </div>
+          <div class="strip">개발자 전용? <b>아니요</b>, 분석·연구 어디에나</div>
+        </div>
+        <div class="slide-no">13</div>
+      </section>
+
+      <!-- 14 Markdown -->
+      <section class="slide" data-sec="2" data-title="그래서 어떻게 하는건데?" data-ico="ic-md">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 환경 구축</div>
+          <h2 class="title sm">그래서 어떻게 하는 건데?</h2>
+          <p class="sub">LLM은 언어모델입니다 · 잘 알아듣는 언어로 말해주면 됩니다.</p>
+          <div class="media" style="align-items:center">
+            <div class="col-txt" style="flex:1">
+              <p class="lead">요청 명확화 · 계획 · 검증 ... 이 모든 걸 어떻게 전달할까요?</p>
+              <p class="lead">정답은 의외로 단순합니다. LLM이 가장 잘 이해하는 형식, <span class="circ">Markdown (.md)</span></p>
+              <p class="sub" style="font-size:.88em">사람도 읽기 쉽고, 기계도 구조를 정확히 이해합니다.</p>
+            </div>
+            <div style="flex:0 0 28%;display:grid;place-items:center">
+              <div class="sk-card accent" style="aspect-ratio:1;width:62%;display:grid;place-items:center;text-align:center"><div><div class="ic" style="margin:0 auto .3em;width:2.4em;height:2.4em"><svg><use href="#ic-md"/></svg></div><div class="big">.md</div></div></div>
+            </div>
+          </div>
+          <div class="strip">복잡한 작업도 결국, 잘 쓴 <b>.md 한 장</b>에서 시작합니다</div>
+        </div>
+        <div class="slide-no">14</div>
+      </section>
+
+      <!-- 15 마크다운 그게 뭔데 -->
+      <section class="slide" data-sec="2" data-title="마크다운? 그게 뭔데?" data-ico="ic-md">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 환경 구축</div>
+          <h2 class="title sm">마크다운? <span class="ul">그게 뭔데</span>?</h2>
+          <div class="media">
+            <div class="col-txt" style="flex:0 0 33%">
+              <p class="lead">AI가 가장 잘 알아듣는, <b class="ink">구조가 살아있는 일반 텍스트</b>입니다.</p>
+              <ul style="list-style:none;display:flex;flex-direction:column;gap:.32em;font-size:.84em">
+                <li><b class="tr code">#</b> 제목 (Heading)</li>
+                <li><b class="tr code">-</b> 목록 (List)</li>
+                <li><b class="tr code">**</b> 강조 (Bold)</li>
+                <li><b class="tr code">1)</b> 순서 (Ordered)</li>
+              </ul>
+              <p class="sub" style="font-size:.82em">사람도 읽기 쉽고, AI도 문서 구조를 정확히 파악합니다.</p>
+            </div>
+            <div class="editor">
+              <div class="bar"><i style="background:#e06a4a"></i><i style="background:#e0b24a"></i><i style="background:#7fb06a"></i> <span style="margin-left:.4em">Requests.md · 이 발표를 만든 실제 요청서</span></div>
+              <div class="body"><span class="md-h"># 한국직업능력연구원 AI 리터러시 향상 데모</span>
+  - <span class="md-t">AI를 활용한 패널데이터 분석방법 안내</span>
+  - <span class="md-t">구성원 모두가 낙오자 없이 AI를 잘 활용하도록</span>
+
+<span class="md-h2">## 데모 주요 내용</span>
+  1) <span class="md-t">논문 한 편을 쓰기 위한 프로세스를 보여주기</span>
+  2) <span class="md-t">Raw data → 정제 → 자연어 질문 → 분석</span>
+     <span class="md-t">→ R · Stata 검증 코드 → 결과 해석</span>
+
+<span class="md-h2">## 분석주제</span>
+  - <span class="md-t">SES · 사회 이동성 · 중3 · 고3 코호트</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="slide-no">15</div>
+      </section>
+
+      <!-- 16 데이터 분석 4종 -->
+      <section class="slide" data-sec="3" data-title="데이터 분석에 어떻게 쓰이나 · 4종" data-ico="ic-chart">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 예시</div>
+          <h2 class="title sm">그래서, 데이터 분석에는 <span class="ul">어떻게</span> 쓰일까?</h2>
+          <p class="sub">연구에 LLM을 활용해, KEEP I 데이터로 네 가지 분석을 해봤습니다.</p>
+          <div class="cards cols-4 grow stagger">
+            <div class="sk-card"><div class="lab"><span class="big">1</span> <span class="ink" style="font-size:.92em">아이디어 → 모델</span></div><div class="desc">막연한 주제를 실제 분석 모델로</div></div>
+            <div class="sk-card"><div class="lab"><span class="big">2</span> <span class="ink" style="font-size:.92em">방법 검증</span></div><div class="desc">이 방법이 맞나? 의도를 담아 재분석</div></div>
+            <div class="sk-card"><div class="lab"><span class="big">3</span> <span class="ink" style="font-size:.92em">프론티어 모델</span></div><div class="desc">더 강한 모델이면 더 나은가?</div></div>
+            <div class="sk-card accent"><div class="lab"><span class="big">4</span> <span class="ink" style="font-size:.92em">논문 재현</span></div><div class="desc">같은 데이터로 기존 논문 재현?</div></div>
+          </div>
+          <div class="note">※ 이 데모는 활용 '방법'을 보여주는 시연입니다. 분석 결과 자체는 별도로 검증하지 않았습니다.</div>
+        </div>
+        <div class="slide-no">16</div>
+      </section>
+
+      <!-- 17 무엇을 준비했나 -->
+      <section class="slide" data-sec="3" data-title="시작 전, 무엇을 준비했나?" data-ico="ic-folder">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 예시</div>
+          <h2 class="title sm">시작하기 전에, 무엇을 <span class="ul">준비</span>했나?</h2>
+          <p class="sub">분석에 들어가기 전, 세 가지를 준비했습니다.</p>
+          <div class="cards cols-3 grow stagger">
+            <div class="sk-card"><div class="lab"><span class="ic ink"><svg><use href="#ic-folder"/></svg></span> KEEP I 원자료</div><div class="desc">직능연 KEEP 다운로드 · 1~13차</div></div>
+            <div class="sk-card"><div class="lab"><span class="ic"><svg><use href="#ic-doc"/></svg></span> Requests.md</div><div class="desc">분석 요청 사항</div></div>
+            <div class="sk-card"><div class="lab"><span class="ic"><svg><use href="#ic-md"/></svg></span> Work_inst.md</div><div class="desc">LLM 작업 지시서</div></div>
+          </div>
+          <div class="strip">이 셋을 LLM에게 건네면, <b>분석이 시작</b>됩니다</div>
+        </div>
+        <div class="slide-no">17</div>
+      </section>
+
+      <!-- 18 수행 과정 영상 -->
+      <section class="slide vmax" data-sec="3" data-title="데이터 분석 수행 과정 (영상)" data-ico="ic-play">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 예시</div>
+          <h2 class="title sm">데이터 분석 <span class="ul">수행 과정</span></h2>
+          <div class="vstage"><div class="vrow"><video src="asset/analysis-roadmap_v.1.0.mp4" controls preload="metadata" playsinline></video></div></div>
+        </div>
+        <div class="slide-no">18</div>
+      </section>
+
+      <!-- 19 분석1 Work_inst -->
+      <section class="slide" data-sec="3" data-title="분석 1 · @Work_inst.md 실행" data-ico="ic-term">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 1 · 아이디어를 모델로</div>
+          <h2 class="title sm">'아이디어' 수준의 연구주제를 실제 <span class="ul">분석 모델</span>로</h2>
+          <div class="grow" style="display:flex;align-items:center;justify-content:center;gap:1em">
+            <div class="sk-card" style="padding:.75em 1em"><div class="lab ink" style="white-space:nowrap"><span class="ic"><svg><use href="#ic-md"/></svg></span> Work_inst.md</div><div class="ko">LLM 작업 지시서</div><div class="desc">(안에서 @Requests.md 참조)</div></div>
+            <svg class="harw" viewBox="0 0 40 24" style="width:2.6em" filter="url(#rough)"><path d="M3 12h28" fill="none" stroke="var(--terra)" stroke-width="2.2" stroke-linecap="round"/><path d="M25 6l9 6-9 6" fill="none" stroke="var(--terra)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="sk-card accent" style="padding:.75em 1em;background:#2b2824;border-color:#2b2824"><div class="lab" style="color:#f4ead9;font-family:'Consolas',monospace;white-space:nowrap">&gt; @Work_inst.md</div><div class="ko" style="color:#cdbfa9">터미널에 한 줄 입력</div></div>
+            <svg class="harw" viewBox="0 0 40 24" style="width:2.6em" filter="url(#rough)"><path d="M3 12h28" fill="none" stroke="var(--terra)" stroke-width="2.2" stroke-linecap="round"/><path d="M25 6l9 6-9 6" fill="none" stroke="var(--terra)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="sk-card" style="padding:.75em 1em"><div class="lab ink"><span class="ic"><svg><use href="#ic-robot"/></svg></span> LLM이 실행</div><div class="desc">지시서·요청서를 읽고 분석 시작</div></div>
+          </div>
+          <div class="strip">작업 지시서 한 줄(<b>@Work_inst.md</b>)이면, 분석이 시작됩니다</div>
+        </div>
+        <div class="slide-no">19</div>
+      </section>
+
+      <!-- 20 분석1 절차 -->
+      <section class="slide" data-sec="3" data-title="분석 1 · Planning 4단계" data-ico="ic-route">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 1 · 아이디어를 모델로</div>
+          <h2 class="title sm">본격 분석 전, <span class="ul">네 단계</span>로 진행합니다</h2>
+          <div class="cards cols-4 grow stagger">
+            <div class="sk-card"><div class="lab"><span class="big">1</span> <span class="ink" style="font-size:.92em">계획 수립</span></div><div class="desc">Planning 모드로 분석 계획 작성</div></div>
+            <div class="sk-card accent"><div class="lab"><span class="big">2</span> <span class="ink" style="font-size:.92em">사용자 검토</span></div><div class="desc">계획을 사람이 직접 확인</div></div>
+            <div class="sk-card"><div class="lab"><span class="big">3</span> <span class="ink" style="font-size:.92em">분석 시행</span></div><div class="desc">검토된 계획대로 실행</div></div>
+            <div class="sk-card accent"><div class="lab"><span class="big">4</span> <span class="ink" style="font-size:.92em">산출물 확인</span></div><div class="desc">단계별 결과를 점검</div></div>
+          </div>
+          <div class="strip">계획을 먼저 세우고 검토한 뒤 실행, <b>분석도 똑같습니다</b></div>
+        </div>
+        <div class="slide-no">20</div>
+      </section>
+
+      <!-- 21 분석1 오케스트레이션 -->
+      <section class="slide" data-sec="3" data-title="분석 1 · 에이전트 오케스트레이션" data-ico="ic-robot">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 1 · 아이디어를 모델로</div>
+          <h2 class="title sm">여러 데이터를 한 세션에? 일을 쪼개고, 팀 리더가 <span class="ul">조율</span></h2>
+          <div class="orch grow">
+            <div class="leader"><span class="ic" style="border-color:#f4ead9;color:#f4ead9;background:rgba(255,255,255,.08)"><svg><use href="#ic-robot"/></svg></span> 팀 리더 · 조율·검증 → Verify_planning.md <span class="badge">Opus 4.8</span></div>
+            <svg class="fan" viewBox="0 0 600 50" preserveAspectRatio="none" filter="url(#rough)"><path d="M300 4 C200 22 110 24 75 46" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M300 4 C258 26 240 30 232 46" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M300 4 C342 26 360 30 368 46" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M300 4 C400 22 490 24 525 46" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+            <div class="subs">
+              <div class="agent">폴더 구조 파악<span class="f">Folder_structure.md</span><span class="m">Sonnet</span></div>
+              <div class="agent">데이터 탐색<span class="f">Data_exploration.md</span><span class="m">Sonnet</span></div>
+              <div class="agent">코드북·설명 숙지<span class="f">Data_description.md</span><span class="m">Sonnet</span></div>
+              <div class="agent">방법론 제안<span class="f">Method_exploration.md</span><span class="m">Sonnet</span></div>
+            </div>
+          </div>
+          <div class="strip">서브에이전트 4종이 각 .md를 산출 · 추가: <b>기초통계표 · 검정통계 · 패널/결과 시각화</b></div>
+        </div>
+        <div class="slide-no">21</div>
+      </section>
+
+      <!-- 22 Planning 영상 -->
+      <section class="slide vmax" data-sec="3" data-title="분석 1 · 계획 세우기 (영상)" data-ico="ic-play">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 1 (Cont'd)</div>
+          <h2 class="title sm">Planning 모드를 활용해 <span class="ul">계획 세우기</span></h2>
+          <div class="vstage"><div class="vrow"><video src="asset/Krivet_demo_1_comp.mp4" controls preload="metadata" playsinline></video></div><div class="vcap">demo 1 · 8배속</div></div>
+        </div>
+        <div class="slide-no">22</div>
+      </section>
+
+      <!-- 23 계획 검토 영상 -->
+      <section class="slide vmax" data-sec="3" data-title="분석 1 · 계획 검토하기 (영상)" data-ico="ic-play">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 1 (Cont'd)</div>
+          <h2 class="title sm">계획 <span class="ul">검토</span>하기</h2>
+          <div class="vstage"><div class="vrow"><video src="asset/Krivet_demo_2_comp.mp4" controls preload="metadata" playsinline></video></div><div class="vcap">demo 2 · 8배속</div></div>
+          <div class="vinfo">
+            <div class="sk-card" style="padding:.45em .8em"><div class="lab ink" style="font-size:.84em">걸린 시간 · 약 1시간 27분</div><div class="desc">계획 수립 → 검토까지 (영상은 8배속)</div></div>
+            <div class="sk-card" style="padding:.45em .8em"><div class="lab ink" style="font-size:.84em">문서로 남기는 이유</div><div class="desc">컨텍스트 유지로 다시 파악할 필요 없이 토큰 절약</div></div>
+            <div class="sk-card accent" style="padding:.45em .8em"><div class="lab tr" style="font-size:.84em">계획을 검토하는 이유</div><div class="desc">계획이 틀어지면 이후가 모두 꼬임</div></div>
+          </div>
+        </div>
+        <div class="slide-no">23</div>
+      </section>
+
+      <!-- 24 분석 실행 영상 -->
+      <section class="slide vmax" data-sec="3" data-title="분석 1 · 분석 실행하기 (영상)" data-ico="ic-play">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 1 (Cont'd)</div>
+          <h2 class="title sm">계획 문서를 기반으로 <span class="ul">분석 실행</span>하기</h2>
+          <div class="vstage"><div class="vrow"><video src="asset/Krivet_demo_3_comp.mp4" controls preload="metadata" playsinline></video></div><div class="vcap">demo 3 · 8배속</div></div>
+        </div>
+        <div class="slide-no">24</div>
+      </section>
+
+      <!-- 25 산출물 -->
+      <section class="slide" data-sec="3" data-title="분석 1 · 그래서 뭐가 나왔나?" data-ico="ic-chart">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 1 (Cont'd)</div>
+          <h2 class="title sm">그래서 뭐가 나왔나? · Analysis_Demo의 <span class="ul">실제 산출물</span></h2>
+          <div class="media">
+            <div class="arts" style="flex:0 0 52%">
+              <div class="art"><div class="lab"><span class="ic"><svg><use href="#ic-chart"/></svg></span> 그림</div><div class="desc">9장</div></div>
+              <div class="art"><div class="lab"><span class="ic ink"><svg><use href="#ic-doc"/></svg></span> 표</div><div class="desc">8개</div></div>
+              <div class="art"><div class="lab"><span class="ic ink"><svg><use href="#ic-doc"/></svg></span> 보고서</div><div class="desc">README · 해석</div></div>
+              <div class="art"><div class="lab"><span class="ic"><svg><use href="#ic-check"/></svg></span> 검증 코드</div><div class="desc">R · Stata</div></div>
+            </div>
+            <div class="vstage"><div class="vrow"><img src="asset/R1_forest.png" alt="forest plot"></div><div class="vcap">예시 산출물 · 회귀계수 forest plot</div></div>
+          </div>
+          <div class="note">※ 활용 '방법'을 보여주는 시연 산출물입니다 · 결과값 자체는 검증 대상이 아닙니다</div>
+        </div>
+        <div class="slide-no">25</div>
+      </section>
+
+      <!-- 26 방법론 CRE -->
+      <section class="slide" data-sec="3" data-title="분석 1 · 방법론 (CRE)" data-ico="ic-check">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 1 (Cont'd)</div>
+          <h2 class="title sm">어떤 방법론을 시행했나? · 검정으로 <span class="ul">적정 모형</span>을 선택</h2>
+          <div class="media">
+            <div class="col-txt" style="flex:0 0 42%">
+              <div class="chips"><span class="chip">Pooled</span><span class="chip">RE</span><span class="chip">FE</span><span class="chip tr">Mundlak (CRE)</span></div>
+              <p class="sub" style="font-size:.86em">FE는 시간불변(2004년 1회 측정) SES를 흡수합니다. Mundlak · CRE로 그 효과를 되살립니다.</p>
+              <div class="sk-card accent" style="padding:.55em .8em"><div class="desc">Hausman 등 검정 → <b class="tr">CRE를 적정 모형으로 선택</b></div></div>
+              <div class="chips" style="font-size:.92em"><span class="chip code">예전: by id: egen m = mean(...)</span></div>
+              <div class="chips" style="font-size:.92em"><span class="chip code">Stata 19: xtreg dep indep control, cre</span></div>
+            </div>
+            <div class="vstage"><div class="vrow"><img src="asset/CRE_framed.png" alt="Stata 19 cre"></div><div class="vcap">Stata 19 · CRE가 한 줄 옵션으로 들어왔습니다</div></div>
+          </div>
+        </div>
+        <div class="slide-no">26</div>
+      </section>
+
+      <!-- 27 분석2 Precise -->
+      <section class="slide" data-sec="3" data-title="분석 2 · 내가 원하는 방향 (Precise)" data-ico="ic-merge">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 2 · 내가 원하는 방향으로</div>
+          <h2 class="title sm">1차부터 직접 구축한 <span class="ul">불균형 패널</span> · 균형 패널과 무엇이 다른가</h2>
+          <div class="media">
+            <div class="col-txt" style="flex:0 0 40%">
+              <p class="sub" style="font-size:.86em">1~13차 원자료를 직접 결합해 불균형 종단패널을 구축했습니다.</p>
+              <div class="chips" style="gap:1em">
+                <div class="stat"><span class="v">8,604 · 3,432명</span><span class="l">불균형 (관측 · 인원)</span></div>
+                <div class="stat"><span class="v">4,399 · 1,612명</span><span class="l">기존 균형 → 약 2.1배 표본</span></div>
+              </div>
+              <div class="sk-card accent" style="padding:.55em .8em"><div class="desc">이탈은 비무작위(MNAR). Verbeek-Nijman Wald <b>42.5</b>, p&lt;.001 → IPW·Heckman 보정 후에도 SES 효과의 부호·유의는 그대로.</div></div>
+            </div>
+            <div class="vstage"><div class="vrow"><img src="asset/V4_attrition.png" alt="패널 이탈"></div><div class="vcap">Wave 1 6,000명 → 13차 3,983명(66%) · 최저 4차 54.9%</div></div>
+          </div>
+          <div class="strip">균형패널만 보면 놓치는 이탈까지, <b>직접 구축해</b> 들여다봅니다</div>
+        </div>
+        <div class="slide-no">27</div>
+      </section>
+
+      <!-- 28 분석3 Ultra -->
+      <section class="slide" data-sec="3" data-title="분석 3 · 더 나은 모델 (Ultra)" data-ico="ic-robot">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 3 · 더 나은 모델로</div>
+          <h2 class="title sm">Fable 5로 재분석 · 대신 <span class="ul">Sonnet 7종</span>이 서로 검증</h2>
+          <div class="media">
+            <div class="col-txt" style="flex:0 0 44%">
+              <p class="sub" style="font-size:.84em">무엇이 더 나아졌나? <span class="mut">(애석하게도 그는 갔습니다...)</span></p>
+              <div class="sk-card" style="padding:.5em .75em"><div class="lab ink" style="font-size:.86em"><span class="ic"><svg><use href="#ic-check"/></svg></span> 적대적 2경로 독립 재산출</div><div class="desc">경로 A·B가 따로 추정, Mundlak β 차이 0.001 이하로 합의</div></div>
+              <div class="sk-card" style="padding:.5em .75em"><div class="lab ink" style="font-size:.86em"><span class="ic"><svg><use href="#ic-check"/></svg></span> 완전성 비평 (loop-until-dry)</div><div class="desc">빠진 검정·미검증 주장을 2라운드 연속 없을 때까지 적출</div></div>
+              <div class="sk-card accent" style="padding:.5em .75em"><div class="lab tr" style="font-size:.86em"><span class="ic"><svg><use href="#ic-check"/></svg></span> CI 회귀검증 18/18 PASS</div><div class="desc">표본·계수·검정·그림까지 한 번에 재현</div></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:.5em;min-height:0">
+              <div class="vstage"><div class="vrow"><img src="asset/R2_model_compare.png" alt="모형 비교"></div><div class="vcap">모형 배터리 재실행 (적대적 2경로)</div></div>
+              <div class="stat" style="align-items:center"><span class="v">712,370 토큰</span><span class="l">MP-01~07 서브에이전트 합계 (메인 오케스트레이션 별도)</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="slide-no">28</div>
+      </section>
+
+      <!-- 29 분석4 재현 -->
+      <section class="slide" data-sec="3" data-title="분석 4 · 기존 논문 재현" data-ico="ic-book">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 4 · 기존 논문 재현하기</div>
+          <h2 class="title sm">같은 데이터를 활용하면, 기존 논문을 <span class="ul">재현</span>할 수 있는가?</h2>
+          <div class="media">
+            <div class="col-txt" style="flex:0 0 38%">
+              <div class="sk-card" style="padding:.55em .8em"><div class="lab ink" style="font-size:.84em"><span class="ic ink"><svg><use href="#ic-book"/></svg></span> 재현 대상</div><div class="desc">「부모소득이 청년취업에 미치는 영향 분석: 특성화고 졸업자를 중심으로」<br>황성수·김재호 · 제10회 한국교육고용패널 학술대회 · 이변량 프로빗(Bivariate probit) · KEEP 1·2·3·10차</div></div>
+              <div class="chips" style="font-size:.92em"><span class="chip tr">G1 51 · G2 197 · G3 140</span><span class="chip">ρ = -1 경계 재현</span><span class="chip">풀링 2,155 vs 골든 2,144</span><span class="chip">2경로 합의 CI 13/13</span></div>
+            </div>
+            <div class="vstage"><div class="vrow"><img src="asset/nature_repl_light.png" alt="Nature 재현성 논문"></div><div class="vcap">Nature (2026) · 사회과학 274건 중 55%만 재현</div></div>
+            <div class="vstage"><div class="vrow"><img src="asset/funnel.png" alt="재현 표본 깔때기"></div><div class="vcap">재현 결과 · 표9·10 비프로빗 388셀</div></div>
+          </div>
+          <div class="strip">핵심 발견을 재현했습니다 · 부모소득 높을수록 진학 늘고 취업 줄어 (<b>부호·유의 100% 일치</b>)</div>
+        </div>
+        <div class="slide-no">29</div>
+      </section>
+
+      <!-- 30 분석4 검증 -->
+      <section class="slide vmax" data-sec="3" data-title="분석 4 · 검증 (R/Stata)" data-ico="ic-check">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 4 · 검증</div>
+          <h2 class="title sm">LLM이 분석한 걸 <span class="ul">믿을 수 있어</span>? · 결과 말고 '코드'를 받으세요</h2>
+          <div class="vstage"><div class="vrow"><video src="asset/krivet_demo_working1_comp.mp4" controls preload="metadata" playsinline></video></div><div class="vcap">검증 스크립트를 IDE에서 직접 실행 · 별도 R 실행 없이 바로 재현</div></div>
+          <div class="vinfo">
+            <div class="sk-card" style="padding:.45em .8em"><div class="lab" style="font-size:.84em"><span class="ic ink"><svg><use href="#ic-q"/></svg></span> "분석해줘"</div><div class="desc">결과만 나오고, 맞는지 확인이 어렵습니다</div></div>
+            <div class="sk-card accent" style="padding:.45em .8em"><div class="lab tr" style="font-size:.84em"><span class="ic"><svg><use href="#ic-check"/></svg></span> "분석 가능한 파이썬 코드를 생성해줘"</div><div class="desc">코드를 열어 직접 검증 · 신뢰가 높습니다</div></div>
+            <div class="sk-card" style="padding:.45em .8em"><div class="desc">이 데모는 계획 단계 에이전트가 파이썬 코드로 작성 · R · Stata 검증 코드도 함께 생성</div></div>
+          </div>
+        </div>
+        <div class="slide-no">30</div>
+      </section>
+
+      <!-- 31 뭣이 중헌디 -->
+      <section class="slide" data-sec="4" data-title="그래서 뭣이 중헌디?" data-ico="ic-brain">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 마무리</div>
+          <h2 class="title sm">그래서 <span class="circ">뭣이 중헌디</span>? · 연구자의 Background Knowledge</h2>
+          <p class="sub">도구가 아무리 좋아도, 방향과 판단은 사람의 몫입니다.</p>
+          <div class="cards cols-3 grow stagger">
+            <div class="sk-card accent"><div class="lab"><span class="ic"><svg><use href="#ic-check"/></svg></span> 검토는 사람의 몫</div><div class="desc">계획·결과를 직접 판단</div></div>
+            <div class="sk-card"><div class="lab"><span class="ic ink"><svg><use href="#ic-brain"/></svg></span> 내용을 알아야</div><div class="desc">변수 · 분석방법 · 해석</div></div>
+            <div class="sk-card"><div class="lab"><span class="ic ink"><svg><use href="#ic-route"/></svg></span> 명확하게 지시</div><div class="desc">모호하면 모호한 결과</div></div>
+          </div>
+          <div class="strip">도구는 거들 뿐, 방향과 판단은 <b>연구자의 몫</b>입니다</div>
+        </div>
+        <div class="slide-no">31</div>
+      </section>
+
+      <!-- 32 모르면 -->
+      <section class="slide" data-sec="4" data-title="모르면 쓰지도 못해?" data-ico="ic-q">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 마무리</div>
+          <h2 class="title sm">그러면, 모르면 <span class="ul">쓰지도 못해</span>?</h2>
+          <div class="media">
+            <div class="col-txt" style="flex:0 0 40%">
+              <p class="lead"><b class="tr" style="font-family:var(--hand);font-size:1.5em">아니오.</b> 모른다고 못 쓰는 게 아닙니다.</p>
+              <ul style="list-style:none;display:flex;flex-direction:column;gap:.38em;font-size:.86em">
+                <li>· 모르는 건 <b class="ink">LLM에게 묻고</b>, 논문·저서로 확인하며 배웁니다.</li>
+                <li>· <b class="ink">해석을 쉽게</b> 해달라고 요청할 수도 있습니다.</li>
+              </ul>
+              <div class="note">어려운 용어도 '쉽게 풀어줘' 한마디면 됩니다</div>
+            </div>
+            <div class="editor" style="background:#fbf7ef;border:1px solid var(--line)">
+              <div class="bar" style="background:#efe7d8;color:#6e675d"><i style="background:#e06a4a"></i><i style="background:#e0b24a"></i><i style="background:#7fb06a"></i> <span style="margin-left:.4em">interpretation_v2.md · 쉬운 해석</span></div>
+              <div class="body" style="color:#3b3631;font-size:.84em">LLM이 만든 '쉬운 해석'
+Analysis_Demo_Precise · interpretation_v2.md
+
+<span style="color:#A84B2F">'부모가 잘살수록 자녀 월급이 낮다'?</span>
+
+알고 보니, 젊을 때 대학을 더 다닌 사람이
+당장은 월급이 낮게 찍히는 '함정'이었습니다.</div>
+            </div>
+          </div>
+          <div class="strip">모르는 만큼 <b>물어보고 배우면서</b> 쓰면 됩니다</div>
+        </div>
+        <div class="slide-no">32</div>
+      </section>
+
+      <!-- 33 Q&A -->
+      <section class="slide" data-sec="4" data-title="Q & A" data-ico="ic-q">
+        <div class="slide-inner qa">
+          <div class="eyebrow" style="justify-content:center"><span class="dot"></span> 감사합니다</div>
+          <div class="big-t">Q &amp; A</div>
+          <div class="meta" style="justify-content:center;color:var(--muted);margin-top:1em;display:flex;gap:1.2em"><span><b class="ink">LLM을 활용한 데이터 분석</b></span><span style="color:var(--line)">|</span><span>박동찬 · 직무능력연구센터</span></div>
+        </div>
+        <div class="slide-no">33</div>
+      </section>
+
+    </div>
+    <button class="nav next" id="nextBtn" aria-label="다음"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+  </div>
+
+  <footer class="dotbar">
+    <div id="dots" style="display:flex;align-items:center;gap:7px"></div>
+    <span class="hint"><b>← →</b> 이동 · <b>O</b> 전체보기 · <b>F</b> 전체화면</span>
+  </footer>
+</div>
+
+<div class="overview" id="overview">
+  <div class="ov-head"><svg width="20" height="20"><use href="#ic-grid"/></svg><span class="t">전체 슬라이드</span><span class="s">클릭하면 해당 슬라이드로 이동 · Esc 닫기</span><div style="flex:1"></div><button class="tbtn" id="ovClose">닫기 <span class="k">Esc</span></button></div>
+  <div class="ov-body" id="ovBody"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  const SECTIONS = [
+    {name:"시작"},
+    {name:"Part 1 · 터미널 기반 LLM 활용"},
+    {name:"Part 2 · 데이터 분석 환경 구축"},
+    {name:"Part 3 · 데이터 분석 예시"},
+    {name:"마무리"},
+  ];
+  const deck = document.getElementById('deck');
+  const slides = Array.from(deck.querySelectorAll('.slide'));
+  const total = slides.length;
+  let cur = 0;
+  const secNow = document.getElementById('secNow');
+  const curN = document.getElementById('curN');
+  document.getElementById('totN').textContent = total;
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const dotsWrap = document.getElementById('dots');
+
+  const dotEls = [];
+  let curGroup = null, lastSec = -1;
+  slides.forEach((s,i)=>{
+    const sec = +s.dataset.sec;
+    if(sec !== lastSec){ curGroup = document.createElement('div'); curGroup.className='dgroup'; dotsWrap.appendChild(curGroup); lastSec = sec; }
+    const d = document.createElement('button');
+    d.className='dot'; d.title=(i+1)+'. '+(s.dataset.title||'');
+    d.addEventListener('click',()=>go(i));
+    curGroup.appendChild(d); dotEls.push(d);
+  });
+
+  const ovBody = document.getElementById('ovBody');
+  const overview = document.getElementById('overview');
+  const ovCards = [];
+  (function(){
+    let lastSec=-1, secDiv=null, grid=null;
+    slides.forEach((s,i)=>{
+      const sec = +s.dataset.sec;
+      if(sec!==lastSec){
+        secDiv=document.createElement('div'); secDiv.className='ov-sec';
+        const h=document.createElement('h4'); h.innerHTML='<span class="b"></span>'+SECTIONS[sec].name; secDiv.appendChild(h);
+        grid=document.createElement('div'); grid.className='ov-grid'; secDiv.appendChild(grid);
+        ovBody.appendChild(secDiv); lastSec=sec;
+      }
+      const c=document.createElement('button'); c.className='ov-card';
+      const ico=s.dataset.ico||'ic-doc';
+      c.innerHTML='<div class="n">'+String(i+1).padStart(2,'0')+'</div><div class="ttl">'+(s.dataset.title||'')+'</div><div class="ico"><svg><use href="#'+ico+'"/></svg></div>';
+      c.addEventListener('click',()=>{ go(i); closeOverview(); });
+      grid.appendChild(c); ovCards.push(c);
+    });
+  })();
+
+  function openOverview(){ overview.classList.add('show'); ovCards.forEach((c,i)=>c.classList.toggle('on',i===cur)); const o=ovCards[cur]; if(o) o.scrollIntoView({block:'center'}); }
+  function closeOverview(){ overview.classList.remove('show'); }
+  function toggleOverview(){ overview.classList.contains('show')?closeOverview():openOverview(); }
+  document.getElementById('ovBtn').addEventListener('click',toggleOverview);
+  document.getElementById('ovClose').addEventListener('click',closeOverview);
+  overview.addEventListener('click',e=>{ if(e.target===overview) closeOverview(); });
+
+  function go(i){
+    i=Math.max(0,Math.min(total-1,i));
+    if(i===cur && slides[cur].classList.contains('active')){ sync(); return; }
+    slides[cur].classList.remove('active');
+    cur=i; slides[cur].classList.add('active');
+    slides.forEach((s,idx)=>{ if(idx!==cur) s.querySelectorAll('video').forEach(v=>v.pause()); });
+    sync();
+  }
+  function sync(){
+    curN.textContent=cur+1;
+    secNow.textContent=SECTIONS[+slides[cur].dataset.sec].name;
+    prevBtn.disabled=cur===0; nextBtn.disabled=cur===total-1;
+    dotEls.forEach((d,i)=>{ d.classList.toggle('on',i===cur); d.classList.toggle('done',i<cur); });
+    ovCards.forEach((c,i)=>c.classList.toggle('on',i===cur));
+    if(location.hash!=='#'+(cur+1)) history.replaceState(null,'','#'+(cur+1));
+  }
+  const next=()=>go(cur+1), prev=()=>go(cur-1);
+  nextBtn.addEventListener('click',next); prevBtn.addEventListener('click',prev);
+
+  document.addEventListener('keydown',e=>{
+    if(overview.classList.contains('show')){ if(e.key==='Escape'||e.key==='o'||e.key==='O') closeOverview(); return; }
+    switch(e.key){
+      case 'ArrowRight': case 'PageDown': case ' ': case 'j': e.preventDefault(); next(); break;
+      case 'ArrowLeft': case 'PageUp': case 'k': e.preventDefault(); prev(); break;
+      case 'Home': go(0); break;
+      case 'End': go(total-1); break;
+      case 'o': case 'O': toggleOverview(); break;
+      case 'f': case 'F': toggleFull(); break;
+      case 'Escape': closeOverview(); break;
+    }
+  });
+  function toggleFull(){ if(!document.fullscreenElement){ document.documentElement.requestFullscreen?.(); } else { document.exitFullscreen?.(); } }
+  document.getElementById('fsBtn').addEventListener('click',toggleFull);
+
+  function hashIndex(){ const n=parseInt((location.hash||'').replace('#',''),10); return (!isNaN(n)&&n>=1&&n<=total)?n-1:null; }
+  const initIdx=hashIndex(); if(initIdx!=null) cur=initIdx;
+  slides.forEach((s,i)=>s.classList.toggle('active',i===cur));
+  sync();
+  window.addEventListener('hashchange',()=>{ const t=hashIndex(); if(t!=null&&t!==cur) go(t); });
+
+  (function typing(){
+    const el=document.getElementById('typed'); if(!el) return;
+    const words=['claude','codex','agy']; let w=0,c=0,del=false;
+    function tick(){
+      const word=words[w]; el.textContent=word.slice(0,c);
+      if(!del){ if(c<word.length){ c++; setTimeout(tick,130); } else { del=true; setTimeout(tick,1100); } }
+      else { if(c>0){ c--; setTimeout(tick,60); } else { del=false; w=(w+1)%words.length; setTimeout(tick,350); } }
+    }
+    tick();
+  })();
+})();
+</script>
+</body>
+</html>
