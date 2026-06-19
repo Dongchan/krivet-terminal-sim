@@ -117,6 +117,20 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opac
 .vrow{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
 .vrow img,.vrow video{max-width:100%;max-height:100%;width:auto;height:auto;display:block;border-radius:14px;box-shadow:0 .7em 1.6em -.5em rgba(45,32,20,.4)}
 .vcap{flex:0 0 auto;text-align:center;font-size:.74em;color:var(--muted)}
+
+/* 데이터 차트 클릭 확대(라이트박스) — 동영상 전체화면에 대응 */
+.vstage img.zoom,.frame-m img.zoom{cursor:zoom-in}
+.vrow:has(> img.zoom),.frame-m:has(> img.zoom){position:relative}
+.zbtn{position:absolute;z-index:5;width:1.95em;height:1.95em;padding:0;border:none;border-radius:8px;background:rgba(20,16,12,.28);color:#fff;cursor:zoom-in;opacity:.42;display:grid;place-items:center;font-size:1.55cqw;transition:opacity .16s,background .16s}
+.vrow:hover .zbtn,.frame-m:hover .zbtn{opacity:.85}
+.zbtn:hover{opacity:1!important;background:rgba(20,16,12,.62)}
+.zbtn svg{width:1.05em;height:1.05em;stroke:#fff;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.imgzoom{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;background:rgba(18,14,10,.9);padding:2.5vmin;cursor:zoom-out}
+.imgzoom.show{display:flex}
+.imgzoom img{max-width:97vw;max-height:94vh;width:auto;height:auto;border-radius:10px;box-shadow:0 1.4em 4em -1em rgba(0,0,0,.6)}
+.imgzoom .zclose{position:fixed;top:16px;right:20px;width:40px;height:40px;border:none;border-radius:50%;background:rgba(255,255,255,.14);color:#f4ead9;font-size:20px;line-height:1;cursor:pointer;display:grid;place-items:center;transition:.16s}
+.imgzoom .zclose:hover{background:rgba(255,255,255,.28)}
+.imgzoom .zhint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);font-size:13px;color:#d9cdb9;letter-spacing:.02em;pointer-events:none}
 .vcap b{color:var(--terra-dk);font-weight:400}
 /* 영상 슬라이드 : 헤더를 압축해 영상을 최대 크기로 */
 .slide.vmax{padding:1.7cqw 3.2cqw 1.9cqw}
@@ -907,6 +921,12 @@ Analysis_Demo_Precise · interpretation_v2.md
   <div class="ov-body" id="ovBody"></div>
 </div>
 
+<div class="imgzoom" id="imgzoom" role="dialog" aria-modal="true" aria-label="그림 확대">
+  <button class="zclose" id="zClose" aria-label="닫기">✕</button>
+  <img id="zImg" alt="">
+  <div class="zhint">클릭 또는 Esc로 닫기</div>
+</div>
+
 <script>
 (function(){
   "use strict";
@@ -982,11 +1002,41 @@ Analysis_Demo_Precise · interpretation_v2.md
     dotEls.forEach((d,i)=>{ d.classList.toggle('on',i===cur); d.classList.toggle('done',i<cur); });
     ovCards.forEach((c,i)=>c.classList.toggle('on',i===cur));
     if(location.hash!=='#'+(cur+1)) history.replaceState(null,'','#'+(cur+1));
+    requestAnimationFrame(placeIcons);
   }
   const next=()=>go(cur+1), prev=()=>go(cur-1);
   nextBtn.addEventListener('click',next); prevBtn.addEventListener('click',prev);
 
+  // 데이터 차트 클릭 확대(라이트박스) — 동영상의 전체화면에 대응. 파일명으로 대상 지정(스크린샷 제외).
+  const imgzoom=document.getElementById('imgzoom'), zImg=document.getElementById('zImg');
+  const ZOOMABLE=['Fig3_','Fig5_','Fig6_','V4_attrition','R2_model_compare','funnel','R1_forest'];
+  const EXPAND_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>';
+  const zoomEls=[];
+  function closeZoom(){ imgzoom.classList.remove('show'); zImg.removeAttribute('src'); }
+  function openZoom(im){ zImg.src=im.currentSrc||im.src; zImg.alt=im.alt||''; imgzoom.classList.add('show'); }
+  function placeIcons(){ zoomEls.forEach(({im,host,btn})=>{
+    const dx=Math.max(0,(host.clientWidth-im.offsetWidth)/2), dy=Math.max(0,(host.clientHeight-im.offsetHeight)/2);
+    btn.style.right=(dx+10)+'px'; btn.style.bottom=(dy+10)+'px';
+  }); }
+  document.querySelectorAll('.vrow img,.frame-m img').forEach(im=>{
+    if(!ZOOMABLE.some(k=>(im.getAttribute('src')||'').includes(k))) return;
+    im.classList.add('zoom');
+    im.addEventListener('click',()=>openZoom(im));
+    const host=im.closest('.vrow')||im.closest('.frame-m'); if(!host) return;
+    const btn=document.createElement('button');
+    btn.className='zbtn'; btn.type='button'; btn.setAttribute('aria-label','그림 전체화면으로 보기'); btn.innerHTML=EXPAND_SVG;
+    btn.addEventListener('click',e=>{ e.stopPropagation(); openZoom(im); });
+    host.appendChild(btn);
+    zoomEls.push({im,host,btn});
+    im.addEventListener('load',placeIcons);
+  });
+  imgzoom.addEventListener('click',closeZoom);
+  window.addEventListener('resize',placeIcons);
+  document.addEventListener('fullscreenchange',placeIcons);
+  window.addEventListener('load',placeIcons);
+
   document.addEventListener('keydown',e=>{
+    if(imgzoom.classList.contains('show')){ if(e.key==='Escape'){ e.preventDefault(); closeZoom(); } return; }
     if(overview.classList.contains('show')){ if(e.key==='Escape'||e.key==='o'||e.key==='O') closeOverview(); return; }
     switch(e.key){
       case 'ArrowRight': case 'PageDown': case ' ': case 'j': e.preventDefault(); next(); break;
