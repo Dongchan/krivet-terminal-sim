@@ -288,11 +288,10 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opac
 
 <div class="shell">
   <header class="topbar">
-    <div class="brand"><img class="brand-logo" src="asset/KRIVET_CI_mark.png" alt="KRIVET"> 한국직업능력연구원 · <b>KRIVET 포럼</b></div>
+    <div class="brand"><img class="brand-logo" src="asset/KRIVET_CI_mark.png" alt="KRIVET"> 한국직업능력연구원 · <b>KRIVET AI 활용 역량강화</b></div>
     <div class="sec-now" id="secNow">시작</div>
     <div class="spacer"></div>
     <div class="counter"><b id="curN">1</b> / <span id="totN">33</span></div>
-    <button class="tbtn" id="fsBtn" title="전체화면 (F)"><svg><use href="#ic-full"/></svg></button>
     <button class="tbtn" id="ovBtn" title="전체 슬라이드 보기 (O)"><svg><use href="#ic-grid"/></svg> 전체보기 <span class="k">O</span></button>
   </header>
 
@@ -912,7 +911,7 @@ Analysis_Demo_Precise · interpretation_v2.md
 
   <footer class="dotbar">
     <div id="dots" style="display:flex;align-items:center;gap:7px"></div>
-    <span class="hint"><b>← →</b> 이동 · <b>O</b> 전체보기 · <b>F</b> 전체화면</span>
+    <span class="hint"><b>← →</b> 이동 · <b>O</b> 전체보기 · <b>F11</b> 전체화면</span>
   </footer>
 </div>
 
@@ -1011,18 +1010,8 @@ Analysis_Demo_Precise · interpretation_v2.md
   const imgzoom=document.getElementById('imgzoom'), zImg=document.getElementById('zImg');
   const EXPAND_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>';
   const zoomEls=[];
-  function hideZoom(){ imgzoom.classList.remove('show'); zImg.removeAttribute('src'); }
-  function closeZoom(){
-    // 라이트박스가 중첩 전체화면이면 그 한 단계만 빠져나온다(슬라이드 전체화면 유지) → 오버레이는 fullscreenchange가 닫음.
-    if(document.fullscreenElement===imgzoom){ if(document.exitFullscreen) document.exitFullscreen(); }
-    else { hideZoom(); }
-  }
-  function openZoom(im){
-    zImg.src=im.currentSrc||im.src; zImg.alt=im.alt||''; imgzoom.classList.add('show');
-    // 슬라이드가 (브라우저)전체화면이면 라이트박스를 그 위에 중첩 전체화면으로 띄워, Esc가 전체화면 스택을
-    // 한 단계만 pop(라이트박스만 닫고 슬라이드 전체화면 유지)하도록 한다. 전체화면이 아니면 일반 오버레이.
-    if(document.fullscreenElement && imgzoom.requestFullscreen){ imgzoom.requestFullscreen().catch(function(){}); }
-  }
+  function closeZoom(){ imgzoom.classList.remove('show'); zImg.removeAttribute('src'); }
+  function openZoom(im){ zImg.src=im.currentSrc||im.src; zImg.alt=im.alt||''; imgzoom.classList.add('show'); }
   function placeIcons(){ zoomEls.forEach(({im,host,btn})=>{
     const dx=Math.max(0,(host.clientWidth-im.offsetWidth)/2), dy=Math.max(0,(host.clientHeight-im.offsetHeight)/2);
     btn.style.right=(dx+10)+'px'; btn.style.bottom=(dy+10)+'px';
@@ -1040,22 +1029,10 @@ Analysis_Demo_Precise · interpretation_v2.md
   });
   imgzoom.addEventListener('click',closeZoom);
   window.addEventListener('resize',placeIcons);
-  document.addEventListener('fullscreenchange',function(){
-    // 라이트박스가 전체화면에서 빠져나오면(Esc로 스택 pop 되어 슬라이드 전체화면 복귀 등) 오버레이를 닫는다.
-    if(imgzoom.classList.contains('show') && document.fullscreenElement!==imgzoom) hideZoom();
-    placeIcons();
-  });
   window.addEventListener('load',placeIcons);
 
   document.addEventListener('keydown',e=>{
-    if(imgzoom.classList.contains('show')){
-      if(e.key==='Escape'){
-        // 중첩 전체화면이면 브라우저가 Esc로 스택을 pop(슬라이드 전체화면 복귀) → fullscreenchange가 오버레이를 닫음.
-        // 그 외(비전체화면)에는 직접 닫는다.
-        if(document.fullscreenElement!==imgzoom){ e.preventDefault(); hideZoom(); }
-      }
-      return;
-    }
+    if(imgzoom.classList.contains('show')){ if(e.key==='Escape'){ e.preventDefault(); closeZoom(); } return; }
     if(overview.classList.contains('show')){ if(e.key==='Escape'||e.key==='o'||e.key==='O') closeOverview(); return; }
     switch(e.key){
       case 'ArrowRight': case 'PageDown': case ' ': case 'j': e.preventDefault(); next(); break;
@@ -1063,12 +1040,9 @@ Analysis_Demo_Precise · interpretation_v2.md
       case 'Home': go(0); break;
       case 'End': go(total-1); break;
       case 'o': case 'O': toggleOverview(); break;
-      case 'f': case 'F': toggleFull(); break;
       case 'Escape': closeOverview(); break;
     }
   });
-  function toggleFull(){ if(!document.fullscreenElement){ document.documentElement.requestFullscreen?.(); } else { document.exitFullscreen?.(); } }
-  document.getElementById('fsBtn').addEventListener('click',toggleFull);
 
   function hashIndex(){ const n=parseInt((location.hash||'').replace('#',''),10); return (!isNaN(n)&&n>=1&&n<=total)?n-1:null; }
   const initIdx=hashIndex(); if(initIdx!=null) cur=initIdx;
