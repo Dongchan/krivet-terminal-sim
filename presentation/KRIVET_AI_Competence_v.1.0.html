@@ -1007,9 +1007,8 @@ Analysis_Demo_Precise · interpretation_v2.md
   const next=()=>go(cur+1), prev=()=>go(cur-1);
   nextBtn.addEventListener('click',next); prevBtn.addEventListener('click',prev);
 
-  // 데이터 차트 클릭 확대(라이트박스) — 동영상의 전체화면에 대응. 파일명으로 대상 지정(스크린샷 제외).
+  // 그림 클릭 확대(라이트박스) — 동영상의 전체화면에 대응. 본문 미디어(.vrow/.frame-m) 차트·스크린샷 전부 대상(상단 브랜드 로고는 해당 컨테이너 밖이라 제외).
   const imgzoom=document.getElementById('imgzoom'), zImg=document.getElementById('zImg');
-  const ZOOMABLE=['Fig3_','Fig5_','Fig6_','V4_attrition','R2_model_compare','funnel','R1_forest'];
   const EXPAND_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>';
   const zoomEls=[];
   function closeZoom(){ imgzoom.classList.remove('show'); zImg.removeAttribute('src'); }
@@ -1019,7 +1018,6 @@ Analysis_Demo_Precise · interpretation_v2.md
     btn.style.right=(dx+10)+'px'; btn.style.bottom=(dy+10)+'px';
   }); }
   document.querySelectorAll('.vrow img,.frame-m img').forEach(im=>{
-    if(!ZOOMABLE.some(k=>(im.getAttribute('src')||'').includes(k))) return;
     im.classList.add('zoom');
     im.addEventListener('click',()=>openZoom(im));
     const host=im.closest('.vrow')||im.closest('.frame-m'); if(!host) return;
