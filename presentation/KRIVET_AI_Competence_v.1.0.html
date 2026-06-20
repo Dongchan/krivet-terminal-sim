@@ -87,6 +87,8 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opac
 .sk-card::after{content:"";position:absolute;inset:3px 4px 5px 3px;border:1px solid rgba(59,54,49,.22);border-radius:13px 16px 11px 15px;pointer-events:none}
 .sk-card.accent{border-color:var(--terra-dk)}
 .sk-card.accent::after{border-color:rgba(168,75,47,.3)}
+a.sk-card{text-decoration:none;color:inherit;cursor:pointer}
+a.sk-card:hover{transform:translateY(-2px);box-shadow:.2em .34em .6em rgba(59,54,49,.2);transition:transform .14s,box-shadow .14s}
 .sk-card .lab{font-size:1.02em;color:var(--ink);display:flex;align-items:center;gap:.5em}
 .sk-card .desc{font-size:.84em;color:var(--body);line-height:1.42}
 .sk-card .big{font-family:var(--hand);font-size:1.7em;color:var(--terra);line-height:1}
@@ -616,8 +618,8 @@ a.agent:hover{transform:translateY(-2px);box-shadow:.14em .34em .6em rgba(59,54,
           <p class="sub">분석에 들어가기 전, 세 가지를 준비했습니다.</p>
           <div class="cards cols-3 grow stagger">
             <div class="sk-card"><div class="lab"><span class="ic ink"><svg><use href="#ic-folder"/></svg></span> KEEP I 원자료</div><div class="desc">직능연 KEEP 다운로드 · 1~13차</div></div>
-            <div class="sk-card"><div class="lab"><span class="ic"><svg><use href="#ic-doc"/></svg></span> Requests.md</div><div class="desc">분석 요청 사항</div></div>
-            <div class="sk-card"><div class="lab"><span class="ic"><svg><use href="#ic-md"/></svg></span> Work_inst.md</div><div class="desc">LLM 작업 지시서</div></div>
+            <a class="sk-card" href="asset/Requests.md" target="_blank" rel="noopener"><div class="lab"><span class="ic"><svg><use href="#ic-doc"/></svg></span> Requests.md</div><div class="desc">분석 요청 사항</div></a>
+            <a class="sk-card" href="asset/Work_inst.md" target="_blank" rel="noopener"><div class="lab"><span class="ic"><svg><use href="#ic-md"/></svg></span> Work_inst.md</div><div class="desc">LLM 작업 지시서</div></a>
           </div>
           <div class="strip">이 셋을 LLM에게 건네면, <b>분석이 시작</b>됩니다</div>
         </div>
