@@ -589,7 +589,7 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opac
           <div class="cards cols-4 grow stagger">
             <div class="sk-card"><div class="lab"><span class="big">1</span> <span class="ink" style="font-size:.92em">아이디어 → 모델</span></div><div class="desc">막연한 주제를 실제 분석 모델로</div></div>
             <div class="sk-card"><div class="lab"><span class="big">2</span> <span class="ink" style="font-size:.92em">방법 검증</span></div><div class="desc">이 방법이 맞나? 의도를 담아 재분석</div></div>
-            <div class="sk-card"><div class="lab"><span class="big">3</span> <span class="ink" style="font-size:.92em">프론티어 모델</span></div><div class="desc">더 강한 모델이면 더 나은가?</div></div>
+            <div class="sk-card"><div class="lab"><span class="big">3</span> <span class="ink" style="font-size:.92em">여러 에이전트 교차검증</span></div><div class="desc">Harness를 적용하면 달라질까?</div></div>
             <div class="sk-card accent"><div class="lab"><span class="big">4</span> <span class="ink" style="font-size:.92em">논문 재현</span></div><div class="desc">같은 데이터로 기존 논문 재현?</div></div>
           </div>
           <div class="note">※ 이 데모는 활용 '방법'을 보여주는 시연입니다. 분석 결과 자체는 별도로 검증하지 않았습니다.</div>
@@ -771,19 +771,19 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opac
       </section>
 
       <!-- 28 분석3 Ultra -->
-      <section class="slide" data-sec="3" data-title="분석 3 · 더 나은 모델 (Ultra)" data-ico="ic-robot">
+      <section class="slide" data-sec="3" data-title="분석 3 · 교차검증 (Ultra mode)" data-ico="ic-robot">
         <div class="slide-inner">
-          <div class="eyebrow"><span class="dot"></span> 데이터 분석 3 · 더 나은 모델로</div>
-          <h2 class="title sm">Fable 5로 재분석 · 대신 <span class="ul">Sonnet 7종</span>이 서로 검증</h2>
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 3 · 여러 에이전트의 교차검증</div>
+          <h2 class="title sm">에이전트 7종이 서로 <span class="ul">교차검증</span></h2>
           <div class="media">
             <div class="col-txt" style="flex:0 0 44%">
-              <p class="sub" style="font-size:.84em">무엇이 더 나아졌나? <span class="mut">(애석하게도 그는 갔습니다...)</span></p>
-              <div class="sk-card" style="padding:.5em .75em"><div class="lab ink" style="font-size:.86em"><span class="ic"><svg><use href="#ic-check"/></svg></span> 적대적 2경로 독립 재산출</div><div class="desc">경로 A·B가 따로 추정, Mundlak β 차이 0.001 이하로 합의</div></div>
-              <div class="sk-card" style="padding:.5em .75em"><div class="lab ink" style="font-size:.86em"><span class="ic"><svg><use href="#ic-check"/></svg></span> 완전성 비평 (loop-until-dry)</div><div class="desc">빠진 검정·미검증 주장을 2라운드 연속 없을 때까지 적출</div></div>
-              <div class="sk-card accent" style="padding:.5em .75em"><div class="lab tr" style="font-size:.86em"><span class="ic"><svg><use href="#ic-check"/></svg></span> CI 회귀검증 18/18 PASS</div><div class="desc">표본·계수·검정·그림까지 한 번에 재현</div></div>
+              <p class="sub" style="font-size:.84em">모델이 아니라 하네스로 '계산이 맞나'를 교차검증</p>
+              <div class="sk-card" style="padding:.42em .75em"><div class="lab ink" style="font-size:.86em"><span class="ic"><svg><use href="#ic-check"/></svg></span> 두 에이전트가 같은 값을 따로 산출</div><div class="desc">다른 도구로 독립 계산, β 0.001 이하 일치 → 코딩 실수·버그 아님</div></div>
+              <div class="sk-card" style="padding:.42em .75em"><div class="lab ink" style="font-size:.86em"><span class="ic"><svg><use href="#ic-check"/></svg></span> 빠진 검증 없는지 비평</div><div class="desc">놓친 검정·근거 없는 주장을 더 안 나올 때까지 반복 점검</div></div>
+              <div class="sk-card accent" style="padding:.42em .75em"><div class="lab tr" style="font-size:.86em"><span class="ic"><svg><use href="#ic-check"/></svg></span> 다시 돌려도 결과 똑같음</div><div class="desc">표본·계수·검정·그림 18개 항목 일치</div></div>
             </div>
             <div style="flex:1;display:flex;flex-direction:column;gap:.5em;min-height:0">
-              <div class="vstage"><div class="vrow"><img src="asset/R2_model_compare.png" alt="모형 비교"></div><div class="vcap">모형 배터리 재실행 (적대적 2경로)</div></div>
+              <div class="vstage"><div class="vrow"><img src="asset/R2_model_compare.png" alt="모형 비교"></div><div class="vcap">서로 다른 두 에이전트가 따로 계산해 대조</div></div>
               <div class="stat" style="align-items:center"><span class="v">712,370 토큰</span><span class="l">MP-01~07 서브에이전트 합계 (메인 오케스트레이션 별도)</span></div>
             </div>
           </div>
@@ -796,12 +796,13 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opac
         <div class="slide-inner">
           <div class="eyebrow"><span class="dot"></span> 데이터 분석 4 · 기존 논문 재현하기</div>
           <h2 class="title sm">같은 데이터를 활용하면, 기존 논문을 <span class="ul">재현</span>할 수 있는가?</h2>
+          <p class="sub" style="font-size:.8em;color:var(--muted);margin-top:-.1em">이번엔 Fable 5로 재현 (애석하게도 그는 갔습니다…)</p>
           <div class="media">
             <div class="sk-card" style="flex:1;padding:.6em .85em;justify-content:center"><div class="lab ink" style="font-size:.84em"><span class="ic ink"><svg><use href="#ic-book"/></svg></span> 재현 대상</div><div class="desc">「부모소득이 청년취업에 미치는 영향 분석: 특성화고 졸업자를 중심으로」<br>황성수·김재호 · 제10회 한국교육고용패널 학술대회 · 이변량 프로빗(Bivariate probit) · KEEP 1·2·3·10차</div></div>
             <div class="vstage"><div class="frame-m"><img src="asset/nature_repl_light.png" alt="Nature 재현성 논문"></div><div class="vcap" style="min-height:2.3em">Nature (2026) · 사회과학 274건 중 55%만 재현</div></div>
             <div class="vstage"><div class="frame-m"><img src="asset/funnel.png" alt="재현 표본 깔때기"></div><div class="vcap" style="min-height:2.3em">재현 결과 · 표9·10 비프로빗 388셀</div></div>
           </div>
-          <div class="chips" style="font-size:.92em;justify-content:center;margin-top:.1em"><span class="chip tr">G1 51 · G2 197 · G3 140</span><span class="chip">ρ = -1 경계 재현</span><span class="chip">풀링 2,155 vs 골든 2,144</span><span class="chip">2경로 합의 CI 13/13</span></div>
+          <div class="chips" style="font-size:.92em;justify-content:center;margin-top:.1em"><span class="chip tr">논문 표 수치 388개 대조</span><span class="chip">재구성 표본 2,155명 (논문 2,144명과 거의 일치)</span><span class="chip">논문 특이결과(ρ=-1)까지 재현</span></div>
           <div class="strip">핵심 발견을 재현했습니다 · 부모소득 높을수록 진학 늘고 취업 줄어 (<b>부호·유의 100% 일치</b>)</div>
         </div>
         <div class="slide-no">29</div>
