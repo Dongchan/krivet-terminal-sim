@@ -851,13 +851,13 @@ a.agent:hover{transform:translateY(-2px);box-shadow:.14em .34em .6em rgba(59,54,
           <div class="eyebrow"><span class="dot"></span> 데이터 분석 4 · 검증</div>
           <h2 class="title sm">코드를 직접 열어보니 · 계획과 실제 구현이 <span class="ul">달랐다</span></h2>
           <p class="sub" style="font-size:.86em">'결과'가 아니라 '코드'를 받았기에, 계획서와 실제 구현 코드를 직접 대조할 수 있었습니다. 실제로 <b>종속변수(임금)가 계획과 달랐습니다.</b></p>
-          <div style="font-family:ui-monospace,'Cascadia Code','D2Coding',Consolas,monospace;font-size:.95em;line-height:1.65;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:.65em 1.05em;box-shadow:0 8px 22px -12px rgba(45,32,20,.35);margin:.15em 0">
-            <div style="color:var(--muted);font-size:.8em;margin-bottom:.4em">DS-A 종속변수 (청년기 임금) · <b>계획 &rarr; 실제 코드</b></div>
-            <div style="color:var(--muted)"># Planning_Precise/Method_exploration.md&nbsp;&nbsp;(계획)</div>
-            <div style="background:#F7E6E0;color:#A84B2F;border-left:3px solid #C05A38;padding:.06em .55em;border-radius:4px;margin:.16em 0">&minus; 종속변수 = <b>BYJ205034</b>&nbsp;&nbsp;&nbsp;<span style="opacity:.72"># 마지막직업 월임금 · Balanced Panel · "권장"</span></div>
-            <div style="color:var(--muted);margin-top:.32em"># Analysis_Demo_Precise/02_build.py&nbsp;&nbsp;(실제)</div>
-            <div style="background:#E7F0E7;color:#3C7A4E;border-left:3px solid #5AA06E;padding:.06em .55em;border-radius:4px;margin:.16em 0">+ wage = <b>Q26_1_etc</b>/12&nbsp;&nbsp;또는&nbsp;&nbsp;<b>Q26_2_etc</b>&nbsp;&nbsp;&nbsp;<span style="opacity:.72"># 13차(2019) 현직 임금 · 원자료</span></div>
-            <div style="background:#E7F0E7;color:#3C7A4E;border-left:3px solid #5AA06E;padding:.06em .55em;border-radius:4px;margin:.16em 0">+ df_a["ln_wage"] = np.log(wage)&nbsp;&nbsp;&nbsp;<span style="opacity:.72"># &larr; 실제 종속변수</span></div>
+          <div style="font-family:ui-monospace,'Cascadia Code','D2Coding',Consolas,monospace;font-size:.82em;line-height:1.72;white-space:nowrap;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:.6em 0;overflow:hidden;box-shadow:0 8px 22px -12px rgba(45,32,20,.35);margin:.15em 0">
+            <div style="color:var(--muted);font-size:.8em;margin-bottom:.4em;padding:0 1.1em">DS-A 종속변수 (청년기 임금) · <b>계획 &rarr; 실제 코드</b></div>
+            <div style="color:var(--muted);padding:.05em 1.1em"># Planning_Precise/Method_exploration.md&nbsp;&nbsp;(계획)</div>
+            <div style="background:#F7E6E0;color:#A84B2F;padding:.14em 1.1em">&minus;&nbsp;&nbsp;종속변수 = <b>BYJ205034</b>&nbsp;&nbsp;<span style="color:#b3897b"># 마지막직업 월임금 · Balanced Panel · "권장"</span></div>
+            <div style="color:var(--muted);margin-top:.3em;padding:.05em 1.1em"># Analysis_Demo_Precise/02_build.py&nbsp;&nbsp;(실제)</div>
+            <div style="background:#E7F0E7;color:#2E7D4E;padding:.14em 1.1em">+&nbsp;&nbsp;wage = <b>Q26_1_etc</b>/12 또는 <b>Q26_2_etc</b>&nbsp;&nbsp;<span style="color:#7aa888"># 13차(2019) 현직 임금 · 원자료</span></div>
+            <div style="background:#E7F0E7;color:#2E7D4E;padding:.14em 1.1em">+&nbsp;&nbsp;df_a["ln_wage"] = np.log(wage)&nbsp;&nbsp;<span style="color:#7aa888"># &larr; 실제 종속변수</span></div>
           </div>
           <div class="strip">계획엔 '마지막직업 임금(BYJ205034)', 코드엔 '2019 현직 임금(Q26)' — <b>다른 변수</b>. 결과표만 받았으면 몰랐을 차이입니다.</div>
           <p class="sub" style="font-size:.78em;color:var(--muted)">※ 확인 결과 Q26은 '원자료 직접 구축(Balanced Panel 회피)' 원칙에 맞는 합리적 선택 — 그조차 코드를 열어야 알 수 있었습니다.</p>
