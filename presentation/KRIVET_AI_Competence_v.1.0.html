@@ -785,7 +785,7 @@ a.agent:hover{transform:translateY(-2px);box-shadow:.14em .34em .6em rgba(59,54,
               </div>
               <div class="sk-card accent" style="padding:.55em .8em"><div class="desc">이탈은 비무작위(MNAR). Verbeek-Nijman Wald <b>42.5</b>, p&lt;.001 → IPW·Heckman 보정 후에도 SES 효과의 부호·유의는 그대로.</div></div>
             </div>
-            <div class="vstage"><div class="vrow"><img src="asset/V4_attrition.png" alt="패널 이탈"></div><div class="vcap">Wave 1 6,000명 → 13차 3,983명(66%) · 최저 4차 54.9%</div></div>
+            <div class="vstage"><div class="vrow"><img src="asset/V4_attrition.png" alt="패널 이탈"></div><div class="vcap">Wave 1 6,000명 → 12차(2015) 3,983명(66%) · 최저 4차 54.9%</div></div>
           </div>
           <div class="strip">균형패널만 보면 놓치는 이탈까지, <b>직접 구축해</b> 들여다봅니다</div>
         </div>
@@ -845,7 +845,27 @@ a.agent:hover{transform:translateY(-2px);box-shadow:.14em .34em .6em rgba(59,54,
         <div class="slide-no">30</div>
       </section>
 
-      <!-- 31 뭣이 중헌디 -->
+      <!-- 31 코드 점검: 계획 vs 구현 -->
+      <section class="slide" data-sec="3" data-title="코드를 직접 점검하니 (계획≠구현)" data-ico="ic-check">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 4 · 검증</div>
+          <h2 class="title sm">코드를 직접 열어보니 · 계획과 실제 구현이 <span class="ul">달랐다</span></h2>
+          <p class="sub" style="font-size:.86em">'결과'가 아니라 '코드'를 받았기에, 계획서와 실제 구현 코드를 직접 대조할 수 있었습니다. 실제로 <b>종속변수(임금)가 계획과 달랐습니다.</b></p>
+          <div style="font-family:ui-monospace,'Cascadia Code','D2Coding',Consolas,monospace;font-size:.95em;line-height:1.65;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:.65em 1.05em;box-shadow:0 8px 22px -12px rgba(45,32,20,.35);margin:.15em 0">
+            <div style="color:var(--muted);font-size:.8em;margin-bottom:.4em">DS-A 종속변수 (청년기 임금) · <b>계획 &rarr; 실제 코드</b></div>
+            <div style="color:var(--muted)"># Planning_Precise/Method_exploration.md&nbsp;&nbsp;(계획)</div>
+            <div style="background:#F7E6E0;color:#A84B2F;border-left:3px solid #C05A38;padding:.06em .55em;border-radius:4px;margin:.16em 0">&minus; 종속변수 = <b>BYJ205034</b>&nbsp;&nbsp;&nbsp;<span style="opacity:.72"># 마지막직업 월임금 · Balanced Panel · "권장"</span></div>
+            <div style="color:var(--muted);margin-top:.32em"># Analysis_Demo_Precise/02_build.py&nbsp;&nbsp;(실제)</div>
+            <div style="background:#E7F0E7;color:#3C7A4E;border-left:3px solid #5AA06E;padding:.06em .55em;border-radius:4px;margin:.16em 0">+ wage = <b>Q26_1_etc</b>/12&nbsp;&nbsp;또는&nbsp;&nbsp;<b>Q26_2_etc</b>&nbsp;&nbsp;&nbsp;<span style="opacity:.72"># 13차(2019) 현직 임금 · 원자료</span></div>
+            <div style="background:#E7F0E7;color:#3C7A4E;border-left:3px solid #5AA06E;padding:.06em .55em;border-radius:4px;margin:.16em 0">+ df_a["ln_wage"] = np.log(wage)&nbsp;&nbsp;&nbsp;<span style="opacity:.72"># &larr; 실제 종속변수</span></div>
+          </div>
+          <div class="strip">계획엔 '마지막직업 임금(BYJ205034)', 코드엔 '2019 현직 임금(Q26)' — <b>다른 변수</b>. 결과표만 받았으면 몰랐을 차이입니다.</div>
+          <p class="sub" style="font-size:.78em;color:var(--muted)">※ 확인 결과 Q26은 '원자료 직접 구축(Balanced Panel 회피)' 원칙에 맞는 합리적 선택 — 그조차 코드를 열어야 알 수 있었습니다.</p>
+        </div>
+        <div class="slide-no">31</div>
+      </section>
+
+      <!-- 32 뭣이 중헌디 -->
       <section class="slide" data-sec="4" data-title="그래서 뭣이 중헌디?" data-ico="ic-brain">
         <div class="slide-inner">
           <div class="eyebrow"><span class="dot"></span> 마무리</div>
@@ -858,7 +878,7 @@ a.agent:hover{transform:translateY(-2px);box-shadow:.14em .34em .6em rgba(59,54,
           </div>
           <div class="strip">도구는 거들 뿐, 방향과 판단은 <b>연구자의 몫</b>입니다</div>
         </div>
-        <div class="slide-no">31</div>
+        <div class="slide-no">32</div>
       </section>
 
       <!-- 32 Anthropic Figure 3 -->
@@ -870,7 +890,7 @@ a.agent:hover{transform:translateY(-2px);box-shadow:.14em .34em .6em rgba(59,54,
           <div class="vstage"><div class="vrow"><img src="asset/Fig3_more_per_prompt_by_expertise_chart.png" alt="Figure 3 · Claude does more per prompt for more expert users"></div></div>
           <div class="strip">전문성이 높을수록, 한 번의 지시에 Claude가 <b>더 많이·더 길게 일합니다</b> (전문가는 초보의 약 2배 액션·5배 산출)</div>
         </div>
-        <div class="slide-no">32</div>
+        <div class="slide-no">33</div>
       </section>
 
       <!-- 33 Anthropic Figure 5 -->
@@ -882,7 +902,7 @@ a.agent:hover{transform:translateY(-2px);box-shadow:.14em .34em .6em rgba(59,54,
           <div class="vstage"><div class="vrow"><img src="asset/Fig5_expertise_session_outcomes_chart.png" alt="Figure 5 · Expertise and how sessions end"></div></div>
           <div class="strip">도메인 전문성이 높을수록 <b>세션 성공률이 오르고, 막혀도 더 잘 회복합니다</b></div>
         </div>
-        <div class="slide-no">33</div>
+        <div class="slide-no">34</div>
       </section>
 
       <!-- 34 Anthropic Figure 6 -->
@@ -894,7 +914,7 @@ a.agent:hover{transform:translateY(-2px);box-shadow:.14em .34em .6em rgba(59,54,
           <div class="vstage"><div class="vrow"><img src="asset/Fig6_success_by_occupation_chart.png" alt="Figure 6 · Success rates in coding sessions by inferred occupation"></div></div>
           <div class="strip">성공은 코딩 경력이 아니라 <b>도메인 이해</b>에서 옵니다 · 모든 직군이 소프트웨어 엔지니어와 거의 같은 성공률</div>
         </div>
-        <div class="slide-no">34</div>
+        <div class="slide-no">35</div>
       </section>
 
       <!-- 35 모르면 -->
@@ -924,7 +944,7 @@ Analysis_Demo_Precise · interpretation_v2.md
           </div>
           <div class="strip">모르는 만큼 <b>물어보고 배우면서</b> 쓰면 됩니다</div>
         </div>
-        <div class="slide-no">35</div>
+        <div class="slide-no">36</div>
       </section>
 
       <!-- 36 Q&A -->
@@ -942,7 +962,7 @@ Analysis_Demo_Precise · interpretation_v2.md
             </div>
           </a>
         </div>
-        <div class="slide-no">36</div>
+        <div class="slide-no">37</div>
       </section>
 
     </div>
