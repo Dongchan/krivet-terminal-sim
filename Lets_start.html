@@ -436,9 +436,20 @@ claude doctor</code></pre>
     <li><strong>단계별 산출물 확인</strong> · 분석이 진행되며 표·그림·보고서·검증 코드(R·Stata 등)가 폴더에 쌓입니다. 중간중간 열어 확인합니다.</li>
     <li><strong>결과 검토</strong> · 나온 결과가 타당한지 <strong>사람이</strong> 판단합니다.</li>
   </ol>
+  <div class="callout tip">
+    <span class="ti">실전 팁: <kbd>Shift</kbd>+<kbd>Tab</kbd>으로 '계획 모드(Plan Mode)' 켜기</span>
+    <p>위 5번('계획 먼저')을 가장 확실하게 지키는 방법입니다. <code class="inline">claude</code>가 실행 중일 때 <kbd>Shift</kbd>+<kbd>Tab</kbd>을 누르면 작업 모드가 바뀌는데, 화면 아래에 <strong>'plan mode on'</strong>(계획 모드)이 보일 때까지 누르세요.</p>
+    <p>계획 모드에서는 LLM이 <strong>파일을 바꾸거나 명령을 실행하지 않고</strong>, 무엇을 어떻게 할지 <strong>'계획'만</strong> 세워 보여줍니다. 사람이 그 계획을 <strong>승인해야</strong> 비로소 실제 작업이 시작됩니다. (계획이 마음에 안 들면 고쳐 달라고 한 뒤 다시 세우게 하세요.)</p>
+    <p><strong>좋은 점</strong> ① 파일을 건드리기 전이라 <strong>엉뚱한 방향으로 일이 진행되는 걸 원천 차단</strong> ② 사람이 먼저 검토·수정하니 '계획이 틀어지면 뒤가 다 꼬이는' 사고를 예방 ③ 잘못 실행한 걸 되돌리는 <strong>토큰·시간 낭비를 절약</strong> ④ 작업이 크고 복잡할수록 효과가 큽니다.</p>
+  </div>
   <div class="callout note">
     <span class="ti">신뢰도를 높이는 요령</span>
     <p>"분석해줘"보다 <strong>"분석할 수 있는 파이썬(또는 R/Stata) 코드를 만들어줘"</strong>라고 시키면, 코드가 남아 검증·재현이 쉬워집니다. 결과만 받는 것보다 훨씬 믿을 수 있습니다.</p>
+  </div>
+  <div class="callout tip">
+    <span class="ti">토큰 절약: 고칠 게 있으면 <kbd>Esc</kbd> <kbd>Esc</kbd>(두 번)로 되감기</span>
+    <p>프롬프트를 실행했는데 방향이 어긋났거나 고칠 부분이 보이면, "아니 그게 아니고…" 하며 계속 이어 말하지 마세요. 잘못된 대화가 길어질수록 <strong>그 내용이 컨텍스트에 쌓여 토큰을 먹습니다.</strong></p>
+    <p>대신 <kbd>Esc</kbd>를 <strong>두 번</strong> 누르면 <strong>이전 메시지 목록</strong>이 떠서, 어긋나기 시작한 지점으로 <strong>되감아</strong> 그 프롬프트를 고쳐 다시 실행할 수 있습니다. 잘못된 부분을 덜어내고 깔끔하게 다시 가니 <strong>토큰·시간이 절약</strong>됩니다. (<kbd>Esc</kbd> 한 번은 진행 중인 작업을 멈추는 기능입니다.)</p>
   </div>
   <div class="callout warn">
     <span class="ti">이 데모 프로젝트 파일이 필요하면</span>
