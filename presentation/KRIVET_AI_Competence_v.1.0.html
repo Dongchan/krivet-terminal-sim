@@ -180,6 +180,10 @@ a.sk-card:hover{transform:translateY(-2px);box-shadow:.2em .34em .6em rgba(59,54
 .rpts{display:grid;grid-template-columns:repeat(5,1fr);gap:.5em}
 a.agent{text-decoration:none;transition:transform .14s,box-shadow .14s}
 a.agent:hover{transform:translateY(-2px);box-shadow:.14em .34em .6em rgba(59,54,49,.22)}
+a.leader{text-decoration:none;color:#f4ead9;transition:transform .14s,box-shadow .14s}
+a.leader:hover{transform:translateY(-2px);box-shadow:.26em .42em .7em rgba(59,54,49,.3)}
+.agent .ctx{display:flex;align-items:center;justify-content:center;gap:.3em;margin-top:.2em;padding-top:.22em;border-top:1px dashed rgba(59,54,49,.22);font-size:.58em;line-height:1.22;color:var(--terra-dk);text-align:center}
+.agent .ctx svg{width:1.25em;height:1.25em;flex:0 0 auto}
 .agent .ic{margin-bottom:.05em}
 .agent .f{word-break:break-all}
 .agent.lead{border-color:var(--terra);background:rgba(192,90,56,.06)}
@@ -675,16 +679,16 @@ a.agent:hover{transform:translateY(-2px);box-shadow:.14em .34em .6em rgba(59,54,
           <div class="eyebrow"><span class="dot"></span> 데이터 분석 1 · 아이디어를 모델로</div>
           <h2 class="title sm">여러 데이터를 한 세션에? 일을 쪼개고, 팀 리더가 <span class="ul">조율</span></h2>
           <div class="orch grow">
-            <div class="leader"><span class="ic" style="border-color:#f4ead9;color:#f4ead9;background:rgba(255,255,255,.08)"><svg><use href="#ic-robot"/></svg></span> 팀 리더 · 조율·검증 → Verify_planning.md <span class="badge">Opus 4.8</span></div>
+            <a class="leader" href="asset/Verify_planning.md" target="_blank" rel="noopener"><span class="ic" style="border-color:#f4ead9;color:#f4ead9;background:rgba(255,255,255,.08)"><svg><use href="#ic-robot"/></svg></span> 팀 리더 · 조율·검증 → Verify_planning.md <span class="badge">Opus 4.8</span></a>
             <svg class="fan" viewBox="0 0 600 50" preserveAspectRatio="none"><path d="M300 4 C200 22 110 24 75 46" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M300 4 C258 26 240 30 232 46" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M300 4 C342 26 360 30 368 46" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M300 4 C400 22 490 24 525 46" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
             <div class="subs">
-              <div class="agent">폴더 구조 파악<span class="f">Folder_structure.md</span><span class="m">Sonnet</span></div>
-              <div class="agent">데이터 탐색<span class="f">Data_exploration.md</span><span class="m">Sonnet</span></div>
-              <div class="agent">코드북·설명 숙지<span class="f">Data_description.md</span><span class="m">Sonnet</span></div>
-              <div class="agent">방법론 제안<span class="f">Method_exploration.md</span><span class="m">Sonnet</span></div>
+              <a class="agent" href="asset/Folder_structure.md" target="_blank" rel="noopener">폴더 구조 파악<span class="f">Folder_structure.md</span><span class="m">Sonnet</span><span class="ctx"><svg><use href="#ic-window"/></svg> 에이전트#1 고유 컨텍스트 윈도우</span></a>
+              <a class="agent" href="asset/Data_exploration.md" target="_blank" rel="noopener">데이터 탐색<span class="f">Data_exploration.md</span><span class="m">Sonnet</span><span class="ctx"><svg><use href="#ic-window"/></svg> 에이전트#2 고유 컨텍스트 윈도우</span></a>
+              <a class="agent" href="asset/Data_description.md" target="_blank" rel="noopener">코드북·설명 숙지<span class="f">Data_description.md</span><span class="m">Sonnet</span><span class="ctx"><svg><use href="#ic-window"/></svg> 에이전트#3 고유 컨텍스트 윈도우</span></a>
+              <a class="agent" href="asset/Method_exploration.md" target="_blank" rel="noopener">방법론 제안<span class="f">Method_exploration.md</span><span class="m">Sonnet</span><span class="ctx"><svg><use href="#ic-window"/></svg> 에이전트#4 고유 컨텍스트 윈도우</span></a>
             </div>
           </div>
-          <div class="strip">서브에이전트 4종이 각 .md를 산출 · 추가: <b>기초통계표 · 검정통계 · 패널/결과 시각화</b></div>
+          <div class="strip">에이전트마다 <b>자기만의 컨텍스트 윈도우</b>에서 따로 일하고, 리더가 조율·검증해요 · 박스를 누르면 <b>실제 보고서</b>가 열려요</div>
         </div>
         <div class="slide-no">21</div>
       </section>
