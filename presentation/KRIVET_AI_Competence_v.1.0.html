@@ -865,7 +865,61 @@ a.agent:hover{transform:translateY(-2px);box-shadow:.14em .34em .6em rgba(59,54,
         <div class="slide-no">31</div>
       </section>
 
-      <!-- 32 뭣이 중헌디 -->
+      <!-- 32 왜 H2는 없을까? (요청≠의도) -->
+      <section class="slide" data-sec="3" data-title="왜 H2는 없을까? (요청≠의도)" data-ico="ic-route">
+        <div class="slide-inner">
+          <div class="eyebrow"><span class="dot"></span> 데이터 분석 · 점검</div>
+          <h2 class="title sm">왜 <span class="circ">H2</span>는 없을까? · 모호한 요청은 LLM에게 '빈칸'이 된다</h2>
+          <p class="sub" style="font-size:.84em">제 요청은 "SES·사회이동성·중3/고3" 정도였고 <b>변수·방법은 "알아서"</b>. 그러자 LLM이 검정 가설을 <b>다섯 개</b>나 만들었고(18번 영상에 스쳐 지나간 그 가설들), 실제로 확정해 쓴 건 <b>H1·H3 둘뿐</b>이었습니다.</p>
+          <table style="width:100%;border-collapse:collapse;font-size:.78em;margin:.2em 0;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 8px 22px -12px rgba(45,32,20,.35)">
+            <thead>
+              <tr style="background:rgba(59,54,49,.05);color:var(--header);text-align:left">
+                <th style="padding:.42em .8em;font-weight:400;width:2.6em">#</th>
+                <th style="padding:.42em .8em;font-weight:400">가설 <span style="color:var(--muted);font-size:.86em">(LLM이 생성)</span></th>
+                <th style="padding:.42em .8em;font-weight:400">검정 모형</th>
+                <th style="padding:.42em .8em;font-weight:400;text-align:center;width:7em">실제 사용</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-top:1px solid var(--line);background:rgba(192,90,56,.11)">
+                <td style="padding:.32em .8em;color:var(--terra-dk)"><b>H1</b></td>
+                <td style="padding:.32em .8em;color:var(--ink)">가구 SES&uarr; &rarr; 청년기 임금&uarr;</td>
+                <td style="padding:.32em .8em;color:var(--body)">패널회귀(Pooled/RE/FE/Mundlak)</td>
+                <td style="padding:.32em .8em;text-align:center;color:#2E7D4E"><b>&#10004; 확정</b></td>
+              </tr>
+              <tr style="border-top:1px solid var(--line)">
+                <td style="padding:.32em .8em;color:var(--muted)">H2</td>
+                <td style="padding:.32em .8em;color:var(--body)">교육성취가 SES&rarr;임금을 '매개'</td>
+                <td style="padding:.32em .8em;color:var(--muted)">경로분석(2단계)</td>
+                <td style="padding:.32em .8em;text-align:center;color:var(--muted)">&#10008; 미사용</td>
+              </tr>
+              <tr style="border-top:1px solid var(--line);background:rgba(192,90,56,.11)">
+                <td style="padding:.32em .8em;color:var(--terra-dk)"><b>H3</b></td>
+                <td style="padding:.32em .8em;color:var(--ink)">SES 효과의 코호트(중3·고3) 차이</td>
+                <td style="padding:.32em .8em;color:var(--body)">상호작용항</td>
+                <td style="padding:.32em .8em;text-align:center;color:#2E7D4E"><b>&#10004; 확정</b></td>
+              </tr>
+              <tr style="border-top:1px solid var(--line)">
+                <td style="padding:.32em .8em;color:var(--muted)">H4</td>
+                <td style="padding:.32em .8em;color:var(--body)">임금 성장기울기가 SES에 따라 다름</td>
+                <td style="padding:.32em .8em;color:var(--muted)">성장곡선</td>
+                <td style="padding:.32em .8em;text-align:center;color:var(--muted)">&#10008; 보류</td>
+              </tr>
+              <tr style="border-top:1px solid var(--line)">
+                <td style="padding:.32em .8em;color:var(--muted)">H5</td>
+                <td style="padding:.32em .8em;color:var(--body)">출신격차가 첫&rarr;끝 직업서 축소/유지</td>
+                <td style="padding:.32em .8em;color:var(--muted)">FD / FE</td>
+                <td style="padding:.32em .8em;text-align:center;color:var(--muted)">&#10008; 보류</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="strip">내가 요청한 건 SES·코호트뿐. <b>H2·H4·H5는 LLM이 채운 것.</b> 틀린 게 아니라, 모호하면 알아서 채운다는 속성.</div>
+          <p class="sub" style="font-size:.76em;color:var(--muted)">※ 통제법: 무엇을 할지 / 무엇은 하지 말지를 명확히 &rarr; 스코프는 내가 정한다. (H2는 빠진 게 아니라 이동성·수능 분석으로 모양을 바꿔 들어옴)</p>
+        </div>
+        <div class="slide-no">32</div>
+      </section>
+
+      <!-- 33 뭣이 중헌디 -->
       <section class="slide" data-sec="4" data-title="그래서 뭣이 중헌디?" data-ico="ic-brain">
         <div class="slide-inner">
           <div class="eyebrow"><span class="dot"></span> 마무리</div>
