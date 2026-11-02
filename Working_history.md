@@ -47,6 +47,16 @@ krivet-terminal-sim 프로젝트(현재 작업 폴더의 루트, PC에 따라 `D
 
 ---
 
+## [2026-11-02 13:36:39] 새 페이지 `Lets_prepare.html` — 특강 전에 미리 해 둘 것(Codex 실습 준비)
+
+- **계기**: KLEI 특강 2회차('터미널 + MCP/API', Codex로 실습) 참석자가 시작 안내서 1~6번에 더해 미리 할 일을 한 페이지로 정리. 사용자: "추가 안내 사항은 별도 파일로 만들자." → "카톡으로 링크 보낼 거야, 웹 페이지로 만들자" → "유료 Plus 구독하고 오라고 적자". `Lets_start.html`은 손대지 않음.
+- **내용(5단계)**: 1 RISS API 이용 신청(가장 먼저: 기관 명의·사람마다 따로·심사 기간, KLEI_AI_Talk 후속자료 RISS 2·3단계 링크, 키는 작업 폴더에 `RISS_API.txt`로 저장, 후속자료 5단계의 손 등록은 하지 않음) / 2 시작 안내서 1~6번을 Codex로(ChatGPT Plus, 3번은 Codex만, 6번에서 `codex`) / 3 Python 설치(공식 문서 기준 Python install manager, 앱 실행 별칭 문제 해결, PATH는 추가) / 4 마지막 점검(`codex --version`, `python --version`) / 5 당일 같이 할 것(폴더 구조·`AGENTS.md`, KOSIS MCP 연결, RISS 키 환경 변수 등록, CSV 저장).
+- **모양**: `Lets_start.html`의 `</head>`까지와 `<script>`(cp·fallback)를 바이트 그대로 복사, 새 CSS·JS 없음. 복사 버튼 5개.
+- **만든 방법**: Claude Code가 지시문을 쓰고 Codex가 작성(2회차 작업 방식). 첫 결과의 `<title>`이 PowerShell 명령줄을 거치며 `?`로 깨져, 유니코드 이스케이프로 다시 고침. 이어서 PATH 문장을 "추가한다고 답합니다"로 고침(공식 문서는 PATH 추가가 선택이라고만 하고 `python` 명령이 되는지는 직접 말하지 않음).
+- **확인**: 로컬 서버 + Playwright 1280px·390px(가로 스크롤 없음), 복사될 글자 5개, 링크 목록, UTF-8·CRLF, `Lets_start.html`과 head·script 바이트 비교. 클립보드에 실제로 들어가는지는 브라우저 권한 창 때문에 확인 못 함.
+- **2026-11-02에 확인한 사실**: ChatGPT Plus 월 20달러·Codex 포함(공식 요금 안내), Python 최신 3.15.2·install manager 권장(3.14부터 예전 설치 파일 폐지 예정, 공식 문서).
+- **상태**: 이 항목과 함께 커밋·푸시(커밋 번호는 `git log` 참고). 공개 주소 <https://dongchan.github.io/krivet-terminal-sim/Lets_prepare.html>.
+
 ## [2026-06-16 08:09:25] 푸터 "다음 미션 예고" 동적화 — 미션 5 잔존 placeholder 버그 픽스
 
 - **계기**: 새 세션에서 GitHub 원격(`d10c974`, Phase 6 완료)과 로컬(`2006970`, Phase 1) 비교 → 23커밋 뒤처짐 확인 후 `git pull --ff-only` 로 동기화(머지 없이 fast-forward). 이후 사용자 발견: "5번째 미션 마지막으로 가면, 두 개의 터미널로 시작하는 메세지가 있다."
