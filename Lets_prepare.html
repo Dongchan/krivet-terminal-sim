@@ -215,10 +215,10 @@
   <p>시작 안내서는 Claude Code를 중심으로 쓰여 있습니다. 이번 실습은 Codex(ChatGPT를 터미널에서 쓰는 도구)로 하므로, 아래처럼 바꿔 읽으면서 1~6번을 마치세요.</p>
   <ul>
     <li><a href="Lets_start.html#s1">1번 LLM 구독하기</a>: ChatGPT Plus(월 20달러) 이상을 구독합니다. Claude 구독은 이번 실습에 필요 없습니다.</li>
-    <li><a href="Lets_start.html#s2">2번 Node.js 설치</a>: 건너뜁니다.</li>
-    <li><a href="Lets_start.html#s3">3번 CLI 도구 설치</a>: 'Codex (ChatGPT를 터미널에서)' 부분만 따라 합니다. Claude Code는 설치하지 않아도 됩니다. 설치한 뒤 <code class="inline">codex</code>를 실행해 <strong>Sign in with ChatGPT</strong>로 로그인까지 마칩니다.</li>
+    <li><a href="Lets_start.html#s2">2번 Node.js 설치</a>: <strong>꼭 합니다.</strong> 3번에서 Codex를 npm으로 설치할 때 필요합니다. 설치한 뒤 <span class="os win">Windows</span>는 명령 프롬프트(cmd)를, <span class="os mac">Mac</span>은 터미널을 새로 열어 <code class="inline">node --version</code>과 <code class="inline">npm --version</code>에 숫자가 나오는지 확인합니다. <strong>설치에 시간이 꽤 걸리니 여유 있을 때 미리 해 두세요.</strong> <span class="os win">Windows</span> 설치 마지막의 '추가 도구 자동 설치'를 체크합니다. 설치가 끝난 뒤 검은 창이 떠서 한참 더 설치하는데, 가장 오래 걸리는 부분이니 창을 닫지 말고 끝날 때까지 기다립니다.</li>
+    <li><a href="Lets_start.html#s3">3번 CLI 도구 설치</a>: 'Codex (ChatGPT를 터미널에서)' 부분만 따라 합니다. <span class="os win">Windows</span>는 명령 프롬프트(cmd)에서 <code class="inline">npm install -g @openai/codex</code> 한 줄, <span class="os mac">Mac</span>은 그 아래 Mac 터미널 명령입니다. Claude Code는 설치하지 않아도 됩니다. 설치한 뒤 <code class="inline">codex</code>를 실행해 <strong>Sign in with ChatGPT</strong>로 로그인까지 마칩니다.</li>
     <li><a href="Lets_start.html#s4">4번 VS Code 설치</a>, <a href="Lets_start.html#s5">5번 작업 폴더 만들기</a>: 안내서 그대로 합니다.</li>
-    <li><a href="Lets_start.html#s6">6번 VS Code 통합 터미널에서 실행</a>: 마지막에 <code class="inline">claude</code> 대신 <code class="inline">codex</code>를 입력합니다.</li>
+    <li><a href="Lets_start.html#s6">6번 VS Code 통합 터미널에서 실행</a>: 마지막에 <code class="inline">claude</code> 대신 <code class="inline">codex</code>를 입력합니다. <span class="os win">Windows</span>는 안내서대로 VS Code 터미널을 cmd로 바꿔 둡니다(PowerShell에서는 npm으로 설치한 <code class="inline">codex</code>가 막힐 수 있습니다).</li>
   </ul>
   <div class="code">
     <div class="bar"><span>VS Code 터미널</span><button class="copy" onclick="cp(this)">복사</button></div>
@@ -262,18 +262,21 @@
   </div>
 
   <h2 id="s4"><span class="num">4</span>마지막 점검</h2>
-  <p>실습 전날까지 VS Code 터미널에서 아래 두 줄을 한 줄씩 입력해, 각각 버전 숫자가 나오는지 확인하세요.</p>
+  <p>실습 전날까지 VS Code 터미널에서 아래 세 줄을 한 줄씩 입력해, 각각 버전 숫자가 나오는지 확인하세요.</p>
   <div class="code">
     <div class="bar"><span><span class="os win">Windows</span> · 점검</span><button class="copy" onclick="cp(this)">복사</button></div>
-    <pre><code><span class="p">&gt;</span> codex --version
+    <pre><code><span class="p">&gt;</span> node --version
+<span class="p">&gt;</span> codex --version
 <span class="p">&gt;</span> python --version</code></pre>
   </div>
   <div class="code">
     <div class="bar"><span><span class="os mac">Mac</span> · 점검</span><button class="copy" onclick="cp(this)">복사</button></div>
-    <pre><code><span class="p">&gt;</span> codex --version
+    <pre><code><span class="p">&gt;</span> node --version
+<span class="p">&gt;</span> codex --version
 <span class="p">&gt;</span> python3 --version</code></pre>
   </div>
   <ul>
+    <li>□ <code class="inline">node --version</code>에 숫자가 나온다</li>
     <li>□ ChatGPT Plus를 구독하고 <code class="inline">codex</code> 로그인을 마쳤다</li>
     <li>□ VS Code 터미널에서 <code class="inline">codex</code>가 실행된다</li>
     <li>□ <code class="inline">python --version</code>(Mac은 <code class="inline">python3 --version</code>)에 숫자가 나온다</li>
@@ -295,7 +298,7 @@
 
   <footer>
     <p>Codex 실습 준비 · 박동찬(한국직업능력연구원)</p>
-    <p>최종 갱신 2026-11-02 · 요금·설치 안내는 이날 공식 페이지에서 확인한 내용입니다.</p>
+    <p>최종 갱신 2026-11-14 · Node.js·Codex 설치 안내는 이날, 요금과 Python 설치 안내는 2026-11-02에 공식 페이지에서 확인한 내용입니다.</p>
     <a class="backtop" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">맨 위로 ↑</a>
   </footer>
 </div>

@@ -185,7 +185,7 @@
     <ol start="0">
       <li><a href="#s0">시작하기 전에: 큰 그림</a></li>
       <li><a href="#s1">LLM 구독하기</a></li>
-      <li><a href="#s2">Node.js 설치 (선택)</a></li>
+      <li><a href="#s2">Node.js 설치</a></li>
       <li><a href="#s3">CLI 도구 설치 (Claude·ChatGPT)</a></li>
       <li><a href="#s4">VS Code 설치</a></li>
       <li><a href="#s5">작업 폴더 만들기</a></li>
@@ -208,7 +208,7 @@
   </ul>
   <p>전체 흐름은 이렇습니다.</p>
   <div class="callout note">
-    <p style="margin:0;"><strong>① LLM 구독</strong> → <strong>② (선택) Node.js 설치</strong> → <strong>③ CLI 설치(claude·codex)</strong> → <strong>④ VS Code 설치</strong> → <strong>⑤ 작업 폴더 만들기</strong> → <strong>⑥ 터미널에서 LLM 실행</strong> → <strong>⑦ 마크다운으로 지시 작성</strong> → <strong>⑧ '@'로 파일 읽히기</strong> → <strong>⑨ 분석 실행</strong></p>
+    <p style="margin:0;"><strong>① LLM 구독</strong> → <strong>② Node.js 설치</strong> → <strong>③ CLI 설치(claude·codex)</strong> → <strong>④ VS Code 설치</strong> → <strong>⑤ 작업 폴더 만들기</strong> → <strong>⑥ 터미널에서 LLM 실행</strong> → <strong>⑦ 마크다운으로 지시 작성</strong> → <strong>⑧ '@'로 파일 읽히기</strong> → <strong>⑨ 분석 실행</strong></p>
   </div>
 
   <!-- 1 -->
@@ -234,21 +234,27 @@
   </div>
 
   <!-- 2 -->
-  <h2 id="s2"><span class="num">2</span>Node.js 설치 (선택)</h2>
-  <p><strong>이 단계는 건너뛰어도 됩니다.</strong> Claude Code와 Codex 모두 이제 <strong>Node.js 없이 설치하는 공식 설치 명령</strong>이 있습니다(3단계). Node.js는 예전 방식인 <code class="inline">npm</code>(Node.js에 딸린 설치 도구)으로 깔고 싶을 때만 필요합니다. 이미 Node.js를 쓰고 있거나 npm 방식을 원하는 분만 아래를 따라 하세요. (Claude Code를 npm으로 설치하려면 Node.js 22 이상이 필요합니다. 지금 받는 LTS는 v24입니다.)</p>
+  <h2 id="s2"><span class="num">2</span>Node.js 설치</h2>
+  <p><strong>이 단계는 꼭 합니다.</strong> 3단계에서 <span class="os win">Windows</span>는 Codex를 <code class="inline">npm</code>(Node.js에 딸린 설치 도구)으로 설치하는데, npm은 Node.js를 깔아야 쓸 수 있습니다. <span class="os mac">Mac</span>과 Claude Code는 다른 설치 명령이 기본이지만, 그 명령이 내 PC에서 안 될 때 npm으로 바꿔 설치할 수 있도록 같이 깔아 둡니다. 이미 깔려 있다면 아래 버전 확인만 하면 됩니다. (npm으로 설치하려면 Codex는 Node.js 16 이상, Claude Code는 22 이상이 필요합니다. 지금 받는 LTS는 v26입니다.)</p>
+  <div class="callout warn">
+    <span class="ti">Node.js 설치는 시간이 꽤 걸립니다</span>
+    <p>내려받고 설치하는 데 시간이 꽤 걸립니다. 진행 막대가 멈춘 것처럼 보여도 <strong>창을 닫지 말고 끝날 때까지 기다리세요.</strong> 강의나 실습에서 쓸 예정이라면 <strong>그 전에 미리 설치해 두세요.</strong> 그 자리에서 설치하면 설치만 하다 시간이 다 갑니다.</p>
+    <p><span class="os win">Windows</span> 가장 오래 걸리는 곳은 설치 마지막에 체크하는 <strong>'추가 도구 자동 설치'</strong>입니다. 설치 파일이 끝난 뒤 검은 창이 떠서 한참 더 설치합니다. 오류가 아니니 창을 닫지 말고 끝날 때까지 기다리세요(아래 설명).</p>
+  </div>
   <ol>
     <li><a href="https://nodejs.org" target="_blank" rel="noopener">nodejs.org</a> 접속</li>
     <li><strong>LTS</strong>(안정 버전) 버튼을 눌러 내려받기 <span class="os win">Windows</span> <code class="inline">.msi</code> · <span class="os mac">Mac</span> <code class="inline">.pkg</code></li>
-    <li>받은 설치 파일을 실행해 '다음'으로 진행합니다. <span class="os win">Windows</span>는 환경변수(PATH)가 자동 등록되고, 마지막의 <strong>'추가 도구 자동 설치'는 체크하지 않아도 됩니다</strong>(아래 설명).</li>
+    <li>받은 설치 파일을 실행해 '다음'으로 진행합니다. <span class="os win">Windows</span>는 환경변수(PATH)가 자동 등록되고, 마지막의 <strong>'추가 도구 자동 설치'를 체크합니다</strong>(아래 설명).</li>
   </ol>
   <div class="callout tip">
     <span class="ti"><span class="os win">Windows</span> '환경변수' 설정은 자동입니다 (PATH)</span>
     <p>기본 설정 그대로 설치하면 node·npm 명령이 <strong>아무 터미널에서나 되도록 환경변수(PATH)에 자동 등록</strong>됩니다. 별도의 '환경변수 설정 화면'이 따로 뜨지 않아도 정상이니 안심하세요. (설치 중 'Custom Setup' 단계의 <code class="inline">Add to PATH</code> 항목이 기본으로 켜져 있어서 그렇습니다. 일부러 끄지만 마세요.)</p>
   </div>
-  <div class="callout tip">
-    <span class="ti"><span class="os win">Windows</span> '추가 도구 자동 설치'는 체크하지 않아도 됩니다</span>
-    <p>설치 마지막에 <strong>'Tools for Native Modules'</strong>(추가 도구 자동 설치) 체크박스가 있습니다. 일부 npm 모듈을 C/C++로 컴파일할 때 쓰는 도구(Python, Visual Studio Build Tools)를 까는 옵션입니다. Claude Code와 Codex는 npm으로 깔아도 <strong>미리 만들어진 실행 파일을 내려받으므로 이 도구가 필요 없습니다.</strong> 그러니 체크하지 않아도 됩니다.</p>
-    <p>이미 체크했다면 설치가 끝난 뒤 <strong>검은 창이 저절로 떠서</strong> Chocolatey·Python·Visual Studio Build Tools 등을 <strong>한참 설치</strong>합니다(설치 스크립트 안내 기준 약 7GB 이상의 여유 공간 필요). 처음 보면 당황스럽지만 <strong>오류도 바이러스도 아니라 정상</strong>이니, 끝날 때까지 두거나 원치 않으면 그 창을 닫아 중단하세요.</p>
+  <div class="callout warn">
+    <span class="ti"><span class="os win">Windows</span> '추가 도구 자동 설치'를 체크하세요 (여기서 오래 걸립니다)</span>
+    <p>설치 마지막에 <strong>'Tools for Native Modules'</strong>(추가 도구 자동 설치) 체크박스가 있습니다. 일부 npm 모듈을 C/C++로 컴파일할 때 쓰는 도구(Python, Visual Studio Build Tools)를 까는 옵션입니다. <strong>체크하고 진행하세요.</strong></p>
+    <p>체크하면 설치가 끝난 뒤 <strong>검은 창이 저절로 떠서</strong> Chocolatey·Python·Visual Studio Build Tools 등을 <strong>한참 설치</strong>합니다(설치 스크립트 안내 기준 약 7GB 이상의 여유 공간 필요). <strong>Node.js 설치에서 가장 오래 걸리는 부분입니다.</strong> 처음 보면 당황스럽지만 <strong>오류도 바이러스도 아니라 정상</strong>이니, 창을 닫지 말고 끝날 때까지 기다리세요.</p>
+    <p>검은 창에 <code class="inline">Press any key to continue</code>(계속하려면 아무 키나 누르십시오)가 두 번 나옵니다. 그때마다 아무 키나 누릅니다. 이어서 '이 앱이 디바이스를 변경하도록 허용하시겠습니까?'가 뜨면 <strong>예</strong>를 누릅니다. 파란 창에서 설치가 이어지고, 마지막에 <code class="inline">Type ENTER to exit</code>가 나오면 <kbd>Enter</kbd>를 눌러 닫습니다.</p>
   </div>
   <p>설치가 끝나면 잘 깔렸는지 확인합니다. 터미널을 엽니다.</p>
   <ul>
@@ -260,7 +266,7 @@
     <pre><code>node --version
 npm --version</code></pre>
   </div>
-  <p>각각 <code class="inline">v24.x.x</code> 처럼 숫자가 나오면 성공입니다(npm은 앞에 v 없이 숫자만 나옵니다).</p>
+  <p>각각 <code class="inline">v26.x.x</code> 처럼 숫자가 나오면 성공입니다(npm은 앞에 v 없이 숫자만 나옵니다).</p>
   <div class="callout warn">
     <span class="ti">'node를 찾을 수 없습니다' 라고 나오면</span>
     <p>설치 후 <strong>터미널을 완전히 껐다 다시 켜세요.</strong> 새 프로그램 경로(PATH)가 적용되려면 재시작이 필요합니다. 그래도 안 되면 위 'Add to PATH'가 꺼진 채 설치된 경우이니, Node.js를 다시 설치하며 그 항목을 켜 주세요.</p>
@@ -272,12 +278,12 @@ npm --version</code></pre>
 
   <div class="callout note">
     <span class="ti">먼저 '터미널'을 엽니다</span>
-    <p>아래 명령들은 모두 <strong>터미널(까만 창)</strong>에 입력합니다. <span class="os win">Windows</span> <kbd>Win</kbd>+<kbd>R</kbd> → <code class="inline">cmd</code> → <kbd>Enter</kbd>. <span class="os mac">Mac</span> <strong>터미널(Terminal)</strong> 앱 실행. (2단계를 했다면 그때 연 창을 그대로 써도 됩니다.) 명령을 입력(또는 붙여넣기)하고 <kbd>Enter</kbd>를 누르면 실행됩니다.</p>
+    <p>아래 명령들은 모두 <strong>터미널(까만 창)</strong>에 입력합니다. <span class="os win">Windows</span> <kbd>Win</kbd>+<kbd>R</kbd> → <code class="inline">cmd</code> → <kbd>Enter</kbd>. <span class="os mac">Mac</span> <strong>터미널(Terminal)</strong> 앱 실행. (2단계에서 연 창을 그대로 써도 됩니다.) 명령을 입력(또는 붙여넣기)하고 <kbd>Enter</kbd>를 누르면 실행됩니다.</p>
     <p><span class="os win">Windows</span>에는 cmd와 <strong>PowerShell</strong> 두 가지 창이 있고 명령이 서로 다릅니다. 줄 맨 앞이 <code class="inline">PS C:\Users\...&gt;</code>처럼 <strong>PS로 시작하면 PowerShell</strong>, <code class="inline">C:\Users\...&gt;</code>처럼 PS가 없으면 cmd입니다.</p>
   </div>
 
   <h3>Claude Code (Claude를 터미널에서)</h3>
-  <p>공식 권장 방식(네이티브 설치)입니다. Node.js가 없어도 되고, <strong>관리자 권한으로 실행할 필요도 없습니다.</strong> 지금 연 창에 맞는 명령 <strong>하나만</strong> 넣으세요.</p>
+  <p>공식 권장 방식(네이티브 설치)입니다. <strong>관리자 권한으로 실행할 필요가 없습니다.</strong> 지금 연 창에 맞는 명령 <strong>하나만</strong> 넣으세요.</p>
   <p><span class="os win">Windows</span> 명령 프롬프트(cmd)</p>
   <div class="code">
     <div class="bar"><span>명령 프롬프트(cmd) · 설치</span><button class="copy" onclick="cp(this)">복사</button></div>
@@ -302,14 +308,14 @@ npm --version</code></pre>
     <span class="ti">cmd와 PowerShell 명령을 바꿔 넣으면 오류가 납니다</span>
     <p><code class="inline">'irm' is not recognized</code>가 나오면 cmd 창에 PowerShell 명령을 넣은 것이고, <code class="inline">The token '&amp;&amp;' is not a valid statement separator</code>가 나오면 PowerShell 창에 cmd 명령을 넣은 것입니다. 지금 창에 맞는 명령으로 다시 넣으세요.</p>
   </div>
-  <p>다른 설치 방법도 있습니다. <span class="os win">Windows</span> 패키지 관리자 winget을 쓰거나(자동 업데이트가 되지 않으므로 가끔 <code class="inline">winget upgrade Anthropic.ClaudeCode</code>로 갱신), Node.js(22 이상)가 이미 있다면 예전처럼 npm으로 설치해도 됩니다.</p>
+  <p>다른 설치 방법도 있습니다. <span class="os win">Windows</span> 패키지 관리자 winget을 쓰거나(자동 업데이트가 되지 않으므로 가끔 <code class="inline">winget upgrade Anthropic.ClaudeCode</code>로 갱신), 2단계에서 깐 Node.js(22 이상)의 npm으로 설치해도 됩니다.</p>
   <div class="code">
     <div class="bar"><span>대안 · winget (Windows)</span><button class="copy" onclick="cp(this)">복사</button></div>
     <pre><code>winget install Anthropic.ClaudeCode</code></pre>
   </div>
   <div class="code">
     <div class="bar"><span>대안 · npm (Node.js 22 이상)</span><button class="copy" onclick="cp(this)">복사</button></div>
-    <pre><code>npm install -g @anthropic-ai/claude-code</code></pre>
+    <pre><code>npm install -g @anthropic-ai/claude-code@latest</code></pre>
   </div>
   <p>설치 명령은 바뀔 수 있습니다. 막히면 <a href="https://code.claude.com/docs/en/setup" target="_blank" rel="noopener">공식 설치 안내</a>를 확인하세요.</p>
   <p>설치 후, 작업할 폴더에서 아래를 입력하면 실행됩니다.</p>
@@ -340,21 +346,22 @@ npm --version</code></pre>
   </div>
 
   <h3>Codex (ChatGPT를 터미널에서)</h3>
-  <p>Codex도 Node.js 없이 설치하는 공식 설치 명령이 있습니다.</p>
+  <p><span class="os win">Windows</span>는 2단계에서 깐 Node.js의 <code class="inline">npm</code>으로 설치합니다. <strong>명령 프롬프트(cmd)</strong>에 입력하세요. PowerShell에서는 보안 정책(실행 정책) 때문에 <code class="inline">npm</code> 명령이 막힐 수 있습니다.</p>
+  <div class="code">
+    <div class="bar"><span>명령 프롬프트(cmd) · Codex 설치 (npm)</span><button class="copy" onclick="cp(this)">복사</button></div>
+    <pre><code>npm install -g @openai/codex</code></pre>
+  </div>
+  <p>설치가 끝나면 <code class="inline">codex --version</code>을 입력해 버전 숫자가 나오는지 확인합니다.</p>
+  <p><span class="os mac">Mac</span>은 아래 Mac 터미널 명령으로 설치합니다(npm은 권한 오류가 날 수 있습니다). <span class="os win">Windows</span>도 npm 설치가 안 될 때는 아래 PowerShell 명령으로 해 보세요. 둘 다 Node.js 없이 설치하는 공식 설치 명령입니다.</p>
   <p><span class="os win">Windows</span> PowerShell (공식 안내대로 시작 메뉴에서 <strong>새 PowerShell 창</strong>을 열어 실행)</p>
   <div class="code">
-    <div class="bar"><span>PowerShell · Codex 설치</span><button class="copy" onclick="cp(this)">복사</button></div>
+    <div class="bar"><span>다른 방법 · PowerShell</span><button class="copy" onclick="cp(this)">복사</button></div>
     <pre><code>powershell -ExecutionPolicy ByPass -c "irm https://chatgpt.com/codex/install.ps1 | iex"</code></pre>
   </div>
   <p><span class="os mac">Mac</span> 터미널</p>
   <div class="code">
     <div class="bar"><span>Mac 터미널 · Codex 설치</span><button class="copy" onclick="cp(this)">복사</button></div>
     <pre><code>curl -fsSL https://chatgpt.com/codex/install.sh | sh</code></pre>
-  </div>
-  <p>Node.js가 있다면(2단계) 예전처럼 npm으로 설치해도 됩니다.</p>
-  <div class="code">
-    <div class="bar"><span>대안 · npm</span><button class="copy" onclick="cp(this)">복사</button></div>
-    <pre><code>npm install -g @openai/codex</code></pre>
   </div>
   <div class="code">
     <div class="bar"><span>터미널 · 실행 / 로그인</span><button class="copy" onclick="cp(this)">복사</button></div>
@@ -367,7 +374,7 @@ npm --version</code></pre>
   </div>
   <div class="callout warn">
     <span class="ti">npm으로 설치하다 권한 오류가 날 때</span>
-    <p>위의 기본 설치(네이티브)는 관리자 권한이 필요 없습니다. npm 방식에서 권한 오류가 나면 <strong>기본 설치로 바꾸는 것이 공식 권장</strong>입니다. <span class="os win">Windows</span>에서 npm을 꼭 써야 한다면 명령 프롬프트(cmd)를 <strong>관리자 권한으로 실행</strong>(시작 메뉴에서 'cmd' 검색 → 우클릭 → '관리자 권한으로 실행')한 뒤 다시 시도해 보세요. <span class="os mac">Mac</span>에서는 <code class="inline">sudo</code>를 붙이지 말고(공식 문서도 금지) <a href="https://github.com/nvm-sh/nvm" target="_blank" rel="noopener">nvm</a>으로 Node를 설치하는 방법을 권장합니다.</p>
+    <p>npm 설치에서 권한 오류가 나면 <strong>Node.js 없이 설치하는 공식 설치 명령</strong>(Claude Code는 네이티브 설치, Codex는 위의 PowerShell·Mac 터미널 명령)으로 바꿔 보세요. 관리자 권한이 필요 없습니다. <span class="os win">Windows</span>에서 npm을 꼭 써야 한다면 명령 프롬프트(cmd)를 <strong>관리자 권한으로 실행</strong>(시작 메뉴에서 'cmd' 검색 → 우클릭 → '관리자 권한으로 실행')한 뒤 다시 시도해 보세요. <span class="os mac">Mac</span>에서는 <code class="inline">sudo</code>를 붙이지 말고(공식 문서도 금지) <a href="https://github.com/nvm-sh/nvm" target="_blank" rel="noopener">nvm</a>으로 Node를 설치하는 방법을 권장합니다.</p>
   </div>
 
   <!-- 4 -->
@@ -413,7 +420,7 @@ npm --version</code></pre>
   <p>이제 이 폴더가 작업 무대가 됩니다. 폴더 안의 파일을 읽히고, 새 파일을 만들게 하고, 코드를 돌릴 수 있습니다.</p>
   <div class="callout note">
     <span class="ti"><span class="os win">Windows</span> VS Code 터미널은 cmd로 바꿔 두세요</span>
-    <p>VS Code에서 터미널을 열면 보통 <strong>PowerShell</strong>이 먼저 뜹니다. 이 안내서의 <span class="os win">Windows</span> 명령은 cmd 기준입니다. 또 PowerShell에서는 보안 정책(실행 정책) 때문에 <strong>npm으로 설치한 명령(claude·codex 등)이 막혀 실행이 안 되는 경우</strong>가 있습니다(3단계의 기본 설치로 깔았다면 해당 없음). 그래서 기본 터미널을 <strong>cmd(명령 프롬프트)로 바꿔 두는 것을 권장</strong>합니다.</p>
+    <p>VS Code에서 터미널을 열면 보통 <strong>PowerShell</strong>이 먼저 뜹니다. 이 안내서의 <span class="os win">Windows</span> 명령은 cmd 기준입니다. 또 PowerShell에서는 보안 정책(실행 정책) 때문에 <strong>npm으로 설치한 명령(claude·codex 등)이 막혀 실행이 안 되는 경우</strong>가 있습니다(Node.js 없이 설치하는 명령으로 깔았다면 해당 없음). 그래서 기본 터미널을 <strong>cmd(명령 프롬프트)로 바꿔 두는 것을 권장</strong>합니다.</p>
     <p><strong>바꾸는 법:</strong> 터미널 패널 오른쪽 위 <strong>+ 옆의 ∨(아래 화살표) → 'Select Default Profile'(기본 프로필 선택) → 'Command Prompt'</strong> 선택 → 그 다음 여는 터미널부터 cmd로 뜹니다. (지금 열린 PowerShell 터미널은 휴지통 아이콘으로 닫고 새로 열면 cmd가 됩니다.)</p>
     <p>PowerShell을 그대로 쓰면서 npm으로 깐 명령이 막힐 때는, PowerShell에서 아래 명령을 한 번 실행하면 풀립니다(공식 문제 해결 안내).</p>
   </div>
@@ -516,7 +523,7 @@ npm --version</code></pre>
   <h3>설치 명령에서 'irm' 또는 '&amp;&amp;' 오류가 난다</h3>
   <p>cmd용과 PowerShell용 명령을 바꿔 넣은 경우입니다. 줄 맨 앞에 <code class="inline">PS</code>가 있으면 PowerShell, 없으면 cmd입니다. 3단계에서 지금 창에 맞는 명령을 다시 고르세요.</p>
   <h3>npm 전역 설치에서 권한 오류</h3>
-  <p>가장 쉬운 해결은 npm 대신 3단계의 기본 설치(네이티브)를 쓰는 것입니다(공식 권장, 관리자 권한 불필요). npm을 계속 쓰려면 <span class="os win">Windows</span> 명령 프롬프트(cmd)를 관리자 권한으로 실행해 다시 설치. <span class="os mac">Mac</span> <code class="inline">sudo</code> 남용 대신 <a href="https://github.com/nvm-sh/nvm" target="_blank" rel="noopener">nvm</a>으로 Node 재설치를 권장.</p>
+  <p>가장 쉬운 해결은 npm 대신 3단계의 Node.js 없이 설치하는 공식 설치 명령을 쓰는 것입니다(관리자 권한 불필요). npm을 계속 쓰려면 <span class="os win">Windows</span> 명령 프롬프트(cmd)를 관리자 권한으로 실행해 다시 설치. <span class="os mac">Mac</span> <code class="inline">sudo</code> 남용 대신 <a href="https://github.com/nvm-sh/nvm" target="_blank" rel="noopener">nvm</a>으로 Node 재설치를 권장.</p>
   <h3>로그인 브라우저가 안 열린다</h3>
   <p>Claude Code는 터미널에서 <kbd>c</kbd> 키를 누르면 로그인 주소(URL)가 복사됩니다. 브라우저 주소창에 직접 붙여 넣어 로그인하세요.</p>
   <h3>터미널에서 한글이 깨진다</h3>
@@ -541,7 +548,7 @@ npm --version</code></pre>
 
   <footer>
     <p>Claude Code 시작 안내 · 박동찬(한국직업능력연구원)</p>
-    <p>최종 갱신 2026-10-17 · 요금·설치 명령은 이날 공식 페이지에서 확인한 내용입니다.</p>
+    <p>최종 갱신 2026-11-14 · 설치 명령과 Node.js 버전은 이날, 요금은 2026-10-17에 공식 페이지에서 확인한 내용입니다.</p>
     <a class="backtop" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">맨 위로 ↑</a>
   </footer>
 </div>
