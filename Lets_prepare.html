@@ -164,7 +164,7 @@
     <p>실습 당일에는 각자 PC에서 Codex로 프로젝트 폴더를 만들고, 통계 MCP를 연결하고, RISS 검색 결과를 CSV 파일로 저장합니다. 그날 바로 시작할 수 있도록 아래 네 가지를 미리 해 두세요. 설치 과정은 <a href="Lets_start.html">시작 안내서</a>를 따르고, 이 페이지에는 그 안내서에 더해 할 일만 적었습니다.</p>
     <div class="meta-row">
       <span><b>준비물</b> &nbsp;Windows 10 이상 또는 macOS 13 이상 컴퓨터, 인터넷, 프로그램 설치 권한, 소속 기관 이름과 사업자등록번호(RISS 신청용)</span>
-      <span><b>예상 소요</b> &nbsp;약 50분(RISS 심사를 기다리는 시간 제외)</span>
+      <span><b>예상 소요</b> &nbsp;약 1시간 30분~2시간 30분(RISS 심사를 기다리는 시간 제외)</span>
     </div>
     <div class="callout note" style="margin-bottom:0;">
       <span class="ti">표기 약속</span>
@@ -215,7 +215,7 @@
   <p>시작 안내서는 Claude Code를 중심으로 쓰여 있습니다. 이번 실습은 Codex(ChatGPT를 터미널에서 쓰는 도구)로 하므로, 아래처럼 바꿔 읽으면서 1~6번을 마치세요.</p>
   <ul>
     <li><a href="Lets_start.html#s1">1번 LLM 구독하기</a>: ChatGPT Plus(월 20달러) 이상을 구독합니다. Claude 구독은 이번 실습에 필요 없습니다.</li>
-    <li><a href="Lets_start.html#s2">2번 Node.js 설치</a>: <strong>꼭 합니다.</strong> 3번에서 Codex를 npm으로 설치할 때 필요합니다. 설치한 뒤 <span class="os win">Windows</span>는 명령 프롬프트(cmd)를, <span class="os mac">Mac</span>은 터미널을 새로 열어 <code class="inline">node --version</code>과 <code class="inline">npm --version</code>에 숫자가 나오는지 확인합니다. <strong>설치에 시간이 꽤 걸리니 여유 있을 때 미리 해 두세요.</strong> <span class="os win">Windows</span> 설치 마지막의 '추가 도구 자동 설치'를 체크합니다. 설치가 끝난 뒤 검은 창이 떠서 한참 더 설치하는데, 가장 오래 걸리는 부분이니 창을 닫지 말고 끝날 때까지 기다립니다.</li>
+    <li><a href="Lets_start.html#s2">2번 Node.js 설치</a>: <strong>꼭 합니다.</strong> 3번에서 Codex를 npm으로 설치할 때 필요합니다. 설치한 뒤 <span class="os win">Windows</span>는 명령 프롬프트(cmd)를, <span class="os mac">Mac</span>은 터미널을 새로 열어 <code class="inline">node --version</code>과 <code class="inline">npm --version</code>에 숫자가 나오는지 확인합니다. <strong>설치에 시간이 꽤 걸리니 여유 있을 때 미리 해 두세요.</strong> <span class="os win">Windows</span> 설치 마지막의 '추가 도구 자동 설치'를 체크합니다(Python이 이때 함께 설치됩니다). 설치가 끝난 뒤 검은 창이 떠서 한참 더 설치하는데, 가장 오래 걸리는 부분이니 창을 닫지 말고 끝날 때까지 기다립니다.</li>
     <li><a href="Lets_start.html#s3">3번 CLI 도구 설치</a>: 'Codex (ChatGPT를 터미널에서)' 부분만 따라 합니다. <span class="os win">Windows</span>는 명령 프롬프트(cmd)에서 <code class="inline">npm install -g @openai/codex</code> 한 줄, <span class="os mac">Mac</span>은 그 아래 Mac 터미널 명령입니다. Claude Code는 설치하지 않아도 됩니다. 설치한 뒤 <code class="inline">codex</code>를 실행해 <strong>Sign in with ChatGPT</strong>로 로그인까지 마칩니다.</li>
     <li><a href="Lets_start.html#s4">4번 VS Code 설치</a>, <a href="Lets_start.html#s5">5번 작업 폴더 만들기</a>: 안내서 그대로 합니다.</li>
     <li><a href="Lets_start.html#s6">6번 VS Code 통합 터미널에서 실행</a>: 마지막에 <code class="inline">claude</code> 대신 <code class="inline">codex</code>를 입력합니다. <span class="os win">Windows</span>는 안내서대로 VS Code 터미널을 cmd로 바꿔 둡니다(PowerShell에서는 npm으로 설치한 <code class="inline">codex</code>가 막힐 수 있습니다).</li>
@@ -233,8 +233,8 @@
   <h2 id="s3"><span class="num">3</span>Python 설치</h2>
   <p>실습에서 Codex가 검색 결과를 표로 정리하고 두 통계를 합치는 코드를 Python으로 만들어 돌립니다. 그래서 내 PC에 Python이 있어야 합니다.</p>
   <div class="callout tip">
-    <span class="ti">이미 Python이 있다면</span>
-    <p>VS Code 터미널에서 아래를 입력해 Python 3. 으로 시작하는 숫자가 나오면 이 단계는 건너뜁니다.</p>
+    <span class="ti">먼저 Python이 이미 있는지 확인하세요</span>
+    <p><span class="os win">Windows</span> 2번에서 Node.js를 설치하며 '추가 도구 자동 설치'를 체크했다면 Python이 함께 설치돼 있습니다. VS Code 터미널을 새로 열어 아래를 입력하고, Python 3. 으로 시작하는 숫자가 나오면 이 단계는 건너뜁니다.</p>
   </div>
   <div class="code">
     <div class="bar"><span><span class="os win">Windows</span> · 버전 확인</span><button class="copy" onclick="cp(this)">복사</button></div>
@@ -244,7 +244,7 @@
     <div class="bar"><span><span class="os mac">Mac</span> · 버전 확인</span><button class="copy" onclick="cp(this)">복사</button></div>
     <pre><code><span class="p">&gt;</span> python3 --version</code></pre>
   </div>
-  <p><span class="os win">Windows</span> 설치 순서 (공식 문서 기준: Python install manager)</p>
+  <p><span class="os win">Windows</span> 위에서 숫자가 나오지 않을 때만 아래 순서로 설치합니다 (공식 문서 기준: Python install manager)</p>
   <ol>
     <li><a href="https://www.python.org/downloads/">python.org/downloads</a>에 들어가 Python install manager를 내려받습니다.</li>
     <li>받은 파일을 더블클릭하고 <strong>Install</strong>을 누릅니다.</li>
